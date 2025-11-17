@@ -22,3 +22,7 @@ Análisis del framework Robocode.
 - Analizar el flujo de ejecución para identificar qué procesos realiza el framework al producirse una colisión entre robots.
 - Revisar los métodos involucrados en el manejo y procesamiento de colisiones entre robots.
 - Realizar una planificación inicial que permita organizar la estrategia de trabajo y avanzar con la implementación de las primeras líneas de código relacionadas con la resolución del problema.
+
+
+> Nota: archivo actualizado desde entorno local para prueba de commit.
+
