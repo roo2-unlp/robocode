@@ -236,10 +236,14 @@ public class HiddenAccess {
 				roundNum, numRounds, time);
 	}
 
-	public static BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize) {
-		return rulesHelper.createRules(battlefieldWidth, battlefieldHeight, numRounds, gunCoolingRate, inactivityTime,
-				hideEnemyNames, sentryBorderSize);
-	}
+	// [MODIFICADO] se agrega boolean randomDamage
+    public static BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, 
+                                          double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, 
+                                          int sentryBorderSize, boolean randomDamage) {
+        // se pada el nuevo parámetro al helper
+        return rulesHelper.createRules(battlefieldWidth, battlefieldHeight, numRounds, gunCoolingRate, inactivityTime,
+                hideEnemyNames, sentryBorderSize, randomDamage);
+    }
 
 	public static boolean isSafeThread() {
 		final IThreadManagerBase threadManager = ContainerBase.getComponent(IThreadManagerBase.class);

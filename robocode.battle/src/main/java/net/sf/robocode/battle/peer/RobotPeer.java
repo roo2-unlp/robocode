@@ -12,6 +12,7 @@ import static net.sf.robocode.io.Logger.logMessage;
 import net.sf.robocode.battle.Battle;
 import net.sf.robocode.battle.BoundingRectangle;
 import net.sf.robocode.battle.damage.IDamageModel;
+import net.sf.robocode.battle.damage.StandardDamageModel;
 import net.sf.robocode.host.IHostManager;
 import net.sf.robocode.host.RobotStatics;
 import net.sf.robocode.host.events.EventManager;
@@ -146,48 +147,64 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 
 	private final IDamageModel damageModel; // Nueva!!!!!!!!!!
 
-	public RobotPeer(Battle battle, IHostManager hostManager, RobotSpecification robotSpecification, String name, String suffix, TeamPeer team, int robotIndex) {
-		super();
+	// -----------------------------------------------------------------------
+    // [MODIFICADO] Constructor ORIGINAL (Sobrecargado)
+    // Este constructor mantiene la firma antigua. 
+    // -----------------------------------------------------------------------
+    public RobotPeer(Battle battle, IHostManager hostManager, RobotSpecification robotSpecification, 
+                     String name, String suffix, TeamPeer team, int robotIndex) {
+        // se delega al nuevo constructor pasando el modelo estándar por defecto
+        this(battle, hostManager, robotSpecification, name, suffix, team, robotIndex, new StandardDamageModel());
+    }
 
-		this.battle = battle;
-		this.robotSpecification = robotSpecification;
+	// -----------------------------------------------------------------------
+    // [NUEVO] Constructor MAESTRO (Con inyección de dependencia)
+    // Este contiene toda la lógica de inicialización y recibe la estrategia.
+    // -----------------------------------------------------------------------
+    public RobotPeer(Battle battle, IHostManager hostManager, RobotSpecification robotSpecification, 
+                     String name, String suffix, TeamPeer team, int robotIndex, IDamageModel damageModel) {
+        super();
 
-		this.rbSerializer = new RbSerializer();
+        this.battle = battle;
+        this.robotSpecification = robotSpecification;
+        
+        this.damageModel = damageModel;// se asigna la estrategia recibida
 
-		this.boundingBox = new BoundingRectangle();
-		this.scanArc = new Arc2D.Double();
-		this.teamPeer = team;
-		this.state = RobotState.ACTIVE;
-		this.battleRules = battle.getBattleRules();
+        this.rbSerializer = new RbSerializer();
+        this.boundingBox = new BoundingRectangle();
+        this.scanArc = new Arc2D.Double();
+        this.teamPeer = team;
+        this.state = RobotState.ACTIVE;
+        this.battleRules = battle.getBattleRules();
 
-		if (team != null) {
-			team.add(this);
-		}
-		String teamName;
-		List<String> teamMembers; 
-		boolean isTeamLeader;
-		int teamIndex;
+        if (team != null) {
+            team.add(this);
+        }
+        String teamName;
+        List<String> teamMembers; 
+        boolean isTeamLeader;
+        int teamIndex;
 
-		if (teamPeer == null) {
-			teamName = null;
-			teamMembers = null;
-			isTeamLeader = false;
-			teamIndex = -1; // Must be set to -1 when robot is not in a team
-		} else {
-			teamName = team.getName();
-			teamMembers = team.getMemberNames();
-			isTeamLeader = team.size() == 1; // That is current team size, more might follow later. First robot is leader
-			teamIndex = team.getTeamIndex();
-		}
+        if (teamPeer == null) {
+            teamName = null;
+            teamMembers = null;
+            isTeamLeader = false;
+            teamIndex = -1; 
+        } else {
+            teamName = team.getName();
+            teamMembers = team.getMemberNames();
+            isTeamLeader = team.size() == 1; 
+            teamIndex = team.getTeamIndex();
+        }
 
-		this.statics = new RobotStatics(robotSpecification, name, suffix, isTeamLeader, battleRules, teamName, teamMembers,
-				robotIndex, teamIndex);
-		this.statistics = new RobotStatistics(this, battle.getRobotsCount());
+        this.statics = new RobotStatics(robotSpecification, name, suffix, isTeamLeader, battleRules, teamName, teamMembers,
+                robotIndex, teamIndex);
+        this.statistics = new RobotStatistics(this, battle.getRobotsCount());
 
-		this.isPaintEnabled = this.statics.isPaintRobot() && RobocodeProperties.isPaintingOn();
+        this.isPaintEnabled = this.statics.isPaintRobot() && RobocodeProperties.isPaintingOn();
 
-		this.robotProxy = (IHostingRobotProxy) hostManager.createRobotProxy(robotSpecification, statics, this);
-	}
+        this.robotProxy = (IHostingRobotProxy) hostManager.createRobotProxy(robotSpecification, statics, this);
+    }
 
 	public void println(String s) {
 		synchronized (proxyText) {
@@ -1009,66 +1026,63 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 	}		
 
 	private void checkRobotCollision(List<RobotPeer> robots) {
-		inCollision = false;
+        inCollision = false;
 
-		for (RobotPeer otherRobot : robots) {
-			if (!(otherRobot == null || otherRobot == this || otherRobot.isDead())
-					&& boundingBox.intersects(otherRobot.boundingBox)) {
-				// Bounce back
-				double angle = atan2(otherRobot.x - x, otherRobot.y - y);
+        for (RobotPeer otherRobot : robots) {
+            if (!(otherRobot == null || otherRobot == this || otherRobot.isDead())
+                    && boundingBox.intersects(otherRobot.boundingBox)) {
+                // Bounce back logic...
+                double angle = atan2(otherRobot.x - x, otherRobot.y - y);
+                double movedx = velocity * sin(bodyHeading);
+                double movedy = velocity * cos(bodyHeading);
+                boolean atFault;
+                double bearing = normalRelativeAngle(angle - bodyHeading);
 
-				double movedx = velocity * sin(bodyHeading);
-				double movedy = velocity * cos(bodyHeading);
+                if ((velocity > 0 && bearing > -PI / 2 && bearing < PI / 2)
+                        || (velocity < 0 && (bearing < -PI / 2 || bearing > PI / 2))) {
 
-				boolean atFault;
-				double bearing = normalRelativeAngle(angle - bodyHeading);
+                    inCollision = true;
+                    atFault = true;
+                    velocity = 0;
+                    currentCommands.setDistanceRemaining(0);
+                    x -= movedx;
+                    y -= movedy;
 
-				if ((velocity > 0 && bearing > -PI / 2 && bearing < PI / 2)
-						|| (velocity < 0 && (bearing < -PI / 2 || bearing > PI / 2))) {
+                    boolean teamFire = (teamPeer != null && teamPeer == otherRobot.teamPeer);
 
-					inCollision = true;
-					atFault = true;
-					velocity = 0;
-					currentCommands.setDistanceRemaining(0);
-					x -= movedx;
-					y -= movedy;
+                    if (!teamFire && !otherRobot.isSentryRobot()) {
+                        statistics.scoreRammingDamage(otherRobot.getName());
+                    }
 
-					boolean teamFire = (teamPeer != null && teamPeer == otherRobot.teamPeer);
+                    
+                    // En lugar de usar Rules.ROBOT_HIT_DAMAGE directamente, se usa el modelo de daño.
+                    double damageToApply = this.damageModel.getRobotHitDamage();
 
-					if (!teamFire && !otherRobot.isSentryRobot()) {
-						statistics.scoreRammingDamage(otherRobot.getName());
-					}
+                    this.updateEnergy(-damageToApply);
+                    otherRobot.updateEnergy(-damageToApply);
 
-					this.updateEnergy(-Rules.ROBOT_HIT_DAMAGE);
-					otherRobot.updateEnergy(-Rules.ROBOT_HIT_DAMAGE);
-
-					if (otherRobot.energy == 0) {
-						if (otherRobot.isAlive()) {
-							otherRobot.kill();
-							if (!teamFire && !otherRobot.isSentryRobot()) {
-								final double bonus = statistics.scoreRammingKill(otherRobot.getName());
-
-								if (bonus > 0) {
-									println(
-											"SYSTEM: Ram bonus for killing " + this.getNameForEvent(otherRobot) + ": "
-											+ (int) (bonus + .5));
-								}
-							}
-						}
-					}
-					addEvent(
-							new HitRobotEvent(getNameForEvent(otherRobot), normalRelativeAngle(angle - bodyHeading),
-							otherRobot.energy, atFault));
-					otherRobot.addEvent(
-							new HitRobotEvent(getNameForEvent(this),
-							normalRelativeAngle(PI + angle - otherRobot.getBodyHeading()), energy, false));
-				}
-			}
-		}
-		if (inCollision) {
-			setState(RobotState.HIT_ROBOT);
-		}
-	}
+                    if (otherRobot.energy == 0) {
+                        if (otherRobot.isAlive()) {
+                            otherRobot.kill();
+                            if (!teamFire && !otherRobot.isSentryRobot()) {
+                                final double bonus = statistics.scoreRammingKill(otherRobot.getName());
+                                if (bonus > 0) {
+                                    println("SYSTEM: Ram bonus for killing " + this.getNameForEvent(otherRobot) + ": " + (int) (bonus + .5));
+                                }
+                            }
+                        }
+                    }
+                    addEvent(new HitRobotEvent(getNameForEvent(otherRobot), normalRelativeAngle(angle - bodyHeading),
+                            otherRobot.energy, atFault));
+                    otherRobot.addEvent(new HitRobotEvent(getNameForEvent(this),
+                            normalRelativeAngle(PI + angle - otherRobot.getBodyHeading()), energy, false));
+                }
+            }
+        }
+        if (inCollision) {
+            setState(RobotState.HIT_ROBOT);
+        }
+    }
 
 	public void updateAfterCollision() {
 		if (state == RobotState.HIT_ROBOT) {

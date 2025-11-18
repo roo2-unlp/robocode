@@ -36,6 +36,18 @@ public final class BattleRules implements java.io.Serializable {
 	private final boolean hideEnemyNames;
 	private final int sentryBorderSize;
 
+	private final boolean randomDamage; //nuevo!!!!!!!!!!1
+
+	/**
+     * Returns true if random damage is enabled for this battle.
+     * @return true if random damage is enabled; false otherwise.
+     */
+	//nuevo!!
+	public boolean getRandomDamage() { // [NUEVO] El Getter que necesita Battle.java
+        return randomDamage;
+    }
+	
+	
 	/**
 	 * Returns the battlefield width.
 	 *
@@ -123,26 +135,30 @@ public final class BattleRules implements java.io.Serializable {
 		return sentryBorderSize;
 	}
 	
-	private BattleRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate,
-			long inactivityTime, boolean hideEnemyNames, int sentryBorderSize) {
-		this.battlefieldWidth = battlefieldWidth;
-		this.battlefieldHeight = battlefieldHeight;
-		this.numRounds = numRounds;
-		this.gunCoolingRate = gunCoolingRate;
-		this.inactivityTime = inactivityTime;
-		this.hideEnemyNames = hideEnemyNames;
-		this.sentryBorderSize = sentryBorderSize;
-	}
+	// [MODIFICADO] constructor privado actualizado
+    private BattleRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate,
+            long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean randomDamage) {
+        this.battlefieldWidth = battlefieldWidth;
+        this.battlefieldHeight = battlefieldHeight;
+        this.numRounds = numRounds;
+        this.gunCoolingRate = gunCoolingRate;
+        this.inactivityTime = inactivityTime;
+        this.hideEnemyNames = hideEnemyNames;
+        this.sentryBorderSize = sentryBorderSize;
+        this.randomDamage = randomDamage; // Asignación
+    }
 
 	static IHiddenRulesHelper createHiddenHelper() {
 		return new HiddenHelper();
 	}
 
 	private static class HiddenHelper implements IHiddenRulesHelper {
-
-		public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize) {
-			return new BattleRules(battlefieldWidth, battlefieldHeight, numRounds, gunCoolingRate, inactivityTime,
-					hideEnemyNames, sentryBorderSize);
-		}
-	}
+        // [MODIFICADO] Implementación del método  actualizado
+        public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, 
+                                       double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, 
+                                       int sentryBorderSize, boolean randomDamage) {
+            return new BattleRules(battlefieldWidth, battlefieldHeight, numRounds, gunCoolingRate, inactivityTime,
+                    hideEnemyNames, sentryBorderSize, randomDamage);
+        }
+    }
 }

@@ -7,6 +7,10 @@
  */
 package net.sf.robocode.battle;
 
+// [NUEVO] se importa  estrategias de daño
+import net.sf.robocode.battle.damage.IDamageModel;
+import net.sf.robocode.battle.damage.StandardDamageModel;
+import net.sf.robocode.battle.damage.RandomDamageModel;
 
 import net.sf.robocode.battle.events.BattleEventDispatcher;
 import net.sf.robocode.battle.peer.BulletPeer;
@@ -109,6 +113,27 @@ public final class Battle extends BaseBattle {
 		String[] robotNames = new String[battlingRobotsList.length];
 		Map<String, TeamPeer> teamPeers = new HashMap<String, TeamPeer>();
 
+		// -----------------------------------------------------------------------
+        // [NUEVO] SELECCIÓN DE ESTRATEGIA 
+        // -----------------------------------------------------------------------
+        // seleccion de reglas para esta batalla.
+        // se asume que el objeto 'battleRules' ya trae la bandera desde la UI.
+        IDamageModel damageModelStrategy;
+
+        if (battleRules.getRandomDamage()) { 
+            // Si la UI mandó "true", instanciamos el modelo aleatorio
+            damageModelStrategy = new RandomDamageModel();
+           //Log para confirmar en consola que el modo está activo
+            //net.sf.robocode.io.Logger.logMessage("SYSTEM: Random Damage Mode Activated! 🎲");
+        } else {
+            // Si no (por defecto),  el estándar de siempre (0.6)
+            damageModelStrategy = new StandardDamageModel();
+        }
+        // -------------------------------------------------------------------
+
+
+
+
 		// Populate raw names and suffix numbers (to be included when name duplicates exist)
 		for (int robotIndex = 0; robotIndex < battlingRobotsList.length; robotIndex++) {
 			final RobotSpecification specification = battlingRobotsList[robotIndex];
@@ -161,7 +186,14 @@ public final class Battle extends BaseBattle {
 				}
 			}
 
-			RobotPeer robotPeer = new RobotPeer(this, hostManager, specification, robotNames[robotIndex], robotSuffixes[robotIndex], team, robotIndex);
+			// -----------------------------------------------------------------------
+            // [MODIFICADO] el Constructor
+            // -----------------------------------------------------------------------
+            // Pasamos 'damageModelStrategy' al nuevo constructor sobrecargado de RobotPeer
+            RobotPeer robotPeer = new RobotPeer(this, hostManager, specification, 
+                                                robotNames[robotIndex], robotSuffixes[robotIndex], 
+                                                team, robotIndex, 
+                                                damageModelStrategy);
 			robots.add(robotPeer);
 			if (team == null) {
 				contestants.add(robotPeer);
