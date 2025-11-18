@@ -11,6 +11,7 @@ package net.sf.robocode.battle.peer;
 import static net.sf.robocode.io.Logger.logMessage;
 import net.sf.robocode.battle.Battle;
 import net.sf.robocode.battle.BoundingRectangle;
+import net.sf.robocode.battle.damage.IDamageModel;
 import net.sf.robocode.host.IHostManager;
 import net.sf.robocode.host.RobotStatics;
 import net.sf.robocode.host.events.EventManager;
@@ -141,6 +142,9 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 	private final Arc2D scanArc;
 	private final BoundingRectangle boundingBox;
 	private final RbSerializer rbSerializer;
+
+
+	private final IDamageModel damageModel; // Nueva!!!!!!!!!!
 
 	public RobotPeer(Battle battle, IHostManager hostManager, RobotSpecification robotSpecification, String name, String suffix, TeamPeer team, int robotIndex) {
 		super();
