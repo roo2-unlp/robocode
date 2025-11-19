@@ -149,8 +149,8 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 
 	// -----------------------------------------------------------------------
     // [MODIFICADO] Constructor ORIGINAL (Sobrecargado)
-    // Este constructor mantiene la firma antigua. 
-    // -----------------------------------------------------------------------
+    // Este constructor mantiene la firma antigua para que no fallen los test
+	    // -----------------------------------------------------------------------
     public RobotPeer(Battle battle, IHostManager hostManager, RobotSpecification robotSpecification, 
                      String name, String suffix, TeamPeer team, int robotIndex) {
         // se delega al nuevo constructor pasando el modelo estándar por defecto

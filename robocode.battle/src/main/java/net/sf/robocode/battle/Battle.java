@@ -7,8 +7,8 @@
  */
 package net.sf.robocode.battle;
 
-// [NUEVO] se importa  estrategias de daño
-import net.sf.robocode.battle.damage.IDamageModel;
+
+import net.sf.robocode.battle.damage.IDamageModel;// [NUEVO] se importa  estrategias de daño
 import net.sf.robocode.battle.damage.StandardDamageModel;
 import net.sf.robocode.battle.damage.RandomDamageModel;
 
@@ -87,6 +87,8 @@ public final class Battle extends BaseBattle {
 	// Initial robot setups (if any)
 	private RobotSetup[] initialRobotSetups;
 
+	private IDamageModel damageModelStrategy;//nueva, es la estrategia de daño
+
 	public Battle(ISettingsManager properties, IBattleManager battleManager, IHostManager hostManager, ICpuManager cpuManager, BattleEventDispatcher eventDispatcher) { // NO_UCD (unused code)
 		super(properties, battleManager, eventDispatcher);
 		this.hostManager = hostManager;
@@ -118,12 +120,10 @@ public final class Battle extends BaseBattle {
         // -----------------------------------------------------------------------
         // seleccion de reglas para esta batalla.
         // se asume que el objeto 'battleRules' ya trae la bandera desde la UI.
-        IDamageModel damageModelStrategy;
-
         if (battleRules.getRandomDamage()) { 
             // Si la UI mandó "true", instanciamos el modelo aleatorio
             damageModelStrategy = new RandomDamageModel();
-           //Log para confirmar en consola que el modo está activo
+           //Log para confirmar en consola que el modo está activo:
             //net.sf.robocode.io.Logger.logMessage("SYSTEM: Random Damage Mode Activated! 🎲");
         } else {
             // Si no (por defecto),  el estándar de siempre (0.6)
