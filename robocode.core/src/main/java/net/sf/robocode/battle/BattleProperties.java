@@ -38,7 +38,8 @@ public class BattleProperties implements Serializable {
 			BATTLE_HIDE_ENEMY_NAMES = "robocode.battle.hideEnemyNames",
 			BATTLE_SELECTEDROBOTS = "robocode.battle.selectedRobots",
 			BATTLE_INITIAL_POSITIONS = "robocode.battle.initialPositions",
-			BATTLE_SENTRY_BORDER_SIZE = "robocode.battle.sentryBorderSize";
+			BATTLE_SENTRY_BORDER_SIZE = "robocode.battle.sentryBorderSize",
+			BATTLE_RANDOM_DAMAGE = "robocode.battle.randomDamage";//nuevo!!!!!!!!
 
 	private int battlefieldWidth = 800;
 	private int battlefieldHeight = 600;
@@ -49,6 +50,7 @@ public class BattleProperties implements Serializable {
 	private int sentryBorderSize = 100;
 	private String selectedRobots;
 	private String initialPositions;
+	private boolean randomDamage = false;//nuevo!!!!!!!!!
 
 	private final Properties props = new Properties();
 
@@ -65,6 +67,15 @@ public class BattleProperties implements Serializable {
 		sentryBorderSize = properties.getBattleDefaultSentryBorderSize();
 	}
 
+	public boolean getRandomDamage() {
+    return randomDamage;
+}
+
+	public void setRandomDamage(boolean randomDamage) {//nuevo!!!!!!!
+		this.randomDamage = randomDamage;
+		props.setProperty(BATTLE_RANDOM_DAMAGE, "" + randomDamage);
+	}
+	
 	/**
 	 * Gets the battlefieldWidth.
 	 *
@@ -343,5 +354,6 @@ public class BattleProperties implements Serializable {
 		selectedRobots = props.getProperty(BATTLE_SELECTEDROBOTS, "");
 		initialPositions = props.getProperty(BATTLE_INITIAL_POSITIONS, "");
 		sentryBorderSize = Integer.parseInt(props.getProperty(BATTLE_SENTRY_BORDER_SIZE, "100"));
+		randomDamage = Boolean.parseBoolean(props.getProperty(BATTLE_RANDOM_DAMAGE, "false"));
 	}
 }

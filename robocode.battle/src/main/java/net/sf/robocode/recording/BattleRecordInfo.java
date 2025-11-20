@@ -49,6 +49,8 @@ public class BattleRecordInfo implements Serializable, IXmlSerializable {
 				writer.writeAttribute("gunCoolingRate", battleRules.getGunCoolingRate(), options.trimPrecision);
 				writer.writeAttribute("inactivityTime", battleRules.getInactivityTime());
 				writer.writeAttribute("ver", serialVersionUID);
+
+				writer.writeAttribute("randomDamage", battleRules.getRandomDamage());//nuevo!!!!!!!
 			}
 			writer.endElement();
 
@@ -263,7 +265,7 @@ public class BattleRecordInfo implements Serializable, IXmlSerializable {
 						public void read(String value) {
 							rules.thirds = Integer.parseInt(value);
 						}
-					});
+					});	
 
 					return rules;
 				}
@@ -314,13 +316,19 @@ public class BattleRecordInfo implements Serializable, IXmlSerializable {
 						}
 					});
 
+					reader.expect("randomDamage", new XmlReader.Attribute() {//nuevo!!!!!!!!
+						public void read(String value) {
+							props.setRandomDamage(Boolean.parseBoolean(value));
+						}
+					});
+
 					return BattleRulesWrapper.this;
 				}
 
 				public void close() {
 					recinfo.battleRules = HiddenAccess.createRules(props.getBattlefieldWidth(),
 							props.getBattlefieldHeight(), props.getNumRounds(), props.getGunCoolingRate(),
-							props.getInactivityTime(), props.getHideEnemyNames(), props.getSentryBorderSize());
+							props.getInactivityTime(), props.getHideEnemyNames(), props.getSentryBorderSize(), props.getRandomDamage());
 				}
 			});
 		}

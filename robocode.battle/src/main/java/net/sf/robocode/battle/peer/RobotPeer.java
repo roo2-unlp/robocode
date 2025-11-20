@@ -158,7 +158,7 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
     }
 
 	// -----------------------------------------------------------------------
-    // [NUEVO] Constructor MAESTRO (Con inyección de dependencia)
+    // [NUEVO] Constructor principal (Con inyección de dependencia)
     // Este contiene toda la lógica de inicialización y recibe la estrategia.
     // -----------------------------------------------------------------------
     public RobotPeer(Battle battle, IHostManager hostManager, RobotSpecification robotSpecification, 
