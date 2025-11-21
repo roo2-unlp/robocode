@@ -8,15 +8,23 @@
 package net.sf.robocode.battle.peer;
 
 
-import net.sf.robocode.peer.BulletStatus;
-import robocode.*;
-import robocode.control.snapshot.BulletState;
-import robocode.util.Utils;
-
-import java.awt.geom.Line2D;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.util.List;
+
+import net.sf.robocode.peer.BulletStatus;
+import robocode.BattleRules;
+import robocode.Bullet;
+import robocode.BulletHitBulletEvent;
+import robocode.BulletHitEvent;
+import robocode.BulletMissedEvent;
+import robocode.HitByBulletEvent;
+import robocode.Rules;
+import robocode.control.snapshot.BulletState;
+import robocode.util.Utils;
 
 
 /**
@@ -32,6 +40,8 @@ public class BulletPeer {
 	private static final int EXPLOSION_LENGTH = 17;
 
 	private static final int RADIUS = 3;
+
+  private static final int PROXIMITY_RADIUS = 20;
 
 	protected final RobotPeer owner;
 
@@ -135,6 +145,30 @@ public class BulletPeer {
 		double ub = (dx21 * dy13 - dy21 * dx13) / dn;
 
 		return (ua >= 0 && ua <= 1) && (ub >= 0 && ub <= 1);
+	}
+
+	/**
+	 * Checks whether the robot's bounding box intersects a proximity circle centered at the
+	 * current bullet position (x,y) with radius {@link #PROXIMITY_RADIUS}.
+	 * This is a precise rectangle-circle intersection test using closest-point distance.
+	 *
+	 * @param robot the robot peer to test
+	 * @return true if the circle of radius PROXIMITY_RADIUS around the bullet intersects the robot box
+	 */
+	private boolean intersectsProximityRadius(RobotPeer robot) {
+		if (robot == null || robot.isDead()) {
+			return false;
+		}
+		Rectangle2D box = robot.getBoundingBox();
+		double cx = x;
+		double cy = y;
+		double r = PROXIMITY_RADIUS;
+		// Clamp bullet center to box to find closest point
+		double nearestX = Math.max(box.getMinX(), Math.min(cx, box.getMaxX()));
+		double nearestY = Math.max(box.getMinY(), Math.min(cy, box.getMaxY()));
+		double dx = nearestX - cx;
+		double dy = nearestY - cy;
+		return (dx * dx + dy * dy) <= r * r;
 	}
 
 	private void checkRobotCollision(List<RobotPeer> robots) {
