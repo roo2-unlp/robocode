@@ -190,8 +190,7 @@ public final class Battle extends BaseBattle {
             // Pasamos 'damageModelStrategy' al nuevo constructor sobrecargado de RobotPeer
             RobotPeer robotPeer = new RobotPeer(this, hostManager, specification, 
                                                 robotNames[robotIndex], robotSuffixes[robotIndex], 
-                                                team, robotIndex,
-					damageModel);
+                                                team, robotIndex);
 			robots.add(robotPeer);
 			if (team == null) {
 				contestants.add(robotPeer);
