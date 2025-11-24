@@ -51,14 +51,16 @@ public class NewBattleRulesTab extends JPanel {
 	private final JLabel inactivityTimeLabel = new JLabel("Inactivity Time:");
 	private final JLabel sentryBorderSizeLabel = new JLabel("Sentry Border Size");
 	private final JLabel hideEnemyNamesLabel = new JLabel("Hide Enemy Names:");
+	private final JLabel randomCollisionDamageLabel = new JLabel("Random Collision Damage:"); //NUEVO, columna etiqueta
 
 	private final JButton restoreDefaultsButton = new JButton("Restore Defaults");
-	
+
 	private JTextField numberOfRoundsTextField;
 	private JTextField gunCoolingRateTextField;
 	private JTextField inactivityTimeTextField;
 	private JTextField sentryBorderSizeTextField;
 	private final JCheckBox hideEnemyNamesCheckBox = new JCheckBox();
+	private JCheckBox randomCollisionDamageCheckBox; //NUEVO CHECKBOX RandomDAMAGE
 
 	private JSlider battlefieldWidthSlider;
 	private JSlider battlefieldHeightSlider;
@@ -95,7 +97,7 @@ public class NewBattleRulesTab extends JPanel {
 		restoreDefaultsButton.addActionListener(eventHandler);
 
 		setLayout(new BorderLayout());
-		
+
 		add(rulesPanel, BorderLayout.WEST);
 		add(restoreDefaultsButton, BorderLayout.SOUTH);
 		add(createBattlefieldSizePanel(), BorderLayout.CENTER);
@@ -104,7 +106,7 @@ public class NewBattleRulesTab extends JPanel {
 	private JPanel createBattlefieldSizePanel() {
 		JPanel panel = new JPanel();
 		panel.addAncestorListener(eventHandler);
-		
+
 		Border border = BorderFactory.createCompoundBorder(
 				BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Battlefield Size"),
 				BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -120,7 +122,7 @@ public class NewBattleRulesTab extends JPanel {
 
 		return panel;
 	}
-	
+
 	private JPanel createBattlefieldSlidersPanel() {
 		JPanel panel = new JPanel();
 
@@ -133,11 +135,11 @@ public class NewBattleRulesTab extends JPanel {
 		left.addComponent(battlefieldSizeLabel);
 		left.addComponent(battlefieldWidthSlider);
 		leftToRight.addGroup(left);
-		
+
 		GroupLayout.ParallelGroup right = layout.createParallelGroup();
 		right.addComponent(battlefieldHeightSlider);
 		leftToRight.addGroup(right);
-		
+
 		GroupLayout.SequentialGroup topToBottom = layout.createSequentialGroup();
 
 		GroupLayout.ParallelGroup top = layout.createParallelGroup();
@@ -163,7 +165,7 @@ public class NewBattleRulesTab extends JPanel {
 		panel.setBorder(border);
 
 		panel.setLayout(new GridLayout(predefinedSizeButtons.length, 1));
-		
+
 		for (SizeButton button : predefinedSizeButtons) {
 			panel.add(button);
 		}
@@ -189,16 +191,18 @@ public class NewBattleRulesTab extends JPanel {
 		left.addComponent(inactivityTimeLabel);
 		left.addComponent(sentryBorderSizeLabel);
 		left.addComponent(hideEnemyNamesLabel);
+		left.addComponent(randomCollisionDamageLabel); //añado nuevo componente al layout (etiqueta)
 		leftToRight.addGroup(left);
-		
+
 		GroupLayout.ParallelGroup right = layout.createParallelGroup();
 		right.addComponent(getNumberOfRoundsTextField());
 		right.addComponent(getGunCoolingRateTextField());
 		right.addComponent(getInactivityTimeTextField());
 		right.addComponent(getSentryBorderSizeTextField());
 		right.addComponent(hideEnemyNamesCheckBox);
+		right.addComponent(randomCollisionDamageCheckBox); //añado nuevo componente al layout (checkbox)
 		leftToRight.addGroup(right);
-		
+
 		GroupLayout.SequentialGroup topToBottom = layout.createSequentialGroup();
 
 		GroupLayout.ParallelGroup row0 = layout.createParallelGroup(Alignment.BASELINE);
@@ -228,9 +232,9 @@ public class NewBattleRulesTab extends JPanel {
 
 		layout.setHorizontalGroup(leftToRight);
 		layout.setVerticalGroup(topToBottom);
-		
+
 		return panel;
-	}	
+	}
 
 	private JTextField getNumberOfRoundsTextField() {
 		if (numberOfRoundsTextField == null) {
@@ -313,7 +317,7 @@ public class NewBattleRulesTab extends JPanel {
 		}
 		return inactivityTimeTextField;
 	}
-	
+
 	private JTextField getSentryBorderSizeTextField() {
 		if (sentryBorderSizeTextField == null) {
 			sentryBorderSizeTextField = new JTextField(5);
@@ -339,6 +343,11 @@ public class NewBattleRulesTab extends JPanel {
 			});
 		}
 		return sentryBorderSizeTextField;
+	}
+
+	// NUEVO: METODO getter para que el Dialog pueda leer el valor
+	public boolean isRandomCollisionDamageSelected() {
+		return randomCollisionDamageCheckBox.isSelected();
 	}
 
 	private JSlider createBattlefieldSizeSlider() {
@@ -422,6 +431,11 @@ public class NewBattleRulesTab extends JPanel {
 			settingsManager.setBattleDefaultHideEnemyNames(hideEnemyNames);
 			battleProperties.setHideEnemyNames(hideEnemyNames);
 
+			// MODIFICADO: Guardar el estado del nuevo checkbox en las propiedades
+			// Nota: AVERIGUAR -? guardar en settingsManager requeriria modificar esa interfaz tambien.
+			boolean randomDamage = randomCollisionDamageCheckBox.isSelected();
+			battleProperties.setIsRandomCollisionDamage(randomDamage);
+
 			int weight = battlefieldWidthSlider.getValue();
 			int height = battlefieldHeightSlider.getValue();
 
@@ -451,6 +465,7 @@ public class NewBattleRulesTab extends JPanel {
 				battleProperties.setInactivityTime(450);
 				battleProperties.setHideEnemyNames(false);
 				battleProperties.setSentryBorderSize(100);
+				battleProperties.setIsRandomCollisionDamage(false);//nuevo valor por defecto randomDamage false
 
 				pushBattlePropertiesToUIComponents();
 			}
@@ -473,6 +488,8 @@ public class NewBattleRulesTab extends JPanel {
 			getInactivityTimeTextField().setText("" + battleProperties.getInactivityTime());
 			getSentryBorderSizeTextField().setText("" + battleProperties.getSentryBorderSize());
 			hideEnemyNamesCheckBox.setSelected(battleProperties.getHideEnemyNames());
+			randomCollisionDamageCheckBox.setSelected(battleProperties.getIsRandomCollisionDamage()); //nuevo
+
 		}
 	}
 
