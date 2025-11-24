@@ -51,6 +51,7 @@ public class NewBattleRulesTab extends JPanel {
 	private final JLabel inactivityTimeLabel = new JLabel("Inactivity Time:");
 	private final JLabel sentryBorderSizeLabel = new JLabel("Sentry Border Size");
 	private final JLabel hideEnemyNamesLabel = new JLabel("Hide Enemy Names:");
+	private final JLabel toggleInfinityShot = new JLabel("Activate Infinity Shot:");
 
 	private final JButton restoreDefaultsButton = new JButton("Restore Defaults");
 	
@@ -59,6 +60,7 @@ public class NewBattleRulesTab extends JPanel {
 	private JTextField inactivityTimeTextField;
 	private JTextField sentryBorderSizeTextField;
 	private final JCheckBox hideEnemyNamesCheckBox = new JCheckBox();
+	private final JCheckBox toggleInfinityShotCheckBox = new JCheckBox();
 
 	private JSlider battlefieldWidthSlider;
 	private JSlider battlefieldHeightSlider;
@@ -189,6 +191,7 @@ public class NewBattleRulesTab extends JPanel {
 		left.addComponent(inactivityTimeLabel);
 		left.addComponent(sentryBorderSizeLabel);
 		left.addComponent(hideEnemyNamesLabel);
+		left.addComponent(toggleInfinityShot);
 		leftToRight.addGroup(left);
 		
 		GroupLayout.ParallelGroup right = layout.createParallelGroup();
@@ -197,6 +200,7 @@ public class NewBattleRulesTab extends JPanel {
 		right.addComponent(getInactivityTimeTextField());
 		right.addComponent(getSentryBorderSizeTextField());
 		right.addComponent(hideEnemyNamesCheckBox);
+		right.addComponent(toggleInfinityShotCheckBox);
 		leftToRight.addGroup(right);
 		
 		GroupLayout.SequentialGroup topToBottom = layout.createSequentialGroup();
@@ -225,6 +229,11 @@ public class NewBattleRulesTab extends JPanel {
 		row4.addComponent(hideEnemyNamesLabel);
 		row4.addComponent(hideEnemyNamesCheckBox);
 		topToBottom.addGroup(row4);
+
+		GroupLayout.ParallelGroup row5 = layout.createParallelGroup(Alignment.CENTER);
+		row5.addComponent(toggleInfinityShot);
+		row5.addComponent(toggleInfinityShotCheckBox);
+		topToBottom.addGroup(row5);
 
 		layout.setHorizontalGroup(leftToRight);
 		layout.setVerticalGroup(topToBottom);
@@ -419,8 +428,12 @@ public class NewBattleRulesTab extends JPanel {
 				battleProperties.setSentryBorderSize(sentryBorderSize);
 			}
 			boolean hideEnemyNames = hideEnemyNamesCheckBox.isSelected();
+			boolean infinityShot = toggleInfinityShotCheckBox.isSelected();
+
 			settingsManager.setBattleDefaultHideEnemyNames(hideEnemyNames);
 			battleProperties.setHideEnemyNames(hideEnemyNames);
+
+			battleProperties.setInfintyShot(infinityShot);
 
 			int weight = battlefieldWidthSlider.getValue();
 			int height = battlefieldHeightSlider.getValue();
@@ -450,6 +463,7 @@ public class NewBattleRulesTab extends JPanel {
 				battleProperties.setGunCoolingRate(0.1);
 				battleProperties.setInactivityTime(450);
 				battleProperties.setHideEnemyNames(false);
+				battleProperties.setInfintyShot(false);
 				battleProperties.setSentryBorderSize(100);
 
 				pushBattlePropertiesToUIComponents();

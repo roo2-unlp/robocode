@@ -14,9 +14,9 @@ import robocode.control.snapshot.BulletState;
 import robocode.util.Utils;
 
 import java.awt.geom.Line2D;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
 import java.util.List;
+
+import static java.lang.Math.*;
 
 
 /**
@@ -72,7 +72,12 @@ public class BulletPeer{
 		this.bulletId = bulletId;
 		state = BulletState.FIRED;
 		color = owner.getBulletColor(); // Store current bullet color set on robot
-		this.setWallCollisionStrategy(new InfinityShotCollisionStrategy());
+		System.out.println("Valor de infinityShot: " + battleRules.getInfinityShot());
+		if (battleRules.getInfinityShot()){
+			this.setWallCollisionStrategy(new InfinityShotCollisionStrategy());
+		} else {
+			this.setWallCollisionStrategy(new StandardCollisionStrategy());
+		}
 	}
 
 	public void setWallCollisionStrategy(IWallCollisionStrategy strategy) {

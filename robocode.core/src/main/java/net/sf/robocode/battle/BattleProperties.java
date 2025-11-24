@@ -36,6 +36,7 @@ public class BattleProperties implements Serializable {
 			BATTLE_GUNCOOLINGRATE = "robocode.battle.gunCoolingRate",
 			BATTLE_RULES_INACTIVITYTIME = "robocode.battle.rules.inactivityTime",
 			BATTLE_HIDE_ENEMY_NAMES = "robocode.battle.hideEnemyNames",
+			BATTLE_INFINITY_SHOT = "robocode.battle.infinityShot",
 			BATTLE_SELECTEDROBOTS = "robocode.battle.selectedRobots",
 			BATTLE_INITIAL_POSITIONS = "robocode.battle.initialPositions",
 			BATTLE_SENTRY_BORDER_SIZE = "robocode.battle.sentryBorderSize";
@@ -46,6 +47,7 @@ public class BattleProperties implements Serializable {
 	private double gunCoolingRate = 0.1;
 	private long inactivityTime = 450;
 	private boolean hideEnemyNames = false;
+	private boolean infinityShot = false;
 	private int sentryBorderSize = 100;
 	private String selectedRobots;
 	private String initialPositions;
@@ -200,6 +202,11 @@ public class BattleProperties implements Serializable {
 		props.setProperty(BATTLE_HIDE_ENEMY_NAMES, "" + hideEnemyNames);
 	}
 
+	public void setInfintyShot(boolean infinityShot){
+		this.infinityShot = infinityShot;
+		props.setProperty(BATTLE_INFINITY_SHOT, "" + infinityShot);
+	}
+
 	/**
 	 * Returns true if the enemy names are hidden for robots during a battle; false otherwise.
 	 *
@@ -207,6 +214,10 @@ public class BattleProperties implements Serializable {
 	 */
 	public boolean getHideEnemyNames() {
 		return hideEnemyNames;
+	}
+
+	public boolean getInfinityShot() {
+		return infinityShot;
 	}
 
 	/**
@@ -339,6 +350,7 @@ public class BattleProperties implements Serializable {
 		gunCoolingRate = Double.parseDouble(props.getProperty(BATTLE_GUNCOOLINGRATE, "0.1"));
 		inactivityTime = Long.parseLong(props.getProperty(BATTLE_RULES_INACTIVITYTIME, "450"));
 		hideEnemyNames = Boolean.parseBoolean(props.getProperty(BATTLE_HIDE_ENEMY_NAMES, "false"));
+		infinityShot = Boolean.parseBoolean(props.getProperty(BATTLE_INFINITY_SHOT, "false"));
 		numRounds = Integer.parseInt(props.getProperty(BATTLE_NUMROUNDS, "10"));
 		selectedRobots = props.getProperty(BATTLE_SELECTEDROBOTS, "");
 		initialPositions = props.getProperty(BATTLE_INITIAL_POSITIONS, "");
