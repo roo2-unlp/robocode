@@ -25,6 +25,7 @@ public class BattleSpecification implements java.io.Serializable {
 	private final long inactivityTime;
 	private final boolean hideEnemyNames;
 	private final int sentryBorderSize;
+	private final boolean isRandomCollisionDamage;
 	private final RobotSpecification[] robots;
 	private final RobotSetup[] initialSetups;
 
@@ -101,6 +102,25 @@ public class BattleSpecification implements java.io.Serializable {
 	 * @since 1.9.2.0
 	 */
 	public BattleSpecification(BattlefieldSpecification battlefieldSize, int numRounds, long inactivityTime, double gunCoolingRate, int sentryBorderSize, boolean hideEnemyNames, RobotSpecification[] robots, RobotSetup[] initialSetups) {
+		this(battlefieldSize, numRounds, inactivityTime, gunCoolingRate, sentryBorderSize, hideEnemyNames, false, robots, initialSetups);
+	}
+
+	// NUEVO: NUEVO CONSTRUCTOR MAESTRO, ULTIMO  PASO ESCALERA DE CONSTRUCTORES, AGREGA RANDOMCOLLISIONDAMAGE
+	/**
+	 * Creates a new BattleSpecification with the given settings.
+	 *
+	 * @param battlefieldSize is the battlefield size.
+	 * @param numRounds	is the number of rounds in this battle.
+	 * @param inactivityTime is the inactivity time allowed for the robots before they will loose energy.
+	 * @param gunCoolingRate is the gun cooling rate for the robots.
+	 * @param sentryBorderSize is the sentry border size for a {@link robocode.BorderSentry BorderSentry}.
+	 * @param hideEnemyNames  flag specifying if enemy names are hidden from robots.
+	 * @param robots is the robots participating in this battle.
+	 * @param initialSetups is the initial position and heading of the robots, where the indices matches the indices from the {@code robots} parameter.
+	 *
+	 * @since 1.9.2.0
+	 */
+	public BattleSpecification(BattlefieldSpecification battlefieldSize, int numRounds, long inactivityTime, double gunCoolingRate, int sentryBorderSize, boolean hideEnemyNames, boolean isRandomCollisionDamage, RobotSpecification[] robots, RobotSetup[] initialSetups) {
 		if (battlefieldSize == null) {
 			throw new IllegalArgumentException("battlefieldSize cannot be null");
 		}
@@ -132,6 +152,7 @@ public class BattleSpecification implements java.io.Serializable {
 		this.gunCoolingRate = gunCoolingRate;
 		this.sentryBorderSize = sentryBorderSize;
 		this.hideEnemyNames = hideEnemyNames;
+		this.isRandomCollisionDamage = isRandomCollisionDamage; // NUEVO: Asignacion del nuevo campo
 		this.robots = robots;
 		this.initialSetups = initialSetups;
 	}
