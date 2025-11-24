@@ -27,7 +27,7 @@ import java.util.List;
  * @author Titus Chen (constributor)
  * @author Pavel Savara (constributor)
  */
-public class BulletPeer {
+public class BulletPeer{
 
 	private static final int EXPLOSION_LENGTH = 17;
 
@@ -63,6 +63,8 @@ public class BulletPeer {
 
 	protected int explosionImageIndex; // Do not set to -1
 
+	private IWallCollisionStrategy collisionStrategy;
+
 	BulletPeer(RobotPeer owner, BattleRules battleRules, int bulletId) {
 		super();
 		this.owner = owner;
@@ -70,6 +72,11 @@ public class BulletPeer {
 		this.bulletId = bulletId;
 		state = BulletState.FIRED;
 		color = owner.getBulletColor(); // Store current bullet color set on robot
+		this.setWallCollisionStrategy(new InfinityShotCollisionStrategy());
+	}
+
+	public void setWallCollisionStrategy(IWallCollisionStrategy strategy) {
+		this.collisionStrategy = strategy;
 	}
 
 	private void checkBulletCollision(List<BulletPeer> bullets) {
@@ -103,7 +110,7 @@ public class BulletPeer {
 		}
 	}
 
-	private Bullet createBullet(boolean hideOwnerName) {
+	public Bullet createBullet(boolean hideOwnerName) {
 		String ownerName = (owner == null) ? null : (hideOwnerName ? getNameForEvent(owner) : owner.getName());
 		String victimName = (victim == null) ? null : (hideOwnerName ? victim.getName() : getNameForEvent(victim));
 
@@ -218,12 +225,13 @@ public class BulletPeer {
 	}
 
 	private void checkWallCollision() {
-		if ((x - RADIUS <= 0) || (y - RADIUS <= 0) || (x + RADIUS >= battleRules.getBattlefieldWidth())
-				|| (y + RADIUS >= battleRules.getBattlefieldHeight())) {
-			state = BulletState.HIT_WALL;
-			frame = 0;
-			owner.addEvent(new BulletMissedEvent(createBullet(false))); // Bugfix #366
-		}
+//		if ((x - RADIUS <= 0) || (y - RADIUS <= 0) || (x + RADIUS >= battleRules.getBattlefieldWidth())
+//				|| (y + RADIUS >= battleRules.getBattlefieldHeight())) {
+//			state = BulletState.HIT_WALL;
+//			frame = 0;
+//			owner.addEvent(new BulletMissedEvent(createBullet(false))); // Bugfix #366
+//		}
+		collisionStrategy.checkCollision(this, battleRules);
 	}
 
 	public int getBulletId() {
@@ -270,6 +278,8 @@ public class BulletPeer {
 		return (state == BulletState.HIT_VICTIM && victim != null) ? victim.getY() + deltaY : y;
 	}
 
+	public int getRadius() { return RADIUS; }
+
 	public boolean isActive() {
 		return state.isActive();
 	}
@@ -281,6 +291,8 @@ public class BulletPeer {
 	public int getColor() {
 		return color;
 	}
+
+	public Line2D.Double getBoundingLine() { return boundingLine; }
 
 	public void setHeading(double newHeading) {
 		heading = newHeading;
@@ -302,9 +314,19 @@ public class BulletPeer {
 		y = lastY = newY;
 	}
 
+	public void setLastX(double lastX) {
+		this.lastX = lastX;
+	}
+
+	public void setLastY(double lastY) {
+		this.lastY = lastY;
+	}
+
 	public void setState(BulletState newState) {
 		state = newState;
 	}
+
+	public void setFrame(int newFrame) { this.frame = newFrame; }
 
 	public void update(List<RobotPeer> robots, List<BulletPeer> bullets) {
 		frame++;
