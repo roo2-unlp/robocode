@@ -144,13 +144,7 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 	private final BoundingRectangle boundingBox;
 	private final RbSerializer rbSerializer;
 
-
 	private final IDamageModel damageModel; // Nueva!!!!!!!!!!
-
-	// -----------------------------------------------------------------------
-    // [MODIFICADO] Constructor ORIGINAL (Sobrecargado)
-    // Este constructor mantiene la firma antigua para que no fallen los test
-	    // -----------------------------------------------------------------------
 
 	// -----------------------------------------------------------------------
     // [NUEVO] Constructor principal (Con inyección de dependencia)

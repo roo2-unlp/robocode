@@ -116,7 +116,7 @@ public final class Battle extends BaseBattle {
 		Map<String, TeamPeer> teamPeers = new HashMap<String, TeamPeer>();
 
 		// -----------------------------------------------------------------------
-        // [NUEVO] SELECCIÓN DE ESTRATEGIA 
+        // [NUEVO] SELECCIÓN DE MODELO DE DAÑO
         // -----------------------------------------------------------------------
         // seleccion de reglas para esta batalla.
         // se asume que el objeto 'battleRules' ya trae la bandera desde la UI.
@@ -130,8 +130,6 @@ public final class Battle extends BaseBattle {
             damageModel = new StandardDamageModel();
         }
         // -------------------------------------------------------------------
-
-
 
 
 		// Populate raw names and suffix numbers (to be included when name duplicates exist)
