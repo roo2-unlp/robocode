@@ -151,24 +151,19 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
     // [MODIFICADO] Constructor ORIGINAL (Sobrecargado)
     // Este constructor mantiene la firma antigua para que no fallen los test
 	    // -----------------------------------------------------------------------
-    public RobotPeer(Battle battle, IHostManager hostManager, RobotSpecification robotSpecification, 
-                     String name, String suffix, TeamPeer team, int robotIndex) {
-        // se delega al nuevo constructor pasando el modelo estándar por defecto
-        this(battle, hostManager, robotSpecification, name, suffix, team, robotIndex, new StandardDamageModel());
-    }
 
 	// -----------------------------------------------------------------------
     // [NUEVO] Constructor principal (Con inyección de dependencia)
     // Este contiene toda la lógica de inicialización y recibe la estrategia.
     // -----------------------------------------------------------------------
     public RobotPeer(Battle battle, IHostManager hostManager, RobotSpecification robotSpecification, 
-                     String name, String suffix, TeamPeer team, int robotIndex, IDamageModel damageModel) {
+                     String name, String suffix, TeamPeer team, int robotIndex) {
         super();
 
         this.battle = battle;
         this.robotSpecification = robotSpecification;
         
-        this.damageModel = damageModel;// se asigna la estrategia recibida
+        this.damageModel = battle.getDamageModel();// se asigna la estrategia recibida
 
         this.rbSerializer = new RbSerializer();
         this.boundingBox = new BoundingRectangle();

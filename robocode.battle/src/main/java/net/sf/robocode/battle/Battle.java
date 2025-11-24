@@ -87,7 +87,7 @@ public final class Battle extends BaseBattle {
 	// Initial robot setups (if any)
 	private RobotSetup[] initialRobotSetups;
 
-	private IDamageModel damageModelStrategy;//nueva, es la estrategia de daño
+	private IDamageModel damageModel;//nueva, es la estrategia de daño
 
 	public Battle(ISettingsManager properties, IBattleManager battleManager, IHostManager hostManager, ICpuManager cpuManager, BattleEventDispatcher eventDispatcher) { // NO_UCD (unused code)
 		super(properties, battleManager, eventDispatcher);
@@ -122,12 +122,12 @@ public final class Battle extends BaseBattle {
         // se asume que el objeto 'battleRules' ya trae la bandera desde la UI.
         if (battleRules.getRandomDamage()) { 
             // Si la UI mandó "true", instanciamos el modelo aleatorio
-            damageModelStrategy = new RandomDamageModel();
+            damageModel = new RandomDamageModel();
            //Log para confirmar en consola que el modo está activo:
             //net.sf.robocode.io.Logger.logMessage("SYSTEM: Random Damage Mode Activated! 🎲");
         } else {
             // Si no (por defecto),  el estándar de siempre (0.6)
-            damageModelStrategy = new StandardDamageModel();
+            damageModel = new StandardDamageModel();
         }
         // -------------------------------------------------------------------
 
@@ -192,8 +192,8 @@ public final class Battle extends BaseBattle {
             // Pasamos 'damageModelStrategy' al nuevo constructor sobrecargado de RobotPeer
             RobotPeer robotPeer = new RobotPeer(this, hostManager, specification, 
                                                 robotNames[robotIndex], robotSuffixes[robotIndex], 
-                                                team, robotIndex, 
-                                                damageModelStrategy);
+                                                team, robotIndex,
+					damageModel);
 			robots.add(robotPeer);
 			if (team == null) {
 				contestants.add(robotPeer);
@@ -207,6 +207,10 @@ public final class Battle extends BaseBattle {
 
 	public BattleRules getBattleRules() {
 		return battleRules;
+	}
+
+	public IDamageModel getDamageModel() {
+		return damageModel;
 	}
 
 	public int getRobotsCount() {
