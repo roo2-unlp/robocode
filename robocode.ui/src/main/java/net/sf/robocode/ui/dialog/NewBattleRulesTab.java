@@ -434,7 +434,7 @@ public class NewBattleRulesTab extends JPanel {
 			// MODIFICADO: Guardar el estado del nuevo checkbox en las propiedades
 			// Nota: AVERIGUAR -? guardar en settingsManager requeriria modificar esa interfaz tambien.
 			boolean randomDamage = randomCollisionDamageCheckBox.isSelected();
-			battleProperties.setIsRandomCollisionDamage(randomDamage);
+			battleProperties.setRandomDamage(randomDamage);
 
 			int weight = battlefieldWidthSlider.getValue();
 			int height = battlefieldHeightSlider.getValue();
@@ -465,7 +465,7 @@ public class NewBattleRulesTab extends JPanel {
 				battleProperties.setInactivityTime(450);
 				battleProperties.setHideEnemyNames(false);
 				battleProperties.setSentryBorderSize(100);
-				battleProperties.setIsRandomCollisionDamage(false);//nuevo valor por defecto randomDamage false
+				battleProperties.setRandomDamage(false);//nuevo valor por defecto randomDamage false
 
 				pushBattlePropertiesToUIComponents();
 			}
@@ -488,7 +488,7 @@ public class NewBattleRulesTab extends JPanel {
 			getInactivityTimeTextField().setText("" + battleProperties.getInactivityTime());
 			getSentryBorderSizeTextField().setText("" + battleProperties.getSentryBorderSize());
 			hideEnemyNamesCheckBox.setSelected(battleProperties.getHideEnemyNames());
-			randomCollisionDamageCheckBox.setSelected(battleProperties.getIsRandomCollisionDamage()); //nuevo
+			randomCollisionDamageCheckBox.setSelected(battleProperties.getRandomDamage());//nuevo
 
 		}
 	}
