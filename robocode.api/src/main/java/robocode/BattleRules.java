@@ -35,6 +35,7 @@ public final class BattleRules implements java.io.Serializable {
 	private final long inactivityTime;
 	private final boolean hideEnemyNames;
 	private final int sentryBorderSize;
+	private final boolean randomWallHitDamage; //agrego el check para habilitar la opcion de golpe random con dado
 
 	/**
 	 * Returns the battlefield width.
@@ -122,9 +123,16 @@ public final class BattleRules implements java.io.Serializable {
 	public int getSentryBorderSize() {
 		return sentryBorderSize;
 	}
+
+	/*
+	retorna true si la opcion esta tildada
+	 */
+	public boolean getRandomWallHitDamage(){
+		return this.randomWallHitDamage;
+	}
 	
 	private BattleRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate,
-			long inactivityTime, boolean hideEnemyNames, int sentryBorderSize) {
+			long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean randomWallHitDamage) {
 		this.battlefieldWidth = battlefieldWidth;
 		this.battlefieldHeight = battlefieldHeight;
 		this.numRounds = numRounds;
@@ -132,6 +140,8 @@ public final class BattleRules implements java.io.Serializable {
 		this.inactivityTime = inactivityTime;
 		this.hideEnemyNames = hideEnemyNames;
 		this.sentryBorderSize = sentryBorderSize;
+		this.randomWallHitDamage = randomWallHitDamage;
+
 	}
 
 	static IHiddenRulesHelper createHiddenHelper() {
@@ -140,9 +150,9 @@ public final class BattleRules implements java.io.Serializable {
 
 	private static class HiddenHelper implements IHiddenRulesHelper {
 
-		public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize) {
+		public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean randomWallHitDamage) {
 			return new BattleRules(battlefieldWidth, battlefieldHeight, numRounds, gunCoolingRate, inactivityTime,
-					hideEnemyNames, sentryBorderSize);
+					hideEnemyNames, sentryBorderSize, randomWallHitDamage);
 		}
 	}
 }

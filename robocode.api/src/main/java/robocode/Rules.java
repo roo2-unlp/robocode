@@ -8,9 +8,7 @@
 package robocode;
 
 
-import static java.lang.Math.abs;
-import static java.lang.Math.max;
-
+import static java.lang.Math.*;
 
 /**
  * Constants and methods that defines the rules of Robocode.
@@ -175,6 +173,7 @@ public final class Rules {
 	 * @param velocity the velocity of the robot.
 	 * @return wall hit damage in energy points.
 	 */
+
 	public static double getWallHitDamage(double velocity) {
 		return max(abs(velocity) / 2 - 1, 0);
 	}

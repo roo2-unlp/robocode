@@ -133,6 +133,7 @@ public class SettingsManager implements ISettingsManager {
 	private int battleDefaultSentryBorderSize = 100;
 	private boolean battleDefaultHideEnemyNames = false;
 	private int battleDefaultNumberOfRounds = 10;
+	private boolean battleDefaultRandomWallHitDamage = false;
 
 	private final Properties props = new SortedProperties();
 
@@ -692,6 +693,18 @@ public class SettingsManager implements ISettingsManager {
 		props.setProperty(BATTLE_DEFAULT_HIDE_ENEMY_NAMES, "" + this.battleDefaultHideEnemyNames);
 	}
 
+	/*
+	agrego getter y setter de random wall hit damage
+	 */
+	public boolean getBattleDefaultRamdomWallHitDamage() {
+		return battleDefaultRandomWallHitDamage;
+	}
+	public void setBattleDefaultRandomWallHitDamage(boolean randomWallHitDamage){
+		this.battleDefaultRandomWallHitDamage = randomWallHitDamage;
+		props.setProperty(BATTLE_DEFAULT_RANDOM_WALL_HIT_DAMAGE, "" + this.battleDefaultRandomWallHitDamage);
+	}
+
+
 	public int getBattleDefaultNumberOfRounds() {
 		return battleDefaultNumberOfRounds;
 	}
@@ -700,6 +713,8 @@ public class SettingsManager implements ISettingsManager {
 		this.battleDefaultNumberOfRounds = Math.max(1, numberOfRounds);
 		props.setProperty(BATTLE_DEFAULT_NUMBER_OF_ROUNDS, "" + this.battleDefaultNumberOfRounds);
 	}
+
+
 
 	public void store(FileOutputStream out, String desc) throws IOException {
 		props.store(out, desc);
@@ -790,6 +805,7 @@ public class SettingsManager implements ISettingsManager {
 		battleDefaultInactivityTime = Long.parseLong(props.getProperty(BATTLE_DEFAULT_INACTIVITY_TIME, "450"));
 		battleDefaultHideEnemyNames = Boolean.parseBoolean(props.getProperty(BATTLE_DEFAULT_HIDE_ENEMY_NAMES, "false"));
 		battleDefaultNumberOfRounds = Integer.parseInt(props.getProperty(BATTLE_DEFAULT_NUMBER_OF_ROUNDS, "10"));
+		battleDefaultRandomWallHitDamage = Boolean.parseBoolean(props.getProperty(BATTLE_DEFAULT_RANDOM_WALL_HIT_DAMAGE, "false")); //lo seteo en false por defecto
 
 		robotFilesystemQuota = Long.parseLong(props.getProperty(ROBOT_FILESYSTEM_QUOTA, "" + 200000));
 		consoleQuota = Long.parseLong(props.getProperty(CONSOLE_QUOTA, "8192"));

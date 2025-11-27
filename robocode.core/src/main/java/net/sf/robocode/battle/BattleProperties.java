@@ -38,7 +38,8 @@ public class BattleProperties implements Serializable {
 			BATTLE_HIDE_ENEMY_NAMES = "robocode.battle.hideEnemyNames",
 			BATTLE_SELECTEDROBOTS = "robocode.battle.selectedRobots",
 			BATTLE_INITIAL_POSITIONS = "robocode.battle.initialPositions",
-			BATTLE_SENTRY_BORDER_SIZE = "robocode.battle.sentryBorderSize";
+			BATTLE_SENTRY_BORDER_SIZE = "robocode.battle.sentryBorderSize",
+			BATTLE_RANDOM_WALL_HIT_DAMAGE = "robocode.battle.randomWallHitDamage"; //agrego constante
 
 	private int battlefieldWidth = 800;
 	private int battlefieldHeight = 600;
@@ -47,6 +48,7 @@ public class BattleProperties implements Serializable {
 	private long inactivityTime = 450;
 	private boolean hideEnemyNames = false;
 	private int sentryBorderSize = 100;
+	private boolean randomWallHitDamage = false; //agrego wall hit damage
 	private String selectedRobots;
 	private String initialPositions;
 
@@ -63,6 +65,7 @@ public class BattleProperties implements Serializable {
 		inactivityTime = properties.getBattleDefaultInactivityTime();
 		hideEnemyNames = properties.getBattleDefaultHideEnemyNames();
 		sentryBorderSize = properties.getBattleDefaultSentryBorderSize();
+		randomWallHitDamage = properties.getBattleDefaultRamdomWallHitDamage();
 	}
 
 	/**
@@ -209,6 +212,16 @@ public class BattleProperties implements Serializable {
 		return hideEnemyNames;
 	}
 
+	/*
+	Setter y getter de wall hit damage
+	 */
+	public void setRandomWallHitDamage(boolean randomWallHitDamage){
+		this.randomWallHitDamage = randomWallHitDamage;
+		props.setProperty(BATTLE_RANDOM_WALL_HIT_DAMAGE, "" + randomWallHitDamage);
+	}
+	public boolean getRandomWallHitDamage(){
+		return randomWallHitDamage;
+	}
 	/**
 	 * Gets the selectedRobots.
 	 *
@@ -343,5 +356,7 @@ public class BattleProperties implements Serializable {
 		selectedRobots = props.getProperty(BATTLE_SELECTEDROBOTS, "");
 		initialPositions = props.getProperty(BATTLE_INITIAL_POSITIONS, "");
 		sentryBorderSize = Integer.parseInt(props.getProperty(BATTLE_SENTRY_BORDER_SIZE, "100"));
+		randomWallHitDamage = Boolean.parseBoolean(props.getProperty(BATTLE_RANDOM_WALL_HIT_DAMAGE, "false"));
+
 	}
 }

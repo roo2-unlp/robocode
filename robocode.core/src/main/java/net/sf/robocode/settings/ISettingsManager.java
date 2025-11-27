@@ -232,6 +232,11 @@ public interface ISettingsManager {
 
 	void setBattleDefaultNumberOfRounds(int numberOfRounds);
 
+	boolean getBattleDefaultRamdomWallHitDamage(); // obtener random wall hit damage
+
+	void setBattleDefaultRandomWallHitDamage(boolean randomWallHitDamage); // setear random wall hit damage
+
+
 	void store(FileOutputStream out, String desc) throws IOException;
 
 	void load(FileInputStream in) throws IOException;
@@ -313,5 +318,6 @@ public interface ISettingsManager {
 			BATTLE_DEFAULT_GUN_COOLING_RATE = "robocode.battle.default.gunCoolingRate",
 			BATTLE_DEFAULT_INACTIVITY_TIME = "robocode.battle.default.inactivityTime",
 			BATTLE_DEFAULT_SENTRY_BORDER_SIZE = "robocode.battle.default.sentryBorderSize",
-			BATTLE_DEFAULT_HIDE_ENEMY_NAMES = "robocode.battle.default.hideEnemyNames";
+			BATTLE_DEFAULT_HIDE_ENEMY_NAMES = "robocode.battle.default.hideEnemyNames",
+			BATTLE_DEFAULT_RANDOM_WALL_HIT_DAMAGE = "robocode.battle.default.randomWallHitDamage";
 }

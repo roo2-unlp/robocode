@@ -320,7 +320,7 @@ public class BattleRecordInfo implements Serializable, IXmlSerializable {
 				public void close() {
 					recinfo.battleRules = HiddenAccess.createRules(props.getBattlefieldWidth(),
 							props.getBattlefieldHeight(), props.getNumRounds(), props.getGunCoolingRate(),
-							props.getInactivityTime(), props.getHideEnemyNames(), props.getSentryBorderSize());
+							props.getInactivityTime(), props.getHideEnemyNames(), props.getSentryBorderSize(), props.getRandomWallHitDamage());
 				}
 			});
 		}

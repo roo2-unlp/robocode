@@ -51,6 +51,7 @@ public class NewBattleRulesTab extends JPanel {
 	private final JLabel inactivityTimeLabel = new JLabel("Inactivity Time:");
 	private final JLabel sentryBorderSizeLabel = new JLabel("Sentry Border Size");
 	private final JLabel hideEnemyNamesLabel = new JLabel("Hide Enemy Names:");
+	private final JLabel randomWallHitDamageLabel = new JLabel("Enable Random Wall Collision"); // agrego label nuevo
 
 	private final JButton restoreDefaultsButton = new JButton("Restore Defaults");
 	
@@ -59,6 +60,7 @@ public class NewBattleRulesTab extends JPanel {
 	private JTextField inactivityTimeTextField;
 	private JTextField sentryBorderSizeTextField;
 	private final JCheckBox hideEnemyNamesCheckBox = new JCheckBox();
+	private final JCheckBox randomWallHitDamageCheckBox = new JCheckBox(); // agrego checkbox random wall hit
 
 	private JSlider battlefieldWidthSlider;
 	private JSlider battlefieldHeightSlider;
@@ -189,6 +191,7 @@ public class NewBattleRulesTab extends JPanel {
 		left.addComponent(inactivityTimeLabel);
 		left.addComponent(sentryBorderSizeLabel);
 		left.addComponent(hideEnemyNamesLabel);
+		left.addComponent(randomWallHitDamageLabel); //agrego el label
 		leftToRight.addGroup(left);
 		
 		GroupLayout.ParallelGroup right = layout.createParallelGroup();
@@ -197,6 +200,7 @@ public class NewBattleRulesTab extends JPanel {
 		right.addComponent(getInactivityTimeTextField());
 		right.addComponent(getSentryBorderSizeTextField());
 		right.addComponent(hideEnemyNamesCheckBox);
+		right.addComponent(randomWallHitDamageCheckBox); //agrego el checkbox
 		leftToRight.addGroup(right);
 		
 		GroupLayout.SequentialGroup topToBottom = layout.createSequentialGroup();
@@ -225,6 +229,14 @@ public class NewBattleRulesTab extends JPanel {
 		row4.addComponent(hideEnemyNamesLabel);
 		row4.addComponent(hideEnemyNamesCheckBox);
 		topToBottom.addGroup(row4);
+
+		/*
+		agrego el nuevo grupo de label y chekbox de random wall hit damage
+		 */
+		GroupLayout.ParallelGroup row5 = layout.createParallelGroup(Alignment.CENTER);
+		row5.addComponent(randomWallHitDamageLabel);
+		row5.addComponent(randomWallHitDamageCheckBox);
+		topToBottom.addGroup(row5);
 
 		layout.setHorizontalGroup(leftToRight);
 		layout.setVerticalGroup(topToBottom);
@@ -422,6 +434,15 @@ public class NewBattleRulesTab extends JPanel {
 			settingsManager.setBattleDefaultHideEnemyNames(hideEnemyNames);
 			battleProperties.setHideEnemyNames(hideEnemyNames);
 
+			/*
+			valida si esta seleccionado para aplicar la regla
+			se lo paso a settings manager y a battle properties
+			 */
+			boolean randomWallHitDamage = randomWallHitDamageCheckBox.isSelected();
+			settingsManager.setBattleDefaultRandomWallHitDamage(randomWallHitDamage);
+			battleProperties.setRandomWallHitDamage(randomWallHitDamage);
+
+
 			int weight = battlefieldWidthSlider.getValue();
 			int height = battlefieldHeightSlider.getValue();
 
@@ -451,6 +472,7 @@ public class NewBattleRulesTab extends JPanel {
 				battleProperties.setInactivityTime(450);
 				battleProperties.setHideEnemyNames(false);
 				battleProperties.setSentryBorderSize(100);
+				battleProperties.setRandomWallHitDamage(false); //cuando se restaura a default vuelve a falso
 
 				pushBattlePropertiesToUIComponents();
 			}
@@ -473,6 +495,7 @@ public class NewBattleRulesTab extends JPanel {
 			getInactivityTimeTextField().setText("" + battleProperties.getInactivityTime());
 			getSentryBorderSizeTextField().setText("" + battleProperties.getSentryBorderSize());
 			hideEnemyNamesCheckBox.setSelected(battleProperties.getHideEnemyNames());
+			randomWallHitDamageCheckBox.setSelected(battleProperties.getRandomWallHitDamage()); //obtiene el valor para pasarlo a ui component
 		}
 	}
 
