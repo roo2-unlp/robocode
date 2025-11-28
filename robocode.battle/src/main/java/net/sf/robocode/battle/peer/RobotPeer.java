@@ -867,7 +867,11 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 
 			gunHeat += Rules.getGunHeat(firePower);
 
-			newBullet = new BulletPeer(this, battleRules, bulletCmd.getBulletId());
+			if (bulletCmd.isRadioactive()) {
+				newBullet = new RadioactiveBulletPeer(this, battleRules, bulletCmd.getBulletId());
+			} else {
+				newBullet = new BulletPeer(this, battleRules, bulletCmd.getBulletId());
+			}
 
 			newBullet.setPower(firePower);
 			if (!turnedRadarWithGun || !bulletCmd.isFireAssistValid() || statics.isAdvancedRobot()) {

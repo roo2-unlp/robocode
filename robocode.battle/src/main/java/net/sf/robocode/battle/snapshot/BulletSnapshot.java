@@ -71,6 +71,9 @@ public final class BulletSnapshot implements java.io.Serializable, IXmlSerializa
 
 	private double heading;
 
+	/** Proximity radius for special bullets (e.g., RadioactiveBullet); 0 if not applicable */
+	private double proximityRadius;
+
 	/**
 	 * Creates a snapshot of a bullet that must be filled out with data later.
 	 */
@@ -81,6 +84,7 @@ public final class BulletSnapshot implements java.io.Serializable, IXmlSerializa
 		explosionImageIndex = -1;
 		heading = Double.NaN;
 		power = Double.NaN;
+		proximityRadius = 0.0;
 	}
 
 	/**
@@ -105,6 +109,18 @@ public final class BulletSnapshot implements java.io.Serializable, IXmlSerializa
 
 		isExplosion = (bullet instanceof ExplosionPeer);
 		explosionImageIndex = bullet.getExplosionImageIndex();
+
+		// Capture proximity radius for bullets that use proximity-based explosion sizing
+		// Default to 0 for normal bullets
+		try {
+			// Access via public method to avoid tight coupling
+			proximityRadius = bullet.getProximityRadius();
+			if (proximityRadius < 0) {
+				proximityRadius = 0.0;
+			}
+		} catch (Throwable t) {
+			proximityRadius = 0.0;
+		}
 
 		bulletId = bullet.getBulletId();
 
@@ -225,6 +241,13 @@ public final class BulletSnapshot implements java.io.Serializable, IXmlSerializa
 	 */
 	public int getOwnerIndex() {
 		return ownerIndex;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public double getProximityRadius() {
+		return proximityRadius;
 	}
 
 	/**

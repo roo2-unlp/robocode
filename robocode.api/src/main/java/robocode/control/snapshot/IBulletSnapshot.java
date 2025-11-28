@@ -128,4 +128,13 @@ public interface IBulletSnapshot {
 	 * @return contestantIndex of the owner
 	 */
 	int getOwnerIndex();
+
+	/**
+	 * Returns the proximity radius associated with this bullet, if any.
+	 * Implementations should return 0 when the bullet has no proximity-based
+	 * explosion behavior.
+	 *
+	 * @return the proximity radius in battlefield units, or 0 when not applicable.
+	 */
+	double getProximityRadius();
 }

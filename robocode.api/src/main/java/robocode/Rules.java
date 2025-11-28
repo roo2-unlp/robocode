@@ -25,9 +25,6 @@ import static java.lang.Math.max;
  */
 public final class Rules {
 
-	// Hide the constructor in the Javadocs as it should not be used
-	private Rules() {}
-
 	/**
 	 * The acceleration of a robot, i.e. the increase of velocity when the
 	 * robot moves forward, which is 1 pixel/turn.
@@ -62,6 +59,16 @@ public final class Rules {
 	 * transferred to a bullet when it is fired, which is 3 energy points.
 	 */
 	public static final double MAX_BULLET_POWER = 3;
+
+	/**
+	 * The minimum radioactive bullet power.
+	 */
+	public static final double MIN_RADIOACTIVE_BULLET_POWER = 0.1;
+
+	/**
+	 * The maximum radioactive bullet power.
+	 */
+	public static final double MAX_RADIOACTIVE_BULLET_POWER = 3;
 
 	/**
 	 * The maximum turning rate of the robot, in degrees, which is
@@ -226,4 +233,7 @@ public final class Rules {
 	public static double getGunHeat(double bulletPower) {
 		return 1 + (bulletPower / 5);
 	}
+
+	// Hide the constructor in the Javadocs as it should not be used
+	private Rules() {}
 }

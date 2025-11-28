@@ -8,38 +8,52 @@
 package net.sf.robocode.host.proxies;
 
 
-import net.sf.robocode.host.RobotStatics;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import net.sf.robocode.host.IHostManager;
+import net.sf.robocode.host.RobotStatics;
 import net.sf.robocode.host.events.EventManager;
-import net.sf.robocode.peer.*;
+import net.sf.robocode.peer.BulletCommand;
+import net.sf.robocode.peer.BulletStatus;
+import net.sf.robocode.peer.ExecCommands;
+import net.sf.robocode.peer.ExecResults;
+import net.sf.robocode.peer.IRobotPeer;
+import net.sf.robocode.peer.TeamMessage;
 import net.sf.robocode.repository.IRobotItem;
 import net.sf.robocode.robotpaint.Graphics2DSerialized;
 import net.sf.robocode.robotpaint.IGraphicsProxy;
 import net.sf.robocode.security.HiddenAccess;
-import robocode.*;
+import robocode.BattleEndedEvent;
+import robocode.Bullet;
+import robocode.Condition;
 import robocode.Event;
+import robocode.PaintEvent;
+import robocode.RadioactiveBullet;
+import robocode.RobotStatus;
+import robocode.Rules;
+import robocode.ScannedRobotEvent;
+import robocode.StatusEvent;
 import robocode.exception.AbortedException;
 import robocode.exception.DeathException;
 import robocode.exception.DisabledException;
 import robocode.exception.RobotException;
 import robocode.exception.WinException;
-import robocode.robotinterfaces.peer.IBasicRobotPeer;
+import robocode.robotinterfaces.peer.IRadioactiveRobotPeer;
 import robocode.util.Utils;
-
-import java.awt.*;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
  * @author Pavel Savara (original)
  * @author Flemming N. Larsen (contributor)
  */
-public class BasicRobotProxy extends HostingRobotProxy implements IBasicRobotPeer {
+public class BasicRobotProxy extends HostingRobotProxy implements IRadioactiveRobotPeer {
 	private static final long
 			MAX_SET_CALL_COUNT = 10000,
 			MAX_GET_CALL_COUNT = 10000;
@@ -76,19 +90,6 @@ public class BasicRobotProxy extends HostingRobotProxy implements IBasicRobotPee
 		setGetCallCount(0);
 	}
 
-	protected void initializeRound(ExecCommands commands, RobotStatus status) {
-		updateStatus(commands, status);
-
-		eventManager.reset();
-		eventManager.add(new StatusEvent(status)); // Start event
-
-		setSetCallCount(0);
-		setGetCallCount(0);
-
-		// make bulletId unique for entire battle and across all robots
-		nextBulletId = 1 + this.statics.getRobotIndex() * 10000 + status.getRoundNum() * 1000000;
-	}
-
 	@Override
 	public void cleanup() {
 		super.cleanup();
@@ -115,7 +116,12 @@ public class BasicRobotProxy extends HostingRobotProxy implements IBasicRobotPee
 	// asynchronous actions
 	public Bullet setFire(double power) {
 		setCall();
-		return setFireImpl(power);
+		return fireImpl(power, false);
+	}
+
+	public RadioactiveBullet setFireRadioactive(double power) {
+		setCall();
+		return (RadioactiveBullet) fireImpl(power, true);
 	}
 
 	// blocking actions
@@ -146,6 +152,13 @@ public class BasicRobotProxy extends HostingRobotProxy implements IBasicRobotPee
 
 	public Bullet fire(double power) {
 		Bullet bullet = setFire(power);
+
+		execute();
+		return bullet;
+	}
+
+	public RadioactiveBullet fireRadioactiveBullet(double power) {
+		RadioactiveBullet bullet = setFireRadioactive(power);
 
 		execute();
 		return bullet;
@@ -335,17 +348,40 @@ public class BasicRobotProxy extends HostingRobotProxy implements IBasicRobotPee
 			eventManager.setInterruptible(eventManager.getScannedRobotEventPriority(), origInterruptableValue);
 		}
 	}
+
+	public long getTimeImpl() {
+		return status.getTime();
+	}
 	
 	// -----------
 	// implementations
 	// -----------
 
-	public long getTimeImpl() {
-		return status.getTime();
-	}
-
 	public Graphics2D getGraphicsImpl() {
 		return (Graphics2D) graphicsProxy;
+	}
+
+	public void setTestingCondition(boolean testingCondition) {
+		this.testingCondition = testingCondition;
+	}
+
+	@Override
+	public String toString() {
+		return statics.getShortName() + "(" + (int) status.getEnergy() + ") X" + (int) status.getX() + " Y"
+				+ (int) status.getY();
+	}
+
+	protected void initializeRound(ExecCommands commands, RobotStatus status) {
+		updateStatus(commands, status);
+
+		eventManager.reset();
+		eventManager.add(new StatusEvent(status)); // Start event
+
+		setSetCallCount(0);
+		setGetCallCount(0);
+
+		// make bulletId unique for entire battle and across all robots
+		nextBulletId = 1 + this.statics.getRobotIndex() * 10000 + status.getRoundNum() * 1000000;
 	}
 
 	@Override
@@ -367,7 +403,7 @@ public class BasicRobotProxy extends HostingRobotProxy implements IBasicRobotPee
 		setSetCallCount(0);
 		setGetCallCount(0);
 
-		// This stops autoscan from scanning...
+		// This stops auto-scan from scanning...
 		if (waitCondition != null && waitCondition.test()) {
 			waitCondition = null;
 			commands.setScan(true);
@@ -429,7 +465,7 @@ public class BasicRobotProxy extends HostingRobotProxy implements IBasicRobotPee
 				eventManager.processEvents();
 
 				// The exceptions below are expected to occur, and has already been logged in the robot console,
-				// but still exists in the robot's event queue. Hence we just ignore these!
+				// but still exists in the robot's event queue. Hence, we just ignore these!
 				// Look in the HostingRobotProxy.run() to see which robot errors that are already handled.
 			} catch (DeathException ignore) {} catch (WinException ignore) {// Bug fix [2952549]
 			} catch (AbortedException ignore) {} catch (DisabledException ignore) {// Bug fix [2976258]
@@ -455,20 +491,7 @@ public class BasicRobotProxy extends HostingRobotProxy implements IBasicRobotPee
 		} while (!execResults.isHalt() && execResults.isShouldWait());
 	}
 
-	private void updateStatus(ExecCommands commands, RobotStatus status) {
-		this.status = status;
-		this.commands = commands;
-	}
-
 	protected void loadTeamMessages(java.util.List<TeamMessage> teamMessages) {}
-
-	private final double getEnergyImpl() {
-		return status.getEnergy() - firedEnergy;
-	}
-
-	private final double getGunHeatImpl() {
-		return status.getGunHeat() + firedHeat;
-	}
 
 	protected final void setMoveImpl(double distance) {
 		if (getEnergyImpl() == 0) {
@@ -476,49 +499,6 @@ public class BasicRobotProxy extends HostingRobotProxy implements IBasicRobotPee
 		}
 		commands.setDistanceRemaining(distance);
 		commands.setMoved(true);
-	}
-
-	private final Bullet setFireImpl(double power) {
-		if (Double.isNaN(power)) {
-			println("SYSTEM: You cannot call fire(NaN)");
-			return null;
-		}
-		if (getGunHeatImpl() > 0 || getEnergyImpl() == 0) {
-			return null;
-		}
-
-		power = min(getEnergyImpl(), min(max(power, Rules.MIN_BULLET_POWER), Rules.MAX_BULLET_POWER));
-
-		Bullet bullet;
-		BulletCommand wrapper;
-		Event currentTopEvent = eventManager.getCurrentTopEvent();
-
-		nextBulletId++;
-
-		if (currentTopEvent != null && currentTopEvent.getTime() == status.getTime() && !statics.isAdvancedRobot()
-				&& status.getGunHeadingRadians() == status.getRadarHeadingRadians()
-				&& ScannedRobotEvent.class.isAssignableFrom(currentTopEvent.getClass())) {
-			// this is angle assisted bullet
-			ScannedRobotEvent e = (ScannedRobotEvent) currentTopEvent;
-			double fireAssistAngle = Utils.normalAbsoluteAngle(status.getHeadingRadians() + e.getBearingRadians());
-
-			bullet = new Bullet(fireAssistAngle, getX(), getY(), power, statics.getName(), null, true, nextBulletId);
-			wrapper = new BulletCommand(power, true, fireAssistAngle, nextBulletId);
-		} else {
-			// this is normal bullet
-			bullet = new Bullet(status.getGunHeadingRadians(), getX(), getY(), power, statics.getName(), null, true,
-					nextBulletId);
-			wrapper = new BulletCommand(power, false, 0, nextBulletId);
-		}
-
-		firedEnergy += power;
-		firedHeat += Rules.getGunHeat(power);
-
-		commands.getBullets().add(wrapper);
-
-		bullets.put(nextBulletId, bullet);
-
-		return bullet;
 	}
 
 	protected final void setTurnGunImpl(double radians) {
@@ -535,8 +515,80 @@ public class BasicRobotProxy extends HostingRobotProxy implements IBasicRobotPee
 		commands.setRadarTurnRemaining(radians);
 	}
 
+	private void updateStatus(ExecCommands commands, RobotStatus status) {
+		this.status = status;
+		this.commands = commands;
+	}
+
+	private final double getEnergyImpl() {
+		return status.getEnergy() - firedEnergy;
+	}
+
 	// -----------
 	// battle driven methods
+	// -----------
+
+	private final double getGunHeatImpl() {
+		return status.getGunHeat() + firedHeat;
+	}
+
+	private final Bullet fireImpl(double power, boolean isRadioactive) {
+		if (Double.isNaN(power)) {
+			println("SYSTEM: You cannot call " + (isRadioactive ? "fireRadioactive" : "fire") + "(NaN)");
+			return null;
+		}
+		if (getGunHeatImpl() > 0 || getEnergyImpl() == 0) {
+			return null;
+		}
+
+		double minPower = isRadioactive ? Rules.MIN_RADIOACTIVE_BULLET_POWER : Rules.MIN_BULLET_POWER;
+		double maxPower = isRadioactive ? Rules.MAX_RADIOACTIVE_BULLET_POWER : Rules.MAX_BULLET_POWER;
+
+		power = min(getEnergyImpl(), min(max(power, minPower), maxPower));
+
+		Bullet bullet;
+		BulletCommand wrapper;
+		Event currentTopEvent = eventManager.getCurrentTopEvent();
+
+		nextBulletId++;
+
+		if (currentTopEvent != null && currentTopEvent.getTime() == status.getTime() && !statics.isAdvancedRobot()
+				&& status.getGunHeadingRadians() == status.getRadarHeadingRadians()
+				&& ScannedRobotEvent.class.isAssignableFrom(currentTopEvent.getClass())) {
+			// this is angle assisted bullet
+			ScannedRobotEvent e = (ScannedRobotEvent) currentTopEvent;
+			double fireAssistAngle = Utils.normalAbsoluteAngle(status.getHeadingRadians() + e.getBearingRadians());
+
+			if (isRadioactive) {
+				bullet = new RadioactiveBullet(fireAssistAngle, getX(), getY(), power, statics.getName(), null, true, nextBulletId, 100);
+			} else {
+				bullet = new Bullet(fireAssistAngle, getX(), getY(), power, statics.getName(), null, true, nextBulletId);
+			}
+			wrapper = new BulletCommand(power, true, fireAssistAngle, nextBulletId, isRadioactive);
+		} else {
+			// this is normal bullet
+			if (isRadioactive) {
+				bullet = new RadioactiveBullet(status.getGunHeadingRadians(), getX(), getY(), power, statics.getName(), null, true,
+						nextBulletId, 20.0);
+			} else {
+				bullet = new Bullet(status.getGunHeadingRadians(), getX(), getY(), power, statics.getName(), null, true,
+						nextBulletId);
+			}
+			wrapper = new BulletCommand(power, false, 0, nextBulletId, isRadioactive);
+		}
+
+		firedEnergy += power;
+		firedHeat += Rules.getGunHeat(power);
+
+		commands.getBullets().add(wrapper);
+
+		bullets.put(nextBulletId, bullet);
+
+		return bullet;
+	}
+
+	// -----------
+	// for robot thread
 	// -----------
 
 	private void setSetCallCount(int setCallCount) {
@@ -545,19 +597,5 @@ public class BasicRobotProxy extends HostingRobotProxy implements IBasicRobotPee
 
 	private void setGetCallCount(int getCallCount) {
 		this.getCallCount.set(getCallCount);
-	}
-
-	// -----------
-	// for robot thread
-	// -----------
-
-	public void setTestingCondition(boolean testingCondition) {
-		this.testingCondition = testingCondition;
-	}
-
-	@Override
-	public String toString() {
-		return statics.getShortName() + "(" + (int) status.getEnergy() + ") X" + (int) status.getX() + " Y"
-				+ (int) status.getY();
 	}
 }

@@ -1,13 +1,12 @@
 package testrobots;
 
+import static robocode.util.Utils.normalRelativeAngleDegrees;
+
+import java.awt.Color;
+
 import robocode.HitByBulletEvent;
 import robocode.HitRobotEvent;
-import robocode.Robot;
 import robocode.ScannedRobotEvent;
-
-import java.awt.*;
-
-import static robocode.util.Utils.normalRelativeAngleDegrees;
 
 /**
  * RadioactiveRobot - un robot que usaremos para implementar las balas radioactivas.
@@ -19,7 +18,7 @@ import static robocode.util.Utils.normalRelativeAngleDegrees;
  * @author Flemming N. Larsen (contributor)
  */
 
-public class RadioactiveRobot extends Robot {
+public class RadioactiveRobot extends robocode.RadioactiveRobot {
 	int dist = 50;
 
 	public void run() {
@@ -40,10 +39,10 @@ public class RadioactiveRobot extends Robot {
 	 */
 	public void onScannedRobot(ScannedRobotEvent e) {
 		if (e.getDistance() < 50 && getEnergy() > 50) {
-			fire(3);	//Aca deberiamos: fireRadioactiveBullet
+			fireRadioactiveBullet(3);
 		}
 		else {
-			fire(1); //Aca deberiamos: fireRadioactiveBullet
+			fireRadioactiveBullet(1);
 		}
 		scan();
 	}

@@ -579,7 +579,21 @@ public class BattleView extends Canvas {
 				// Sanity check to avoid bug-354 - Replaying an XML record can cause an ArrayIndexOutOfBoundsException
 				if (explosionIndex >= 0 && frame >= 0) {
 					if (!bulletSnapshot.isExplosion()) {
-						double scale = sqrt(1000 * bulletSnapshot.getPower()) / 128;
+						double scale;
+						double prox = 0.0;
+						try {
+							prox = bulletSnapshot.getProximityRadius();
+						} catch (Throwable t) {
+							prox = 0.0;
+						}
+						if (prox > 0.0) {
+							// Scale explosion so that its radius equals proximityRadius.
+							// Base explosion sprite radius is 128 units.
+							scale = prox / 128.0;
+						} else {
+							// Default: scale based on bullet power
+							scale = sqrt(1000 * bulletSnapshot.getPower()) / 128;
+						}
 						at.scale(scale, scale);
 					}
 					RenderImage explosionRenderImage = imageManager.getExplosionRenderImage(explosionIndex, frame);
