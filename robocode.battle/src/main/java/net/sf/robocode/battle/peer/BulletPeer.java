@@ -7,11 +7,23 @@
  */
 package net.sf.robocode.battle.peer;
 
-import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.util.List;
+
+import net.sf.robocode.peer.BulletStatus;
+import robocode.BattleRules;
+import robocode.Bullet;
+import robocode.BulletHitBulletEvent;
+import robocode.BulletHitEvent;
+import robocode.BulletMissedEvent;
+import robocode.HitByBulletEvent;
+import robocode.Rules;
+import robocode.control.snapshot.BulletState;
+import robocode.util.Utils;
 
 /**
  * @author Mathew A. Nelson (original)
@@ -177,15 +189,6 @@ public class BulletPeer {
   }
 
   /**
-   * Factory hook that allows subclasses to customize the concrete {@link Bullet}
-   * instance
-   * exposed to robots via events.
-   */
-  protected Bullet instantiateBullet(String ownerName, String victimName, boolean isActive) {
-    return new Bullet(getHeading(), getX(), getY(), power, ownerName, victimName, isActive, getBulletId());
-  }
-
-  /**
    * Checks whether the robot's bounding box intersects a proximity circle
    * centered at the
    * current bullet position (x,y) with radius {@link #PROXIMITY_RADIUS}.
@@ -198,6 +201,15 @@ public class BulletPeer {
    */
   public double getProximityRadius() {
     return DEFAULT_PROXIMITY_RADIUS;
+  }
+
+  /**
+   * Factory hook that allows subclasses to customize the concrete {@link Bullet}
+   * instance
+   * exposed to robots via events.
+   */
+  protected Bullet instantiateBullet(String ownerName, String victimName, boolean isActive) {
+    return new Bullet(getHeading(), getX(), getY(), power, ownerName, victimName, isActive, getBulletId());
   }
 
   protected boolean intersectsProximityRadius(RobotPeer robot) {

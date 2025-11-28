@@ -42,7 +42,7 @@ public class BulletCommand implements Serializable {
 			int bulletId = buffer.getInt();
       boolean isRadioactive = serializer.deserializeBoolean(buffer);
 
-			return new BulletCommand(power, fireAssistValid, fireAssistAngle, bulletId);
+			return new BulletCommand(power, fireAssistValid, fireAssistAngle, bulletId, isRadioactive);
 		}
 	}
 

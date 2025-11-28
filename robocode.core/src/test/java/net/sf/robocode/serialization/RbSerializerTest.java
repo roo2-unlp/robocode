@@ -8,28 +8,35 @@
 package net.sf.robocode.serialization;
 
 
-import net.sf.robocode.peer.BulletCommand;
-import net.sf.robocode.peer.DebugProperty;
-import net.sf.robocode.peer.ExecCommands;
-import net.sf.robocode.peer.TeamMessage;
-import net.sf.robocode.robotpaint.Graphics2DSerialized;
-import net.sf.robocode.security.HiddenAccess;
+import java.awt.BasicStroke;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+
+import javax.swing.JFrame;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import net.sf.robocode.peer.BulletCommand;
+import net.sf.robocode.peer.DebugProperty;
+import net.sf.robocode.peer.ExecCommands;
+import net.sf.robocode.peer.TeamMessage;
+import net.sf.robocode.robotpaint.Graphics2DSerialized;
+import net.sf.robocode.security.HiddenAccess;
 import robocode.util.Utils;
-
-import javax.swing.*;
-
-import java.awt.*;
-import java.awt.geom.*;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 
 
 /**
@@ -37,8 +44,6 @@ import java.io.IOException;
  */
 public class RbSerializerTest {
 
-	Exception exception = null;
-	
 	@BeforeClass
 	public static void init() {
 		if (!new File("").getAbsolutePath().endsWith("robocode.core")) {
@@ -50,11 +55,17 @@ public class RbSerializerTest {
 		System.setProperty("TESTING", "true");
 		HiddenAccess.initContainer();
 	}
-
+	
 	@AfterClass
 	public static void cleanup() {
 		System.setProperty("NOSECURITY", "false");
 	}
+
+	public static void assertNear(double v1, double v2) {
+		org.junit.Assert.assertEquals(v1, v2, Utils.NEAR_DELTA);
+	}
+
+	Exception exception = null;
 
 	@Test
 	public void empty() throws IOException {
@@ -80,9 +91,9 @@ public class RbSerializerTest {
 		ExecCommands ec = new ExecCommands();
 
 		ec.setBodyTurnRemaining(150.123);
-		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11));
-		ec.getBullets().add(new BulletCommand(1.0, false, 0.9454, 12));
-		ec.getBullets().add(new BulletCommand(1.0, true, 0.9554, -128));
+		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, false));
+		ec.getBullets().add(new BulletCommand(1.0, false, 0.9454, 12, false));
+		ec.getBullets().add(new BulletCommand(1.0, true, 0.9554, -128, false));
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
 		RbSerializer rbs = new RbSerializer();
@@ -103,7 +114,7 @@ public class RbSerializerTest {
 		ExecCommands ec = new ExecCommands();
 
 		ec.setBodyTurnRemaining(150.123);
-		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11));
+		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, false));
 		final byte[] data = new byte[20];
 
 		data[10] = 10;
@@ -129,7 +140,7 @@ public class RbSerializerTest {
 		ExecCommands ec = new ExecCommands();
 
 		ec.setBodyTurnRemaining(150.123);
-		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11));
+		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, false));
 		ec.getTeamMessages().add(new TeamMessage("Foo", "Bar", null));
 		ec.getDebugProperties().add(
 				new DebugProperty("UTF8 Native characters", "Příliš žluťoučký kůň úpěl ďábelské ódy."));
@@ -152,9 +163,9 @@ public class RbSerializerTest {
 		ExecCommands ec = new ExecCommands();
 
 		ec.setBodyTurnRemaining(150.123);
-		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11));
-		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11));
-		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11));
+		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, false));
+		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, false));
+		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, false));
 		ec.getTeamMessages().add(new TeamMessage("Foo", "Bar", null));
 		ec.getDebugProperties().add(new DebugProperty("ooooh", "aaaah"));
 
@@ -179,9 +190,9 @@ public class RbSerializerTest {
 		ExecCommands ec = new ExecCommands();
 
 		ec.setBodyTurnRemaining(150.123);
-		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11));
-		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11));
-		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11));
+		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, false));
+		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, false));
+		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, false));
 		ec.getTeamMessages().add(new TeamMessage("Foo", "Bar", null));
 		ec.getDebugProperties().add(new DebugProperty("ooooh", "aaaah"));
 
@@ -259,9 +270,5 @@ public class RbSerializerTest {
 		}
 
 		Assert.assertNull("Exception occured: " + exception, exception);
-	}
-
-	public static void assertNear(double v1, double v2) {
-		org.junit.Assert.assertEquals(v1, v2, Utils.NEAR_DELTA);
 	}
 }
