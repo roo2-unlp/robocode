@@ -37,6 +37,13 @@ import java.awt.image.BufferedImage;
 import static java.lang.Math.*;
 import java.util.Random;
 
+//trampas
+import net.sf.robocode.battle.traps.Trap;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import net.sf.robocode.battle.traps.TrapRepository;
+
+
 
 /**
  * @author Mathew A. Nelson (original)
@@ -99,6 +106,9 @@ public class BattleView extends Canvas {
 	private final GraphicsState graphicsState = new GraphicsState();
 	private IGraphicsProxy[] robotGraphics;
 	private AffineTransform identityTx = new AffineTransform();
+
+	//trampas
+	private net.sf.robocode.battle.Battle battle;
 
 	public BattleView(ISettingsManager properties, IWindowManager windowManager, IImageManager imageManager) {
 		this.properties = properties;
@@ -313,6 +323,9 @@ public class BattleView extends Canvas {
 		// Draw ground
 		drawGround(g);
 
+		//trampas
+		drawTraps(g);
+
 		if (snapShot != null) {
 			// Draw scan arcs
 			drawScanArcs(g, snapShot);
@@ -371,6 +384,35 @@ public class BattleView extends Canvas {
 			drawSentryBorder(g);
 		}
 	}
+
+	//trampas
+	private void drawTraps(Graphics2D g) {
+		if (battleField == null) {
+			System.out.println("battleField es null");
+			return;
+		}
+
+		//System.out.println("Cantidad de trampas UI: " + TrapRepository.getTraps().size());
+
+		Color[] colors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.MAGENTA,
+				Color.PINK, Color.CYAN, new Color(128, 0, 128)}; // Purple
+		Random random = new Random();
+
+		for (Trap trap : TrapRepository.getTraps()) {
+			//System.out.println("UI DIBUJA TRAMPA -> x=" + trap.getX() + " y=" + trap.getY() + " r=" + trap.getRadius());
+			int x = (int) (trap.getX() - trap.getRadius());
+			int y = (int) (trap.getY() - trap.getRadius());
+			int size = (int) (trap.getRadius() * 2);
+
+			//g.setColor(colors[random.nextInt(colors.length)]);
+			g.setColor(Color.GREEN);
+			g.fillOval(x, y, size, size);
+
+			g.setColor(Color.BLACK);
+			g.drawOval(x, y, size, size);
+		}
+	}
+
 
 	private void drawSentryBorder(Graphics2D g) {
 		int borderSentrySize = battleRules.getSentryBorderSize();

@@ -49,6 +49,9 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+//trampas
+import net.sf.robocode.battle.traps.Trap;
+import net.sf.robocode.battle.traps.TrapRepository;
 
 /**
  * RobotPeer is an object that deals with game mechanics and rules, and makes
@@ -141,6 +144,9 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 	private final Arc2D scanArc;
 	private final BoundingRectangle boundingBox;
 	private final RbSerializer rbSerializer;
+
+	//trampas
+	private int trapCooldown = 0;
 
 	public RobotPeer(Battle battle, IHostManager hostManager, RobotSpecification robotSpecification, String name, String suffix, TeamPeer team, int robotIndex) {
 		super();
@@ -913,6 +919,9 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 		// At this point, robot has turned then moved.
 		// We could be touching a wall or another bot...
 
+		//trampas
+		checkTrapCollision();
+
 		// First and foremost, we can never go through a wall:
 		checkWallCollision();
 
@@ -1149,6 +1158,70 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 			velocity = 0;
 
 			setState(RobotState.HIT_WALL);
+		}
+	}
+
+	//trampas
+	private void checkTrapCollision() {
+		if (!isAlive() || energy <= 0) {
+			return;
+		}
+
+		// Cooldown para evitar múltiples activaciones consecutivas
+		if (trapCooldown > 0) {
+			trapCooldown--;
+			return;
+		}
+
+		double robotHalf = WIDTH / 2.0;
+
+		for (Trap trap : TrapRepository.getTraps()) {
+			if (trap.intersects(x, y, robotHalf)) {
+				System.out.println("============================== " + getName() + " en (" + x + "," + y + ") pisó la TRAMPA. Energía: " + energy);
+				updateEnergy(-trap.getDamage());
+
+				System.out.println("Energía después: " + energy);
+
+				//Direccion para empujarlo (desde el centro de la trampa al robot)
+				double dx = x - trap.getX(); //cateto
+				double dy = y - trap.getY(); //cateto
+				double distance = Math.sqrt(dx * dx + dy * dy); //la hipotenusa
+
+				if (distance < 0.1) {
+					//Si está en el medio, echarlo para cualquier lado
+					double angle = Math.random() * 2 * Math.PI;
+					dx = Math.cos(angle);
+					dy = Math.sin(angle);
+					distance = 1;
+				}
+
+				//Sacarlo de la trampa
+				double pushDistance = trap.getRadius() + robotHalf + 10; //Radio de la trampa + la mitad del robot + 10
+				double newX = trap.getX() + (dx / distance) * pushDistance;
+				double newY = trap.getY() + (dy / distance) * pushDistance;
+
+				//Que no se salga del tablero
+				x = Math.max(robotHalf, Math.min(battleRules.getBattlefieldWidth() - robotHalf, newX));
+				y = Math.max(robotHalf, Math.min(battleRules.getBattlefieldHeight() - robotHalf, newY));
+
+				System.out.println("Robot empujado a: (" + x + "," + y + ")");
+
+				// Detener el robot
+				velocity = 0;
+
+				if (currentCommands != null) {
+					currentCommands.setDistanceRemaining(0);
+					currentCommands.setBodyTurnRemaining(0);
+				}
+
+				//5 turnos antes de caer en una trampa
+				trapCooldown = 5;
+
+				setState(RobotState.HIT_WALL);
+				addEvent(new HitWallEvent(0));
+
+				break;
+			}
 		}
 	}
 

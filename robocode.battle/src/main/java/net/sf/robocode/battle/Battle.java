@@ -37,6 +37,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+//trampas
+import net.sf.robocode.battle.traps.Trap;
+import net.sf.robocode.battle.traps.TrapRepository;
+
 
 /**
  * The {@code Battle} class is used for controlling a battle.
@@ -72,6 +76,8 @@ public final class Battle extends BaseBattle {
 	private List<RobotPeer> robots = new ArrayList<RobotPeer>();
 	private List<ContestantPeer> contestants = new ArrayList<ContestantPeer>();
 	private final List<BulletPeer> bullets = new CopyOnWriteArrayList<BulletPeer>();
+	//trampas
+	//private List<Trap> traps = new ArrayList<>();
 
 	// Robot counters
 	private int activeParticipants;
@@ -97,6 +103,9 @@ public final class Battle extends BaseBattle {
 		robotsCount = battlingRobotsList.length;
 		computeInitialPositions(battleProps.getInitialPositions());
 		createPeers(battlingRobotsList);
+		//trampas
+		//traps.clear();
+		generateTraps();
 	}
 
 	private void createPeers(RobotSpecification[] battlingRobotsList) {
@@ -240,6 +249,11 @@ public final class Battle extends BaseBattle {
 			System.gc();
 		}
 	}
+
+	//trampas
+	//public List<Trap> getTraps() {
+	//	return traps;
+	//}
 
 	@Override
 	protected void initializeBattle() {
@@ -744,6 +758,44 @@ public final class Battle extends BaseBattle {
 				}
 			}
 			initialRobotSetups[i] = new RobotSetup(x, y, heading);
+		}
+	}
+
+	//para que ande el random de la trampa
+	private double randomDouble(Random random, double min, double max) {
+		return min + random.nextDouble() * (max - min);
+	}
+
+	private int randomInt(Random random, int min, int max) {
+		return min + random.nextInt(max - min);
+	}
+
+	//trampas
+	private void generateTraps() {
+		Random random = RandomFactory.getRandom();
+
+		int count = randomInt(random, 3, 9); // 3 a 8 trampas
+
+		TrapRepository.clear();
+
+		for (int i = 0; i < count; i++) {
+			double radius = randomDouble(random, 20, 40); // 20 a 40
+			double damage = randomDouble(random, 1, 8);  // 1 a 8
+
+			double x = randomDouble(random, RobotPeer.WIDTH,
+					battleRules.getBattlefieldWidth() - RobotPeer.WIDTH);
+			double y = randomDouble(random, RobotPeer.HEIGHT,
+					battleRules.getBattlefieldHeight() - RobotPeer.HEIGHT);
+
+			TrapRepository.addTrap(new Trap(x, y, radius, damage));
+		}
+
+		System.out.println("=== TRAMPAS GENERADAS: " + TrapRepository.getTraps().size() + " ===");
+		for (Trap t : TrapRepository.getTraps()) {
+			System.out.println("TRAMPA -> x=" + String.format("%.1f", t.getX()) +
+					" y=" + String.format("%.1f", t.getY()) +
+					" radio=" + String.format("%.1f", t.getRadius()) +
+					" daño=" + String.format("%.1f", t.getDamage()));
 		}
 	}
 
