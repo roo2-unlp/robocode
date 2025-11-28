@@ -59,6 +59,8 @@ public class NewBattleRulesTab extends JPanel {
 	private JTextField inactivityTimeTextField;
 	private JTextField sentryBorderSizeTextField;
 	private final JCheckBox hideEnemyNamesCheckBox = new JCheckBox();
+	private JCheckBox infiniteMapCheckBox;
+
 
 	private JSlider battlefieldWidthSlider;
 	private JSlider battlefieldHeightSlider;
@@ -117,6 +119,11 @@ public class NewBattleRulesTab extends JPanel {
 
 		JPanel buttonsPanel = createPredefinedSizesPanel();
 		panel.add(buttonsPanel, BorderLayout.EAST);
+		
+		infiniteMapCheckBox = new JCheckBox("Habilitar modo de mapa infinito");
+		infiniteMapCheckBox.setToolTipText("Si esta habilitado, el campo de batalla no tiene bordes");
+		infiniteMapCheckBox.setSelected(false);
+		panel.add(infiniteMapCheckBox, BorderLayout.NORTH);
 
 		return panel;
 	}
@@ -422,6 +429,22 @@ public class NewBattleRulesTab extends JPanel {
 			settingsManager.setBattleDefaultHideEnemyNames(hideEnemyNames);
 			battleProperties.setHideEnemyNames(hideEnemyNames);
 
+			
+			boolean infinite = infiniteMapCheckBox.isSelected();
+			try {
+			    java.lang.reflect.Method mSettings = settingsManager.getClass().getMethod("setBoolean", String.class, boolean.class);
+    			mSettings.invoke(settingsManager, "infiniteMap", infinite);
+			} catch (Exception e) {
+				//no hace nada
+			}
+			try {
+    			java.lang.reflect.Method mProp = battleProperties.getClass().getMethod("setBoolean", String.class, boolean.class);
+    			mProp.invoke(battleProperties, "infiniteMap", infinite);
+			} catch (Exception e) {
+    			//no hace nada
+			}
+
+
 			int weight = battlefieldWidthSlider.getValue();
 			int height = battlefieldHeightSlider.getValue();
 
@@ -473,6 +496,15 @@ public class NewBattleRulesTab extends JPanel {
 			getInactivityTimeTextField().setText("" + battleProperties.getInactivityTime());
 			getSentryBorderSizeTextField().setText("" + battleProperties.getSentryBorderSize());
 			hideEnemyNamesCheckBox.setSelected(battleProperties.getHideEnemyNames());
+
+			try {
+    			java.lang.reflect.Method m = battleProperties.getClass().getMethod("getBoolean", String.class, boolean.class);
+   				boolean infinite = (Boolean) m.invoke(battleProperties, "infiniteMap", false);
+    			infiniteMapCheckBox.setSelected(infinite);
+			} catch (Exception e) {
+    		infiniteMapCheckBox.setSelected(false);
+			}
+
 		}
 	}
 
