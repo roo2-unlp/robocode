@@ -103,9 +103,6 @@ public final class Battle extends BaseBattle {
 		robotsCount = battlingRobotsList.length;
 		computeInitialPositions(battleProps.getInitialPositions());
 		createPeers(battlingRobotsList);
-		//trampas
-		//traps.clear();
-		generateTraps();
 	}
 
 	private void createPeers(RobotSpecification[] battlingRobotsList) {
@@ -345,6 +342,11 @@ public final class Battle extends BaseBattle {
 
 		for (RobotPeer robotPeer : getRobotsAtRandom()) {
 			robotPeer.startRound(waitMillis, waitNanos);
+		}
+
+		// solo generar las trampas en las partidas reales para evitar romper los test deterministicos ya implementadosw
+		if (getRoundNum() == 0 && !RobocodeProperties.isTestingOn()) {
+			generateTraps();
 		}
 
 		List<IBasicRobot> robotObjects = null;
@@ -760,7 +762,6 @@ public final class Battle extends BaseBattle {
 			initialRobotSetups[i] = new RobotSetup(x, y, heading);
 		}
 	}
-
 	//para que ande el random de la trampa
 	private double randomDouble(Random random, double min, double max) {
 		return min + random.nextDouble() * (max - min);
