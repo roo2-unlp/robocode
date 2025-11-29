@@ -51,6 +51,11 @@ public class NewBattleRulesTab extends JPanel {
 	private final JLabel inactivityTimeLabel = new JLabel("Inactivity Time:");
 	private final JLabel sentryBorderSizeLabel = new JLabel("Sentry Border Size");
 	private final JLabel hideEnemyNamesLabel = new JLabel("Hide Enemy Names:");
+	//TRAMPAS
+	private final JLabel trapsEnabledLabel = new JLabel("Activar trampas:");
+	private final JLabel trapCountLabel = new JLabel("Cantidad trampas:");
+	private final JLabel trapRadiusLabel = new JLabel("Radio trampas:");
+	private final JLabel trapDamageLabel = new JLabel("Danio trampas:");
 
 	private final JButton restoreDefaultsButton = new JButton("Restore Defaults");
 	
@@ -58,7 +63,11 @@ public class NewBattleRulesTab extends JPanel {
 	private JTextField gunCoolingRateTextField;
 	private JTextField inactivityTimeTextField;
 	private JTextField sentryBorderSizeTextField;
+	private JTextField trapCountTextField;
+	private JTextField trapRadiusTextField;
+	private JTextField trapDamageTextField;
 	private final JCheckBox hideEnemyNamesCheckBox = new JCheckBox();
+	private final JCheckBox trapsEnabledCheckBox = new JCheckBox();
 
 	private JSlider battlefieldWidthSlider;
 	private JSlider battlefieldHeightSlider;
@@ -189,6 +198,10 @@ public class NewBattleRulesTab extends JPanel {
 		left.addComponent(inactivityTimeLabel);
 		left.addComponent(sentryBorderSizeLabel);
 		left.addComponent(hideEnemyNamesLabel);
+		left.addComponent(trapsEnabledLabel);
+		left.addComponent(trapCountLabel);
+		left.addComponent(trapRadiusLabel);
+		left.addComponent(trapDamageLabel);
 		leftToRight.addGroup(left);
 		
 		GroupLayout.ParallelGroup right = layout.createParallelGroup();
@@ -197,6 +210,10 @@ public class NewBattleRulesTab extends JPanel {
 		right.addComponent(getInactivityTimeTextField());
 		right.addComponent(getSentryBorderSizeTextField());
 		right.addComponent(hideEnemyNamesCheckBox);
+		right.addComponent(trapsEnabledCheckBox);
+		right.addComponent(getTrapCountTextField());
+		right.addComponent(getTrapRadiusTextField());
+		right.addComponent(getTrapDamageTextField());
 		leftToRight.addGroup(right);
 		
 		GroupLayout.SequentialGroup topToBottom = layout.createSequentialGroup();
@@ -225,6 +242,26 @@ public class NewBattleRulesTab extends JPanel {
 		row4.addComponent(hideEnemyNamesLabel);
 		row4.addComponent(hideEnemyNamesCheckBox);
 		topToBottom.addGroup(row4);
+
+		GroupLayout.ParallelGroup row5 = layout.createParallelGroup(Alignment.CENTER);
+		row5.addComponent(trapsEnabledLabel);
+		row5.addComponent(trapsEnabledCheckBox);
+		topToBottom.addGroup(row5);
+
+		GroupLayout.ParallelGroup row6 = layout.createParallelGroup(Alignment.BASELINE);
+		row6.addComponent(trapCountLabel);
+		row6.addComponent(getTrapCountTextField());
+		topToBottom.addGroup(row6);
+
+		GroupLayout.ParallelGroup row7 = layout.createParallelGroup(Alignment.BASELINE);
+		row7.addComponent(trapRadiusLabel);
+		row7.addComponent(getTrapRadiusTextField());
+		topToBottom.addGroup(row7);
+
+		GroupLayout.ParallelGroup row8 = layout.createParallelGroup(Alignment.BASELINE);
+		row8.addComponent(trapDamageLabel);
+		row8.addComponent(getTrapDamageTextField());
+		topToBottom.addGroup(row8);
 
 		layout.setHorizontalGroup(leftToRight);
 		layout.setVerticalGroup(topToBottom);
@@ -340,6 +377,87 @@ public class NewBattleRulesTab extends JPanel {
 		}
 		return sentryBorderSizeTextField;
 	}
+	
+	private JTextField getTrapCountTextField() {
+		if (trapCountTextField == null) {
+			trapCountTextField = new JTextField(5);
+			trapCountTextField.setText("" + battleProperties.getTrapCount());
+			trapCountTextField.setInputVerifier(
+					new InputVerifier() {
+				@Override
+				public boolean verify(JComponent input) {
+					boolean isValid = false;
+
+					String text = ((JTextField) input).getText();
+					if (text != null && text.matches("\\d+")) {
+						int trapCount = Integer.parseInt(text);
+						isValid = (trapCount >= 1 && trapCount <= 20);
+					}
+					if (!isValid) {
+						WindowUtil.messageError(
+								"CANTIDAD DE TRAMPAS TIENE QUE ESTAR ENTRE 1 Y 20");
+						trapCountTextField.setText("" + battleProperties.getTrapCount());
+					}
+					return isValid;
+				}
+			});
+		}
+		return trapCountTextField;
+	}
+
+	private JTextField getTrapRadiusTextField() {
+		if (trapRadiusTextField == null) {
+			trapRadiusTextField = new JTextField(5);
+			trapRadiusTextField.setText("" + battleProperties.getTrapRadius());
+			trapRadiusTextField.setInputVerifier(
+					new InputVerifier() {
+				@Override
+				public boolean verify(JComponent input) {
+					boolean isValid = false;
+
+					String text = ((JTextField) input).getText();
+					if (text != null && text.matches("\\d*(\\.\\d+)?")) {
+						double radius = Double.parseDouble(text);
+						isValid = (radius >= 10.0 && radius <= 100.0);
+					}
+					if (!isValid) {
+						WindowUtil.messageError(
+								"RADIO TIENE QUE ESTAR ENTRE 10 Y 100");
+						trapRadiusTextField.setText("" + battleProperties.getTrapRadius());
+					}
+					return isValid;
+				}
+			});
+		}
+		return trapRadiusTextField;
+	}
+
+	private JTextField getTrapDamageTextField() {
+		if (trapDamageTextField == null) {
+			trapDamageTextField = new JTextField(5);
+			trapDamageTextField.setText("" + battleProperties.getTrapDamage());
+			trapDamageTextField.setInputVerifier(
+					new InputVerifier() {
+				@Override
+				public boolean verify(JComponent input) {
+					boolean isValid = false;
+
+					String text = ((JTextField) input).getText();
+					if (text != null && text.matches("\\d*(\\.\\d+)?")) {
+						double damage = Double.parseDouble(text);
+						isValid = (damage >= 1.0 && damage <= 20.0);
+					}
+					if (!isValid) {
+						WindowUtil.messageError(
+								"DANO TIENE QUE ESTAR ENTRE 1 Y 20");
+						trapDamageTextField.setText("" + battleProperties.getTrapDamage());
+					}
+					return isValid;
+				}
+			});
+		}
+		return trapDamageTextField;
+	}
 
 	private JSlider createBattlefieldSizeSlider() {
 		JSlider slider = new JSlider();
@@ -422,6 +540,43 @@ public class NewBattleRulesTab extends JPanel {
 			settingsManager.setBattleDefaultHideEnemyNames(hideEnemyNames);
 			battleProperties.setHideEnemyNames(hideEnemyNames);
 
+			boolean trapsEnabled = trapsEnabledCheckBox.isSelected();
+			settingsManager.setBattleDefaultTrapsEnabled(trapsEnabled);
+			battleProperties.setTrapsEnabled(trapsEnabled);
+
+			Integer trapCount;
+			try {
+				trapCount = Integer.parseInt(getTrapCountTextField().getText());
+			} catch (NumberFormatException e) {
+				trapCount = null;
+			}
+			if (trapCount != null) {
+				settingsManager.setBattleDefaultTrapCount(trapCount);
+				battleProperties.setTrapCount(trapCount);
+			}
+
+			Double trapRadius;
+			try {
+				trapRadius = Double.parseDouble(getTrapRadiusTextField().getText());
+			} catch (NumberFormatException e) {
+				trapRadius = null;
+			}
+			if (trapRadius != null) {
+				settingsManager.setBattleDefaultTrapRadius(trapRadius);
+				battleProperties.setTrapRadius(trapRadius);
+			}
+
+			Double trapDamage;
+			try {
+				trapDamage = Double.parseDouble(getTrapDamageTextField().getText());
+			} catch (NumberFormatException e) {
+				trapDamage = null;
+			}
+			if (trapDamage != null) {
+				settingsManager.setBattleDefaultTrapDamage(trapDamage);
+				battleProperties.setTrapDamage(trapDamage);
+			}
+
 			int weight = battlefieldWidthSlider.getValue();
 			int height = battlefieldHeightSlider.getValue();
 
@@ -451,6 +606,9 @@ public class NewBattleRulesTab extends JPanel {
 				battleProperties.setInactivityTime(450);
 				battleProperties.setHideEnemyNames(false);
 				battleProperties.setSentryBorderSize(100);
+				battleProperties.setTrapsEnabled(false);
+				battleProperties.setTrapRadius(30.0);
+				battleProperties.setTrapDamage(5.0);
 
 				pushBattlePropertiesToUIComponents();
 			}
@@ -473,6 +631,10 @@ public class NewBattleRulesTab extends JPanel {
 			getInactivityTimeTextField().setText("" + battleProperties.getInactivityTime());
 			getSentryBorderSizeTextField().setText("" + battleProperties.getSentryBorderSize());
 			hideEnemyNamesCheckBox.setSelected(battleProperties.getHideEnemyNames());
+			trapsEnabledCheckBox.setSelected(battleProperties.getTrapsEnabled());
+			getTrapCountTextField().setText("" + battleProperties.getTrapCount());
+			getTrapRadiusTextField().setText("" + battleProperties.getTrapRadius());
+			getTrapDamageTextField().setText("" + battleProperties.getTrapDamage());
 		}
 	}
 

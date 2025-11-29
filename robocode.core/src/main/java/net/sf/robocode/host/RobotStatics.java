@@ -251,6 +251,10 @@ public final class RobotStatics implements IRobotStatics, Serializable {
 			serializer.serialize(buffer, obj.battleRules.getInactivityTime());
 			serializer.serialize(buffer, obj.battleRules.getHideEnemyNames());
 			serializer.serialize(buffer, obj.battleRules.getSentryBorderSize());
+			serializer.serialize(buffer, obj.battleRules.getTrapsEnabled());
+			serializer.serialize(buffer, obj.battleRules.getTrapCount());
+			serializer.serialize(buffer, obj.battleRules.getTrapRadius());
+			serializer.serialize(buffer, obj.battleRules.getTrapDamage());
 			if (obj.teammates != null) {
 				for (String mate : obj.teammates) {
 					serializer.serialize(buffer, mate);
@@ -285,7 +289,11 @@ public final class RobotStatics implements IRobotStatics, Serializable {
 					serializer.deserializeDouble(buffer), // gunCoolingRate
 					serializer.deserializeLong(buffer), // inactivityTime
 					serializer.deserializeBoolean(buffer), // hideEnemyNames
-					serializer.deserializeInt(buffer)); // sentryBorderSize
+					serializer.deserializeInt(buffer), // sentryBorderSize
+					serializer.deserializeBoolean(buffer), // trapsEnabled
+					serializer.deserializeInt(buffer), // trapCount
+					serializer.deserializeDouble(buffer), // trapRadius
+					serializer.deserializeDouble(buffer)); // trapDamage
 
 			List<String> teammates = new ArrayList<String>();
 			Object item = serializer.deserializeString(buffer);

@@ -231,6 +231,23 @@ public interface ISettingsManager {
 	int getBattleDefaultNumberOfRounds();
 
 	void setBattleDefaultNumberOfRounds(int numberOfRounds);
+	//TRAMPAS
+
+	boolean getBattleDefaultTrapsEnabled();
+
+	void setBattleDefaultTrapsEnabled(boolean trapsEnabled);
+
+	int getBattleDefaultTrapCount();
+
+	void setBattleDefaultTrapCount(int trapCount);
+
+	double getBattleDefaultTrapRadius();
+
+	void setBattleDefaultTrapRadius(double trapRadius);
+
+	double getBattleDefaultTrapDamage();
+
+	void setBattleDefaultTrapDamage(double trapDamage);
 
 	void store(FileOutputStream out, String desc) throws IOException;
 
@@ -313,5 +330,10 @@ public interface ISettingsManager {
 			BATTLE_DEFAULT_GUN_COOLING_RATE = "robocode.battle.default.gunCoolingRate",
 			BATTLE_DEFAULT_INACTIVITY_TIME = "robocode.battle.default.inactivityTime",
 			BATTLE_DEFAULT_SENTRY_BORDER_SIZE = "robocode.battle.default.sentryBorderSize",
-			BATTLE_DEFAULT_HIDE_ENEMY_NAMES = "robocode.battle.default.hideEnemyNames";
+			//SETTINGS TRAMPAS
+			BATTLE_DEFAULT_HIDE_ENEMY_NAMES = "robocode.battle.default.hideEnemyNames",
+			BATTLE_DEFAULT_TRAPS_ENABLED = "robocode.battle.default.trapsEnabled",
+			BATTLE_DEFAULT_TRAP_COUNT = "robocode.battle.default.trapCount",
+			BATTLE_DEFAULT_TRAP_RADIUS = "robocode.battle.default.trapRadius",
+			BATTLE_DEFAULT_TRAP_DAMAGE = "robocode.battle.default.trapDamage";
 }

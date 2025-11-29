@@ -97,9 +97,11 @@ public final class Battle extends BaseBattle {
 
 	void setup(RobotSpecification[] battlingRobotsList, BattleProperties battleProps, boolean paused) {
 		isPaused = paused;
+		//agregue los parametros de trampas
 		battleRules = HiddenAccess.createRules(battleProps.getBattlefieldWidth(), battleProps.getBattlefieldHeight(),
 				battleProps.getNumRounds(), battleProps.getGunCoolingRate(), battleProps.getInactivityTime(),
-				battleProps.getHideEnemyNames(), battleProps.getSentryBorderSize());
+				battleProps.getHideEnemyNames(), battleProps.getSentryBorderSize(), battleProps.getTrapsEnabled(),
+				battleProps.getTrapCount(), battleProps.getTrapRadius(), battleProps.getTrapDamage());
 		robotsCount = battlingRobotsList.length;
 		computeInitialPositions(battleProps.getInitialPositions());
 		createPeers(battlingRobotsList);
@@ -345,7 +347,7 @@ public final class Battle extends BaseBattle {
 		}
 
 		// solo generar las trampas en las partidas reales para evitar romper los test deterministicos ya implementadosw
-		if (getRoundNum() == 0 && !RobocodeProperties.isTestingOn()) {
+		if (getRoundNum() == 0 && !RobocodeProperties.isTestingOn() && battleRules.getTrapsEnabled()) {
 			generateTraps();
 		}
 
@@ -774,14 +776,18 @@ public final class Battle extends BaseBattle {
 	//trampas
 	private void generateTraps() {
 		Random random = RandomFactory.getRandom();
-
-		int count = randomInt(random, 3, 9); // 3 a 8 trampas
-
+		
 		TrapRepository.clear();
 
+		// usa los valores de la ui
+		int count = battleRules.getTrapCount();
+		double configuredRadius = battleRules.getTrapRadius();
+		double configuredDamage = battleRules.getTrapDamage();
+
 		for (int i = 0; i < count; i++) {
-			double radius = randomDouble(random, 20, 40); // 20 a 40
-			double damage = randomDouble(random, 1, 8);  // 1 a 8
+
+			double radius = configuredRadius;
+			double damage = configuredDamage;
 
 			double x = randomDouble(random, RobotPeer.WIDTH,
 					battleRules.getBattlefieldWidth() - RobotPeer.WIDTH);

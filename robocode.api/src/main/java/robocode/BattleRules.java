@@ -35,6 +35,10 @@ public final class BattleRules implements java.io.Serializable {
 	private final long inactivityTime;
 	private final boolean hideEnemyNames;
 	private final int sentryBorderSize;
+	private final boolean trapsEnabled;
+	private final int trapCount;
+	private final double trapRadius;
+	private final double trapDamage;
 
 	/**
 	 * Returns the battlefield width.
@@ -122,9 +126,27 @@ public final class BattleRules implements java.io.Serializable {
 	public int getSentryBorderSize() {
 		return sentryBorderSize;
 	}
+
+	//TRAMPAS
+	public boolean getTrapsEnabled() {
+		return trapsEnabled;
+	}
+
+	public int getTrapCount() {
+		return trapCount;
+	}
+
+	public double getTrapRadius() {
+		return trapRadius;
+	}
+
+	public double getTrapDamage() {
+		return trapDamage;
+	}
 	
 	private BattleRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate,
-			long inactivityTime, boolean hideEnemyNames, int sentryBorderSize) {
+			long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean trapsEnabled, 
+			int trapCount, double trapRadius, double trapDamage) {
 		this.battlefieldWidth = battlefieldWidth;
 		this.battlefieldHeight = battlefieldHeight;
 		this.numRounds = numRounds;
@@ -132,6 +154,10 @@ public final class BattleRules implements java.io.Serializable {
 		this.inactivityTime = inactivityTime;
 		this.hideEnemyNames = hideEnemyNames;
 		this.sentryBorderSize = sentryBorderSize;
+		this.trapsEnabled = trapsEnabled;
+		this.trapCount = trapCount;
+		this.trapRadius = trapRadius;
+		this.trapDamage = trapDamage;
 	}
 
 	static IHiddenRulesHelper createHiddenHelper() {
@@ -140,9 +166,9 @@ public final class BattleRules implements java.io.Serializable {
 
 	private static class HiddenHelper implements IHiddenRulesHelper {
 
-		public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize) {
+		public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean trapsEnabled, int trapCount, double trapRadius, double trapDamage) {
 			return new BattleRules(battlefieldWidth, battlefieldHeight, numRounds, gunCoolingRate, inactivityTime,
-					hideEnemyNames, sentryBorderSize);
+					hideEnemyNames, sentryBorderSize, trapsEnabled, trapCount, trapRadius, trapDamage);
 		}
 	}
 }

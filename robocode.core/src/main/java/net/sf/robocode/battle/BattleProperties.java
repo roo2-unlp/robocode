@@ -38,7 +38,12 @@ public class BattleProperties implements Serializable {
 			BATTLE_HIDE_ENEMY_NAMES = "robocode.battle.hideEnemyNames",
 			BATTLE_SELECTEDROBOTS = "robocode.battle.selectedRobots",
 			BATTLE_INITIAL_POSITIONS = "robocode.battle.initialPositions",
-			BATTLE_SENTRY_BORDER_SIZE = "robocode.battle.sentryBorderSize";
+			BATTLE_SENTRY_BORDER_SIZE = "robocode.battle.sentryBorderSize",
+			//propiedades trampas batalla
+			BATTLE_TRAPS_ENABLED = "robocode.battle.trapsEnabled",
+			BATTLE_TRAP_COUNT = "robocode.battle.trapCount",
+			BATTLE_TRAP_RADIUS = "robocode.battle.trapRadius",
+			BATTLE_TRAP_DAMAGE = "robocode.battle.trapDamage";
 
 	private int battlefieldWidth = 800;
 	private int battlefieldHeight = 600;
@@ -47,6 +52,11 @@ public class BattleProperties implements Serializable {
 	private long inactivityTime = 450;
 	private boolean hideEnemyNames = false;
 	private int sentryBorderSize = 100;
+	//opciones trampas
+	private boolean trapsEnabled = false;
+	private int trapCount = 5;
+	private double trapRadius = 30.0;
+	private double trapDamage = 5.0;
 	private String selectedRobots;
 	private String initialPositions;
 
@@ -63,6 +73,10 @@ public class BattleProperties implements Serializable {
 		inactivityTime = properties.getBattleDefaultInactivityTime();
 		hideEnemyNames = properties.getBattleDefaultHideEnemyNames();
 		sentryBorderSize = properties.getBattleDefaultSentryBorderSize();
+		trapsEnabled = properties.getBattleDefaultTrapsEnabled();
+		trapCount = properties.getBattleDefaultTrapCount();
+		trapRadius = properties.getBattleDefaultTrapRadius();
+		trapDamage = properties.getBattleDefaultTrapDamage();
 	}
 
 	/**
@@ -328,6 +342,45 @@ public class BattleProperties implements Serializable {
 		props.setProperty(BATTLE_SENTRY_BORDER_SIZE, "" + sentryBorderSize);
 	}
 
+
+
+	//TRAMPAS
+	public boolean getTrapsEnabled() {
+		return trapsEnabled;
+	}
+
+	public void setTrapsEnabled(boolean trapsEnabled) {
+		this.trapsEnabled = trapsEnabled;
+		props.setProperty(BATTLE_TRAPS_ENABLED, "" + trapsEnabled);
+	}
+
+	public double getTrapRadius() {
+		return trapRadius;
+	}
+
+	public void setTrapRadius(double trapRadius) {
+		this.trapRadius = trapRadius;
+		props.setProperty(BATTLE_TRAP_RADIUS, "" + trapRadius);
+	}
+
+	public double getTrapDamage() {
+		return trapDamage;
+	}
+
+	public void setTrapDamage(double trapDamage) {
+		this.trapDamage = trapDamage;
+		props.setProperty(BATTLE_TRAP_DAMAGE, "" + trapDamage);
+	}
+
+	public int getTrapCount() {
+		return trapCount;
+	}
+
+	public void setTrapCount(int trapCount) {
+		this.trapCount = trapCount;
+		props.setProperty(BATTLE_TRAP_COUNT, "" + trapCount);
+	}
+
 	public void store(FileOutputStream out, String desc) throws IOException {
 		props.store(out, desc);
 	}
@@ -343,5 +396,9 @@ public class BattleProperties implements Serializable {
 		selectedRobots = props.getProperty(BATTLE_SELECTEDROBOTS, "");
 		initialPositions = props.getProperty(BATTLE_INITIAL_POSITIONS, "");
 		sentryBorderSize = Integer.parseInt(props.getProperty(BATTLE_SENTRY_BORDER_SIZE, "100"));
+		trapsEnabled = Boolean.parseBoolean(props.getProperty(BATTLE_TRAPS_ENABLED, "false"));
+		trapCount = Integer.parseInt(props.getProperty(BATTLE_TRAP_COUNT, "5"));
+		trapRadius = Double.parseDouble(props.getProperty(BATTLE_TRAP_RADIUS, "30.0"));
+		trapDamage = Double.parseDouble(props.getProperty(BATTLE_TRAP_DAMAGE, "5.0"));
 	}
 }
