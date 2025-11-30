@@ -142,6 +142,9 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 	private final BoundingRectangle boundingBox;
 	private final RbSerializer rbSerializer;
 
+	//Remaining turns to skip
+	private int skipTurns;
+
 	public RobotPeer(Battle battle, IHostManager hostManager, RobotSpecification robotSpecification, String name, String suffix, TeamPeer team, int robotIndex) {
 		super();
 
@@ -889,6 +892,12 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 
 		// Reset robot state to active if it is not dead
 		if (isDead()) {
+			return;
+		}
+
+ 		// No execute commands this turn
+		if (skipTurns > 0) {
+			skipTurns--;
 			return;
 		}
 
@@ -1772,5 +1781,10 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 				+ " ~" + Utils.angleToApproximateDirection(bodyHeading)
 				+ " " + state.toString()
 				+ (isSleeping() ? " sleeping " : "") + (isRunning() ? " running" : "") + (isHalt() ? " halted" : "");
+	}
+
+	public void skipNextTurns(int turns) {
+		skipTurns += turns;
+		System.out.println(statics.getShortName() + " stunned!");
 	}
 }
