@@ -100,6 +100,7 @@ public class BattleManager implements IBattleManager {
 		battleProperties.setHideEnemyNames(spec.getHideEnemyNames());
 		battleProperties.setSentryBorderSize(spec.getSentryBorderSize());
 		battleProperties.setSelectedRobots(spec.getRobots());
+		// FALTA IMPLEMENTAR EL RANDOM DAMAGE A ESTE METODO QUE ES LLAMADO POR EL TEST
 
 		final RobotSetup[] initialSetups = spec.getInitialSetups();
 		if (initialSetups != null) {
