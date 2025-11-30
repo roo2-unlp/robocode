@@ -102,8 +102,9 @@ public final class Battle extends BaseBattle {
 				battleProps.getHideEnemyNames(), battleProps.getSentryBorderSize(), battleProps.getRandomDamage());
 		robotsCount = battlingRobotsList.length;
 		computeInitialPositions(battleProps.getInitialPositions());
-		createPeers(battlingRobotsList);
 		instanciarTipoDaño();// [NUEVO] se instancia el tipo de daño
+		createPeers(battlingRobotsList);
+		
 	}
 
 	private void instanciarTipoDaño(){
