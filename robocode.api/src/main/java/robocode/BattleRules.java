@@ -34,6 +34,7 @@ public final class BattleRules implements java.io.Serializable {
 	private final double gunCoolingRate;
 	private final long inactivityTime;
 	private final boolean hideEnemyNames;
+	private final boolean stunningBullets;
 	private final int sentryBorderSize;
 
 	/**
@@ -108,6 +109,14 @@ public final class BattleRules implements java.io.Serializable {
 	}
 
 	/**
+	 * Returns true if stunning bullets are used during a battle; false otherwise.
+	 *
+	 */
+	public boolean getStunningBullets() {
+		return stunningBullets;
+	}
+
+	/**
 	 * Returns the sentry border size for a {@link robocode.BorderSentry BorderSentry} that defines the how
 	 * far a BorderSentry is allowed to move from the border edges measured in units.<br>
 	 * Hence, the sentry border size defines the width/range of the border area surrounding the battlefield that
@@ -124,13 +133,14 @@ public final class BattleRules implements java.io.Serializable {
 	}
 	
 	private BattleRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate,
-			long inactivityTime, boolean hideEnemyNames, int sentryBorderSize) {
+			long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean stunningBullets) {
 		this.battlefieldWidth = battlefieldWidth;
 		this.battlefieldHeight = battlefieldHeight;
 		this.numRounds = numRounds;
 		this.gunCoolingRate = gunCoolingRate;
 		this.inactivityTime = inactivityTime;
 		this.hideEnemyNames = hideEnemyNames;
+		this.stunningBullets = stunningBullets;
 		this.sentryBorderSize = sentryBorderSize;
 	}
 
@@ -140,9 +150,9 @@ public final class BattleRules implements java.io.Serializable {
 
 	private static class HiddenHelper implements IHiddenRulesHelper {
 
-		public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize) {
+		public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean stunningBullets) {
 			return new BattleRules(battlefieldWidth, battlefieldHeight, numRounds, gunCoolingRate, inactivityTime,
-					hideEnemyNames, sentryBorderSize);
+					hideEnemyNames, sentryBorderSize, stunningBullets);
 		}
 	}
 }
