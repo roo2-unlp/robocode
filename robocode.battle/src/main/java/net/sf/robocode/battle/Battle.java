@@ -87,7 +87,7 @@ public final class Battle extends BaseBattle {
 	// Initial robot setups (if any)
 	private RobotSetup[] initialRobotSetups;
 
-	private IDamageModel damageModel;//nueva, es la estrategia de daño
+	private IDamageModel damageModel;//nueva, es el tipo de daño
 
 	public Battle(ISettingsManager properties, IBattleManager battleManager, IHostManager hostManager, ICpuManager cpuManager, BattleEventDispatcher eventDispatcher) { // NO_UCD (unused code)
 		super(properties, battleManager, eventDispatcher);
@@ -115,9 +115,8 @@ public final class Battle extends BaseBattle {
 		String[] robotNames = new String[battlingRobotsList.length];
 		Map<String, TeamPeer> teamPeers = new HashMap<String, TeamPeer>();
 
-		// -----------------------------------------------------------------------
+		
         // [NUEVO] SELECCIÓN DE MODELO DE DAÑO
-        // -----------------------------------------------------------------------
         // seleccion de reglas para esta batalla.
         // se asume que el objeto 'battleRules' ya trae la bandera desde la UI.
         if (battleRules.getRandomDamage()) { 
@@ -184,11 +183,7 @@ public final class Battle extends BaseBattle {
 				}
 			}
 
-			// -----------------------------------------------------------------------
-            // [MODIFICADO] el Constructor
-            // -----------------------------------------------------------------------
-            // Pasamos 'damageModelStrategy' al nuevo constructor sobrecargado de RobotPeer
-            RobotPeer robotPeer = new RobotPeer(this, hostManager, specification, 
+			RobotPeer robotPeer = new RobotPeer(this, hostManager, specification, 
                                                 robotNames[robotIndex], robotSuffixes[robotIndex], 
                                                 team, robotIndex);
 			robots.add(robotPeer);
