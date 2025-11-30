@@ -103,20 +103,11 @@ public final class Battle extends BaseBattle {
 		robotsCount = battlingRobotsList.length;
 		computeInitialPositions(battleProps.getInitialPositions());
 		createPeers(battlingRobotsList);
+		instanciarTipoDaño();// [NUEVO] se instancia el tipo de daño
 	}
 
-	private void createPeers(RobotSpecification[] battlingRobotsList) {
-
-		List<String> teamNames = new ArrayList<String>();
-		Map<String, List<String>> teamMembers = new HashMap<String, List<String>>();
-		Map<String /* name */, Integer /* count */> robotNameCount = new HashMap<String, Integer>();
-		int[] robotSuffixNumbers = new int[battlingRobotsList.length];
-		String[] robotSuffixes = new String[battlingRobotsList.length];
-		String[] robotNames = new String[battlingRobotsList.length];
-		Map<String, TeamPeer> teamPeers = new HashMap<String, TeamPeer>();
-
-		
-        // [NUEVO] SELECCIÓN DE MODELO DE DAÑO
+	private void instanciarTipoDaño(){
+		// [NUEVO] SELECCIÓN DE MODELO DE DAÑO
         // seleccion de reglas para esta batalla.
         // se asume que el objeto 'battleRules' ya trae la bandera desde la UI.
         if (battleRules.getRandomDamage()) { 
@@ -129,6 +120,16 @@ public final class Battle extends BaseBattle {
             damageModel = new StandardDamageModel();
         }
         // -------------------------------------------------------------------
+	}
+	private void createPeers(RobotSpecification[] battlingRobotsList) {
+
+		List<String> teamNames = new ArrayList<String>();
+		Map<String, List<String>> teamMembers = new HashMap<String, List<String>>();
+		Map<String /* name */, Integer /* count */> robotNameCount = new HashMap<String, Integer>();
+		int[] robotSuffixNumbers = new int[battlingRobotsList.length];
+		String[] robotSuffixes = new String[battlingRobotsList.length];
+		String[] robotNames = new String[battlingRobotsList.length];
+		Map<String, TeamPeer> teamPeers = new HashMap<String, TeamPeer>(); 
 
 
 		// Populate raw names and suffix numbers (to be included when name duplicates exist)
