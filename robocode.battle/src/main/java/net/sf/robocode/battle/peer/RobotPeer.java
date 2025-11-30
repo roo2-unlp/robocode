@@ -146,10 +146,9 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 
 	private final IDamageModel damageModel; // Nueva!!!!!!!!!!
 
-	// -----------------------------------------------------------------------
     // [NUEVO] Constructor principal (Con inyección de dependencia)
-    // Este contiene toda la lógica de inicialización y recibe la estrategia.
-    // -----------------------------------------------------------------------
+    // Este contiene toda la lógica de inicialización y recibe el tipo de daño.
+   
     public RobotPeer(Battle battle, IHostManager hostManager, RobotSpecification robotSpecification, 
                      String name, String suffix, TeamPeer team, int robotIndex) {
         super();
@@ -157,7 +156,7 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
         this.battle = battle;
         this.robotSpecification = robotSpecification;
         
-        this.damageModel = battle.getDamageModel();// se asigna la estrategia recibida
+        this.damageModel = battle.getDamageModel();// se asigna el daño recibido
 
         this.rbSerializer = new RbSerializer();
         this.boundingBox = new BoundingRectangle();
