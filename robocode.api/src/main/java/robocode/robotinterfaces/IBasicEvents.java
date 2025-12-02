@@ -48,6 +48,12 @@ public interface IBasicEvents {
 	void onStatus(StatusEvent event);
 
 	/**
+	 * Este método se llama cuando el robot pisa una trampa.
+	 * @param event el evento HitTrapEvent que contiene la información de la trampa.
+	 */
+	void onHitTrap(HitTrapEvent event);
+
+	/**
 	 * This method is called when one of your bullets hits another robot.
 	 * You should override it in your robot if you want to be informed of this
 	 * event.

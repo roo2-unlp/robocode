@@ -75,6 +75,11 @@ public class AlienComposition implements IBasicRobot {
 
 		public void onStatus(StatusEvent e) {}
 
+		@Override
+		public void onHitTrap(HitTrapEvent event) {
+
+		}
+
 		public void onBulletHit(BulletHitEvent e) {}
 
 		public void onBulletHitBullet(BulletHitBulletEvent e) {}

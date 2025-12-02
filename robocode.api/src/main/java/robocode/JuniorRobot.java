@@ -883,6 +883,11 @@ public class JuniorRobot extends _RobotBase implements IJuniorRobot {
 			hitWallBearing = -1;		
 		}
 
+		@Override
+		public void onHitTrap(HitTrapEvent event) {
+
+		}
+
 		public void onWin(WinEvent event) {}
 
 		public void run() {

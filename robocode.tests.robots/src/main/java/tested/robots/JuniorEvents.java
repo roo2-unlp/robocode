@@ -65,6 +65,11 @@ public class JuniorEvents implements IJuniorRobot, IBasicEvents, Runnable {
 		g.drawOval((int) (peer.getX() - 55), (int) (peer.getY() - 55), 110, 110);
 	}
 
+	@Override
+	public void onHitTrap(HitTrapEvent event) {
+
+	}
+
 	public void onBulletHit(BulletHitEvent event) {
 		count(event);
 	}

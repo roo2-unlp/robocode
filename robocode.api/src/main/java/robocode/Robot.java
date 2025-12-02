@@ -690,6 +690,10 @@ public class Robot extends _Robot implements IInteractiveRobot, IPaintRobot, IBa
 	}
 
 	/**
+	 * Método de hook llamado por el framework cuando el robot pisa una trampa.
+	 */
+	public void onHitTrap(HitTrapEvent event) {}
+	/**
 	 * {@inheritDoc}
 	 */
 	public void onBulletHit(BulletHitEvent event) {}
