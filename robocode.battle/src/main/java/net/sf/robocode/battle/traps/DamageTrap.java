@@ -1,8 +1,8 @@
 package net.sf.robocode.battle.traps;
 
-import net.sf.robocode.battle.Battle;
 import net.sf.robocode.battle.peer.RobotPeer;
 import net.sf.robocode.io.Logger;
+import robocode.HitTrapEvent;
 import robocode.TrapEffectType;
 
 public class DamageTrap extends Trap{
@@ -28,6 +28,9 @@ public class DamageTrap extends Trap{
 
 		robot.resetTrapCooldown();
 
+		robot.addEvent(
+				new HitTrapEvent(this.getX(), this.getY(), this.getRadius(), TrapEffectType.DAMAGE)
+		);
 
 		Logger.logMessage("TRAMPA: " + robot.getName() + " pisó una trampa de DAÑO. Daño: " + this.damage);
 	}

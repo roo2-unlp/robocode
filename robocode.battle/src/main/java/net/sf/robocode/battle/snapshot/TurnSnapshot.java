@@ -40,6 +40,8 @@ public final class TurnSnapshot implements java.io.Serializable, IXmlSerializabl
 	/** List of snapshots for the bullets that are currently on the battlefield */
 	private List<IBulletSnapshot> bullets;
 
+	private List<ITrapSnapshot> traps;
+
 	/** Current TPS (turns per second) */
 	private int tps;
 
@@ -63,9 +65,10 @@ public final class TurnSnapshot implements java.io.Serializable, IXmlSerializabl
 	 * @param readoutText {@code true} if the output text from the robots must be included in the snapshot;
 	 *                    {@code false} otherwise.
 	 */
-	public TurnSnapshot(Battle battle, List<RobotPeer> battleRobots, List<BulletPeer> battleBullets, boolean readoutText) {
+	public TurnSnapshot(Battle battle, List<RobotPeer> battleRobots, List<BulletPeer> battleBullets, List<TrapSnapshot> battleTraps, boolean readoutText) {
 		robots = new ArrayList<IRobotSnapshot>();
 		bullets = new ArrayList<IBulletSnapshot>();
+		traps = new ArrayList<ITrapSnapshot>();
 
 		for (RobotPeer robotPeer : battleRobots) {
 			robots.add(new RobotSnapshot(robotPeer, readoutText));
@@ -73,6 +76,10 @@ public final class TurnSnapshot implements java.io.Serializable, IXmlSerializabl
 
 		for (BulletPeer bulletPeer : battleBullets) {
 			bullets.add(new BulletSnapshot(bulletPeer));
+		}
+
+		for (TrapSnapshot trap : battleTraps) {
+			traps.add(trap);
 		}
 
 		tps = battle.getTPS();
@@ -99,6 +106,9 @@ public final class TurnSnapshot implements java.io.Serializable, IXmlSerializabl
 		return bullets.toArray(new IBulletSnapshot[bullets.size()]);
 	}
 
+	public ITrapSnapshot[] getTraps() {
+		return traps.toArray(new ITrapSnapshot[traps.size()]);
+	}
 	/**
 	 * {@inheritDoc}
 	 */

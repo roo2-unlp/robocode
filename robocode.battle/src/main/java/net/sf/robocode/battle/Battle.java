@@ -13,6 +13,7 @@ import net.sf.robocode.battle.peer.BulletPeer;
 import net.sf.robocode.battle.peer.ContestantPeer;
 import net.sf.robocode.battle.peer.RobotPeer;
 import net.sf.robocode.battle.peer.TeamPeer;
+import net.sf.robocode.battle.snapshot.TrapSnapshot;
 import net.sf.robocode.battle.snapshot.TurnSnapshot;
 import net.sf.robocode.battle.traps.DamageTrap;
 import net.sf.robocode.host.ICpuManager;
@@ -353,10 +354,15 @@ public final class Battle extends BaseBattle {
 				robotObjects.add(robotPeer.getRobotObject());
 			}
 		}
+		// 1. Convertir la lista de Trap a TrapSnapshot
+		List<TrapSnapshot> trapSnapshots = new ArrayList<>(this.traps.size());
+		for (Trap trampa : this.traps) {
+			trapSnapshots.add(new TrapSnapshot(trampa));
+		}
 
 		Logger.logMessage(""); // puts in a new-line in the log message
 
-		final ITurnSnapshot snapshot = new TurnSnapshot(this, robots, bullets, false);
+		final ITurnSnapshot snapshot = new TurnSnapshot(this, robots, bullets, trapSnapshots, false);
 		eventDispatcher.onRoundStarted(new RoundStartedEvent(snapshot, getRoundNum(), robotObjects));
 	}
 
@@ -468,7 +474,12 @@ public final class Battle extends BaseBattle {
 
 	@Override
 	protected void finalizeTurn() {
-		eventDispatcher.onTurnEnded(new TurnEndedEvent(new TurnSnapshot(this, robots, bullets, true)));
+		// 1. Crear la lista de TrapSnapshots a partir de las trampas activas
+		List<TrapSnapshot> trapSnapshots = new ArrayList<>(this.traps.size());
+		for (Trap trampa : this.traps) {
+			trapSnapshots.add(new TrapSnapshot(trampa));
+		}
+		eventDispatcher.onTurnEnded(new TurnEndedEvent(new TurnSnapshot(this, robots, bullets,trapSnapshots, true)));
 
 		super.finalizeTurn();
 	}

@@ -12,10 +12,6 @@ import net.sf.robocode.battle.BoundingRectangle;
 
 import java.io.Serializable;
 
-//trampas
-import net.sf.robocode.battle.traps.Trap;
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  * @author Mathew A. Nelson (original)
@@ -26,8 +22,6 @@ public class BattleField implements Serializable {
 
 	private final BoundingRectangle boundingBox;
 
-	//trampas
-	//private final List<Trap> traps = new ArrayList<>();
 
 	public BattleField(int width, int height) {
 		super();
@@ -54,13 +48,5 @@ public class BattleField implements Serializable {
 		boundingBox.height = newHeight;
 	}
 
-	//trampas
-	//public List<Trap> getTraps() {
-	//	return traps;
-	//}
-
-	//public void addTrap(Trap trap) {
-	//	traps.add(trap);
-	//}
 
 }
