@@ -14,6 +14,7 @@ import net.sf.robocode.battle.peer.ContestantPeer;
 import net.sf.robocode.battle.peer.RobotPeer;
 import net.sf.robocode.battle.peer.TeamPeer;
 import net.sf.robocode.battle.snapshot.TurnSnapshot;
+import net.sf.robocode.battle.traps.DamageTrap;
 import net.sf.robocode.host.ICpuManager;
 import net.sf.robocode.host.IHostManager;
 import net.sf.robocode.io.Logger;
@@ -39,7 +40,6 @@ import java.util.regex.Pattern;
 
 //trampas
 import net.sf.robocode.battle.traps.Trap;
-import net.sf.robocode.battle.traps.TrapRepository;
 
 
 /**
@@ -77,7 +77,7 @@ public final class Battle extends BaseBattle {
 	private List<ContestantPeer> contestants = new ArrayList<ContestantPeer>();
 	private final List<BulletPeer> bullets = new CopyOnWriteArrayList<BulletPeer>();
 	//trampas
-	//private List<Trap> traps = new ArrayList<>();
+	private final List<Trap> traps = new ArrayList<>();
 
 	// Robot counters
 	private int activeParticipants;
@@ -248,11 +248,6 @@ public final class Battle extends BaseBattle {
 			System.gc();
 		}
 	}
-
-	//trampas
-	//public List<Trap> getTraps() {
-	//	return traps;
-	//}
 
 	@Override
 	protected void initializeBattle() {
@@ -564,6 +559,30 @@ public final class Battle extends BaseBattle {
 		for (RobotPeer robotPeer : getRobotsAtRandom()) {
 			robotPeer.performMove(getRobotsAtRandom(), zapEnergy);
 		}
+		for (RobotPeer robotPeer : getRobotsAtRandom()) {
+			robotPeer.decrementTrapCooldown();
+		}
+
+		// Detección de coliciones con trampas
+		// Obtener el tamaño del robot (asumiendo que RobotPeer.WIDTH es el tamaño)
+		final double ROBOT_HALF_SIZE = RobotPeer.WIDTH / 2.0;
+
+		for (RobotPeer robotPeer : getRobotsAtRandom()) {
+			if (robotPeer.isDead() || robotPeer.isInTrapCooldown()) {
+				continue; // No verificar si el robot ya está muerto
+			}
+
+			double rx = robotPeer.getX();
+			double ry = robotPeer.getY();
+
+			// Iterar sobre las trampas
+			for (Trap trampa : this.traps) {
+				if (trampa.intersects(rx, ry, ROBOT_HALF_SIZE)) {
+					trampa.applyEffect(robotPeer);
+					break;
+				}
+			}
+		}
 
 		// Correct bounding box after collisions
 		for (RobotPeer robotPeer : robots) {
@@ -769,15 +788,16 @@ public final class Battle extends BaseBattle {
 		return min + random.nextDouble() * (max - min);
 	}
 
-	private int randomInt(Random random, int min, int max) {
-		return min + random.nextInt(max - min);
-	}
-
 	//trampas
+	private ArrayList<Trap> getTraps() {
+		return (ArrayList<Trap>) traps;
+	}
+	private void addTrap(Trap trap) {
+		traps.add(trap);
+	}
 	private void generateTraps() {
 		Random random = RandomFactory.getRandom();
-		
-		TrapRepository.clear();
+
 
 		// usa los valores de la ui
 		int count = battleRules.getTrapCount();
@@ -794,15 +814,14 @@ public final class Battle extends BaseBattle {
 			double y = randomDouble(random, RobotPeer.HEIGHT,
 					battleRules.getBattlefieldHeight() - RobotPeer.HEIGHT);
 
-			TrapRepository.addTrap(new Trap(x, y, radius, damage));
+			addTrap(new DamageTrap(x, y, radius, damage));
 		}
 
-		System.out.println("=== TRAMPAS GENERADAS: " + TrapRepository.getTraps().size() + " ===");
-		for (Trap t : TrapRepository.getTraps()) {
+		System.out.println("=== TRAMPAS GENERADAS: " + this.getTraps().size() + " ===");
+		for (Trap t : this.getTraps()) {
 			System.out.println("TRAMPA -> x=" + String.format("%.1f", t.getX()) +
 					" y=" + String.format("%.1f", t.getY()) +
-					" radio=" + String.format("%.1f", t.getRadius()) +
-					" daño=" + String.format("%.1f", t.getDamage()));
+					" radio=" + String.format("%.1f", t.getRadius()));
 		}
 	}
 

@@ -41,8 +41,6 @@ import java.util.Random;
 import net.sf.robocode.battle.traps.Trap;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import net.sf.robocode.battle.traps.TrapRepository;
-
 
 
 /**
