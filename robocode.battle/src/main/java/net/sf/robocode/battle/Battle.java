@@ -362,7 +362,7 @@ public final class Battle extends BaseBattle {
 
 		Logger.logMessage(""); // puts in a new-line in the log message
 
-		final ITurnSnapshot snapshot = new TurnSnapshot(this, robots, bullets, trapSnapshots, false);
+		final ITurnSnapshot snapshot = new TurnSnapshot(this, robots, bullets, trapSnapshots, false, battleRules.getBattlefieldHeight());
 		eventDispatcher.onRoundStarted(new RoundStartedEvent(snapshot, getRoundNum(), robotObjects));
 	}
 
@@ -479,7 +479,7 @@ public final class Battle extends BaseBattle {
 		for (Trap trampa : this.traps) {
 			trapSnapshots.add(new TrapSnapshot(trampa));
 		}
-		eventDispatcher.onTurnEnded(new TurnEndedEvent(new TurnSnapshot(this, robots, bullets,trapSnapshots, true)));
+		eventDispatcher.onTurnEnded(new TurnEndedEvent(new TurnSnapshot(this, robots, bullets, trapSnapshots, true, battleRules.getBattlefieldHeight())));
 
 		super.finalizeTurn();
 	}

@@ -381,10 +381,15 @@ public class BattleView extends Canvas {
 	//trampas
 	private void drawTraps(Graphics2D g, ITurnSnapshot snapshot) {
 
+		double battlefieldHeight = snapshot.getBattlefieldHeight();
+
 		for (ITrapSnapshot trap : snapshot.getTraps()) {
 
+			double invertedY = battlefieldHeight - trap.getY();
+
 			int x = (int) (trap.getX() - trap.getRadius());
-			int y = (int) (trap.getY() - trap.getRadius());
+			int y = (int) (invertedY - trap.getRadius());
+
 			int size = (int) (trap.getRadius() * 2);
 
 			g.setColor(Color.GREEN);

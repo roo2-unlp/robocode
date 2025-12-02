@@ -26,18 +26,29 @@ public final class TrapSnapshot implements Serializable, ITrapSnapshot {
 		this.trapEffect = trap.getTrapEffect();
 	}
 
+	public TrapSnapshot(double x, double y, double radius, TrapEffectType trapEffect) {
+		this.x = x;
+		this.y = y;
+		this.radius = radius;
+		this.trapEffect = trapEffect;
+	}
+
+	@Override
 	public double getX() {
 		return x;
 	}
 
+	@Override
 	public double getY() {
 		return y;
 	}
 
+	@Override
 	public double getRadius() {
 		return radius;
 	}
 
+	@Override
 	public TrapEffectType getTrapEffect() {
 		return trapEffect;
 	}

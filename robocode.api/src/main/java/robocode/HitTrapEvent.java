@@ -89,7 +89,10 @@ public final class HitTrapEvent extends Event {
 
 		// El tamaño del evento es la suma del tamaño de tres doubles.
 		public int sizeOf(RbSerializer serializer, Object object) {
-			return RbSerializer.SIZEOF_TYPEINFO + (3 * RbSerializer.SIZEOF_DOUBLE);
+
+			return RbSerializer.SIZEOF_TYPEINFO
+					+ (3 * RbSerializer.SIZEOF_DOUBLE)
+					+ RbSerializer.SIZEOF_INT;
 		}
 
 		public void serialize(RbSerializer serializer, ByteBuffer buffer, Object object) {

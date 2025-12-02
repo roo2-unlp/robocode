@@ -73,4 +73,6 @@ public interface ITurnSnapshot {
 	 * @see #getSortedTeamScores()
 	 */
 	IScoreSnapshot[] getIndexedTeamScores();
+
+	double getBattlefieldHeight();
 }

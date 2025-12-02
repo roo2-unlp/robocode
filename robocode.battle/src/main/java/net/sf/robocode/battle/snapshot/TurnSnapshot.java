@@ -51,6 +51,7 @@ public final class TurnSnapshot implements java.io.Serializable, IXmlSerializabl
 	/** Current turn in the battle round */
 	private int turn;
 
+	private double battlefieldHeight;
 	/**
 	 * Creates a snapshot of a battle turn that must be filled out with data later.
 	 */
@@ -65,7 +66,9 @@ public final class TurnSnapshot implements java.io.Serializable, IXmlSerializabl
 	 * @param readoutText {@code true} if the output text from the robots must be included in the snapshot;
 	 *                    {@code false} otherwise.
 	 */
-	public TurnSnapshot(Battle battle, List<RobotPeer> battleRobots, List<BulletPeer> battleBullets, List<TrapSnapshot> battleTraps, boolean readoutText) {
+	public TurnSnapshot(Battle battle, List<RobotPeer> battleRobots, List<BulletPeer> battleBullets, List<TrapSnapshot> battleTraps, boolean readoutText, double battlefieldHeight) {
+		this.battlefieldHeight = battlefieldHeight;
+
 		robots = new ArrayList<IRobotSnapshot>();
 		bullets = new ArrayList<IBulletSnapshot>();
 		traps = new ArrayList<ITrapSnapshot>();
@@ -85,6 +88,7 @@ public final class TurnSnapshot implements java.io.Serializable, IXmlSerializabl
 		tps = battle.getTPS();
 		turn = battle.getTime();
 		round = battle.getRoundNum();
+
 	}
 
 	@Override
@@ -172,6 +176,11 @@ public final class TurnSnapshot implements java.io.Serializable, IXmlSerializabl
 		}
 
 		return scores.toArray(new IScoreSnapshot[scores.size()]);
+	}
+
+	@Override
+	public double getBattlefieldHeight() {
+		return battlefieldHeight;
 	}
 
 	public void stripDetails(SerializableOptions options) {
