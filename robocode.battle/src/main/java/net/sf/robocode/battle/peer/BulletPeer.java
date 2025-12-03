@@ -198,7 +198,7 @@ public class BulletPeer {
 
  				// Stun the target if StunningBullets are in use
 				if (battleRules.getStunningBullets()) {
-					otherRobot.skipNextTurns(10);
+					otherRobot.skipNextTurns((int) (power * 10)); 
  				}
 
 				double newX, newY;

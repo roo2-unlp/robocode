@@ -898,6 +898,7 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
  		// No execute commands this turn
 		if (skipTurns > 0) {
 			skipTurns--;
+			// System.out.println("skipping movement for " + statics.getShortName() + ": " + skipTurns + " turns left");
 			return;
 		}
 
@@ -955,15 +956,18 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 			return;
 		}
 
-		turnedRadarWithGun = false;
-		// scan
-		if (scan) {
-			scan(lastRadarHeading, robots);
-			turnedRadarWithGun = (lastGunHeading == lastRadarHeading) && (gunHeading == radarHeading);
-			scan = false;
+		if (skipTurns > 0) {
+			skipTurns--;
+			// System.out.println("skipping radar scan for " + statics.getShortName() + ": " + skipTurns + " turns left");
+		} else {
+			turnedRadarWithGun = false;
+			if (scan) {
+				scan(lastRadarHeading, robots);
+				turnedRadarWithGun = (lastGunHeading == lastRadarHeading) && (gunHeading == radarHeading);
+				scan = false;
+			}
 		}
-
-		// dispatch messages
+		// logica NO skippeable del scan
 		if (statics.isTeamRobot() && teamPeer != null) {
 			for (TeamMessage teamMessage : currentCommands.getTeamMessages()) {
 				for (RobotPeer member : teamPeer) {
@@ -1785,6 +1789,6 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 
 	public void skipNextTurns(int turns) {
 		skipTurns += turns;
-		System.out.println(statics.getShortName() + " stunned!");
+		// System.out.println(statics.getShortName() + " stunned! for " + turns + " turns");
 	}
 }
