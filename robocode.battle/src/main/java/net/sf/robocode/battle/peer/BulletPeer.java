@@ -72,7 +72,6 @@ public class BulletPeer{
 		this.bulletId = bulletId;
 		state = BulletState.FIRED;
 		color = owner.getBulletColor(); // Store current bullet color set on robot
-		System.out.println("Valor de infinityShot: " + battleRules.getInfinityShot());
 		if (battleRules.getInfinityShot()){
 			this.setWallCollisionStrategy(new InfinityShotCollisionStrategy());
 		} else {
