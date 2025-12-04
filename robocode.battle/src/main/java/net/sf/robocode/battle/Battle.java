@@ -581,8 +581,8 @@ public final class Battle extends BaseBattle {
 				final double ROBOT_HALF_SIZE = RobotPeer.WIDTH / 2.0;
 
 				for (RobotPeer robotPeer : getRobotsAtRandom()) {
-					if (robotPeer.isDead() || robotPeer.isInTrapCooldown()) {
-						continue; // No verificar si el robot ya está muerto
+					if (robotPeer.isDead() || robotPeer.isInTrapCooldown() || robotPeer.getEnergy() <= 0) {
+						continue; // No verificar si el robot ya está muerto o sin energía
 					}
 
 					double rx = robotPeer.getX();

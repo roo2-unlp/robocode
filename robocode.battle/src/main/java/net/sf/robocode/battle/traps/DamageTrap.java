@@ -19,10 +19,15 @@ public class DamageTrap extends Trap{
 
 	@Override
 	public void applyEffect(RobotPeer robot) {
+		// Verificar si el robot ya esta muerto o si energia
+		if(robot.isDead() || robot.getEnergy() <= 0){
+			return;
+		}
 
 		robot.applyTrapDamage(this.damage);
 
-		if(robot.isDead()){
+		if(robot.isDead() || robot.getEnergy() <= 0){
+			Logger.logMessage("TRAMPA: " + robot.getName() + " pisó una trampa de DAÑO. Daño: " + this.damage + " (FATAL)");
 			return;
 		}
 
