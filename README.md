@@ -1,25 +1,19 @@
-# Robocode
+# Robocode: Stunning Bullets
 
 ![Robocode logo](https://robocode.sourceforge.io/gfx/robocode_logo_tanks.png)
 
-**Motto: _Build the best — destroy the rest!_**
+**Robocode: Stunning Bullets** is an extension of the [robocode programming game](https://github.com/roo2-unlp/robocode) that allows the use of special ammunition in your battles. These new projectiles lock their targets on impact, opening the door for lots of new strategies and tactics!
 
-**Robocode** is an engaging and educational [programming game] that allows you to code, test, and improve robot battle
-tanks. The game's primary aim is to teach programming skills in a fun and interactive environment.
 
-With Robocode, you can:
+## Preview
+![preview](./assets/readme/preview.gif)
 
-- **Learn to Program**: Develop programming skills in languages like Java and Kotlin.
-- **Create Battle Tanks**: Design and program virtual robots that compete against each other in battles.
-- **Improve Problem-Solving**: Enhance your algorithmic thinking and problem-solving skills by writing better code to
-  outsmart opponents.
+## Usage
+To use stunning bullets simply start a new battle, and check `Use Stunning Bullets` in the rules tab:
+![rules tab](./assets/readme/rules.png)
 
-Robocode is suitable for all levels—from beginners taking their first steps in coding to experienced developers looking
-for a fun challenge. Whether you are learning to program or just seeking a stimulating activity, Robocode offers a
-platform where you can have fun while honing your skills.
 
-Get started with Robocode today and unleash your inner programmer!
-
+## Resources
 - [Robocode home page]
 - [Introduction] to Robocode
 - [RoboWiki] is the best way to learn about Robocoding
@@ -29,11 +23,9 @@ Get started with Robocode today and unleash your inner programmer!
   game)
 - [Robocode Guide for building Robocode], if you want to build Robocode yourself
 
-Also note that a new version of Robocode supports C# as well (and more languages in the future):
 
 - [Robocode Tank Royale] is a new platform for Robocode
 
-Happy Robocoding! 🤖⌨️
 
 [programming game]: https://x-team.com/magazine/coding-games "23 Programming Games to Level Up Your Programming Skills"
 
