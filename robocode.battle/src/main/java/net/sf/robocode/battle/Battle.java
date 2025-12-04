@@ -85,9 +85,8 @@ public final class Battle extends BaseBattle {
 
 	// Intervalo de tiempo entre tiro de dados
 	private int intervaloDado = 0;
-	private int proximoTiroDado = Integer.MAX_VALUE;
 	private int tiempoTranscurrido = 0;
-	private final java.util.Random dadoRandom = new java.util.Random(987654321);
+	private final Random dadoRandom = new Random();
 
 
 	public Battle(ISettingsManager properties, IBattleManager battleManager, IHostManager hostManager, ICpuManager cpuManager, BattleEventDispatcher eventDispatcher) { // NO_UCD (unused code)
@@ -320,7 +319,6 @@ public final class Battle extends BaseBattle {
 		super.initializeRound();
 		tiempoTranscurrido = 0;
 		intervaloDado = dadoRandom.nextInt(150)+50;
-		proximoTiroDado = tiempoTranscurrido + intervaloDado;
 
 		inactiveTurnCount = 0;
 
@@ -379,14 +377,14 @@ public final class Battle extends BaseBattle {
 	@Override
 	protected void runTurn() {
 		super.runTurn();
-		tiempoTranscurrido++;
 		if (battleRules.getRandomWallHitDamage()){
-			if (tiempoTranscurrido >= proximoTiroDado){
+			tiempoTranscurrido++;
+			if (tiempoTranscurrido >= intervaloDado){
 				//aca tiro los dados
+				tiempoTranscurrido = 0;
 				intervaloDado = dadoRandom.nextInt(150)+50;
-				proximoTiroDado = tiempoTranscurrido + intervaloDado;
 				if (!RobocodeProperties.isTestingOn()){
-					Logger.logMessage("este es el intervalo de tiempo" + intervaloDado);
+					Logger.logMessage("este es el intervalo de tiempo " + intervaloDado);
 					Logger.logMessage("este es el valor del dado");
 				}
 
