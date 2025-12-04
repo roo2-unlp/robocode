@@ -359,9 +359,7 @@ public final class Battle extends BaseBattle {
 		for (Trap trampa : this.traps) {
 			trapSnapshots.add(new TrapSnapshot(trampa));
 		}
-
 		Logger.logMessage(""); // puts in a new-line in the log message
-
 		final ITurnSnapshot snapshot = new TurnSnapshot(this, robots, bullets, trapSnapshots, false, battleRules.getBattlefieldHeight());
 		eventDispatcher.onRoundStarted(new RoundStartedEvent(snapshot, getRoundNum(), robotObjects));
 	}
@@ -570,27 +568,33 @@ public final class Battle extends BaseBattle {
 		for (RobotPeer robotPeer : getRobotsAtRandom()) {
 			robotPeer.performMove(getRobotsAtRandom(), zapEnergy);
 		}
-		for (RobotPeer robotPeer : getRobotsAtRandom()) {
-			robotPeer.decrementTrapCooldown();
-		}
 
-		// Detección de coliciones con trampas
-		// Obtener el tamaño del robot (asumiendo que RobotPeer.WIDTH es el tamaño)
-		final double ROBOT_HALF_SIZE = RobotPeer.WIDTH / 2.0;
-
-		for (RobotPeer robotPeer : getRobotsAtRandom()) {
-			if (robotPeer.isDead() || robotPeer.isInTrapCooldown()) {
-				continue; // No verificar si el robot ya está muerto
+		// FIX, SOLO SI LAS TRAMPAS ESTAN ACTIVADAS
+		if (battleRules.getTrapsEnabled()) {
+			for (RobotPeer robotPeer : getRobotsAtRandom()) {
+				robotPeer.decrementTrapCooldown();
 			}
 
-			double rx = robotPeer.getX();
-			double ry = robotPeer.getY();
+			// Detección de coliciones con trampas
+			if (!this.traps.isEmpty()) {
+				// Obtener el tamaño del robot (asumiendo que RobotPeer.WIDTH es el tamaño)
+				final double ROBOT_HALF_SIZE = RobotPeer.WIDTH / 2.0;
 
-			// Iterar sobre las trampas
-			for (Trap trampa : this.traps) {
-				if (trampa.intersects(rx, ry, ROBOT_HALF_SIZE)) {
-					trampa.applyEffect(robotPeer);
-					break;
+				for (RobotPeer robotPeer : getRobotsAtRandom()) {
+					if (robotPeer.isDead() || robotPeer.isInTrapCooldown()) {
+						continue; // No verificar si el robot ya está muerto
+					}
+
+					double rx = robotPeer.getX();
+					double ry = robotPeer.getY();
+
+					// Iterar sobre las trampas
+					for (Trap trampa : this.traps) {
+						if (trampa.intersects(rx, ry, ROBOT_HALF_SIZE)) {
+							trampa.applyEffect(robotPeer);
+							break;
+						}
+					}
 				}
 			}
 		}
