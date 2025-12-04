@@ -26,6 +26,7 @@ import robocode.control.events.BattleStartedEvent;
 import robocode.control.events.TurnEndedEvent;
 import robocode.control.snapshot.IBulletSnapshot;
 import robocode.control.snapshot.IRobotSnapshot;
+import robocode.control.snapshot.ITrapSnapshot;
 import robocode.control.snapshot.ITurnSnapshot;
 
 import java.awt.*;
@@ -36,12 +37,6 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import static java.lang.Math.*;
 import java.util.Random;
-
-//trampas
-import net.sf.robocode.battle.traps.Trap;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import net.sf.robocode.battle.traps.TrapRepository;
 
 
 
@@ -107,8 +102,6 @@ public class BattleView extends Canvas {
 	private IGraphicsProxy[] robotGraphics;
 	private AffineTransform identityTx = new AffineTransform();
 
-	//trampas
-	private net.sf.robocode.battle.Battle battle;
 
 	public BattleView(ISettingsManager properties, IWindowManager windowManager, IImageManager imageManager) {
 		this.properties = properties;
@@ -323,10 +316,10 @@ public class BattleView extends Canvas {
 		// Draw ground
 		drawGround(g);
 
-		//trampas
-		drawTraps(g);
 
 		if (snapShot != null) {
+			//trampas
+			drawTraps(g, snapShot);
 			// Draw scan arcs
 			drawScanArcs(g, snapShot);
 
@@ -386,25 +379,19 @@ public class BattleView extends Canvas {
 	}
 
 	//trampas
-	private void drawTraps(Graphics2D g) {
-		if (battleField == null) {
-			System.out.println("battleField es null");
-			return;
-		}
+	private void drawTraps(Graphics2D g, ITurnSnapshot snapshot) {
 
-		//System.out.println("Cantidad de trampas UI: " + TrapRepository.getTraps().size());
+		double battlefieldHeight = snapshot.getBattlefieldHeight();
 
-		Color[] colors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.MAGENTA,
-				Color.PINK, Color.CYAN, new Color(128, 0, 128)}; // Purple
-		Random random = new Random();
+		for (ITrapSnapshot trap : snapshot.getTraps()) {
 
-		for (Trap trap : TrapRepository.getTraps()) {
-			//System.out.println("UI DIBUJA TRAMPA -> x=" + trap.getX() + " y=" + trap.getY() + " r=" + trap.getRadius());
+			double invertedY = battlefieldHeight - trap.getY();
+
 			int x = (int) (trap.getX() - trap.getRadius());
-			int y = (int) (trap.getY() - trap.getRadius());
+			int y = (int) (invertedY - trap.getRadius());
+
 			int size = (int) (trap.getRadius() * 2);
 
-			//g.setColor(colors[random.nextInt(colors.length)]);
 			g.setColor(Color.GREEN);
 			g.fillOval(x, y, size, size);
 

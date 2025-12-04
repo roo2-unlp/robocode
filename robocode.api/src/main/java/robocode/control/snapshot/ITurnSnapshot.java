@@ -18,6 +18,7 @@ package robocode.control.snapshot;
  */
 public interface ITurnSnapshot {
 
+	ITrapSnapshot[] getTraps();
 	/**
 	 * Returns a list of snapshots for the robots participating in the battle. 
 	 *
@@ -72,4 +73,6 @@ public interface ITurnSnapshot {
 	 * @see #getSortedTeamScores()
 	 */
 	IScoreSnapshot[] getIndexedTeamScores();
+
+	double getBattlefieldHeight();
 }

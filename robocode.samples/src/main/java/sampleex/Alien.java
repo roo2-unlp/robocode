@@ -64,6 +64,11 @@ public class Alien implements IBasicEvents, IBasicRobot, Runnable {
 
 	public void onStatus(StatusEvent e) {}
 
+	@Override
+	public void onHitTrap(HitTrapEvent event) {
+
+	}
+
 	public void onBulletHit(BulletHitEvent e) {}
 
 	public void onBulletHitBullet(BulletHitBulletEvent e) {}

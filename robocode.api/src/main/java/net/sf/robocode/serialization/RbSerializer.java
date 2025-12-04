@@ -72,6 +72,7 @@ public final class RbSerializer {
 	public final static byte MouseReleasedEvent_TYPE = 53;
 	public final static byte MouseWheelMovedEvent_TYPE = 54;
 	public final static byte RoundEndedEvent_TYPE = 55;
+	public final static byte HitTrapEvent_TYPE = 56;
 
 	private final static ISerializableHelper[] typeToHelper = new ISerializableHelper[256];
 	private static final Map<Class<?>, Byte> classToType = new HashMap<Class<?>, Byte>();
@@ -85,6 +86,7 @@ public final class RbSerializer {
 	static {
 		charset = StandardCharsets.UTF_8; // we will use it as UCS-2
 		register(null, TERMINATOR_TYPE); // reserved for end of (list) element
+		register(robocode.HitTrapEvent.class, HitTrapEvent_TYPE);
 	}
 
 	public RbSerializer() {
