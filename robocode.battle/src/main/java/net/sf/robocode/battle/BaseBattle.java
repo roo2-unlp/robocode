@@ -242,6 +242,7 @@ public abstract class BaseBattle implements IBattle, Runnable {
 	protected void initializeRound() {
 		logMessage("");
 		logMessage("Let the games begin!");
+		logMessage("Comienza la batalla y este es el valor de Random Wall Hit Damage: " + battleRules.getRandomWallHitDamage());
 
 		roundOver = false;
 		endTimer = 0;
