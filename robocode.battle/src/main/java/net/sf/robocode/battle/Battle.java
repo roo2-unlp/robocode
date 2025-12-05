@@ -87,6 +87,7 @@ public final class Battle extends BaseBattle {
 	private int intervaloDado = 0;
 	private int tiempoTranscurrido = 0;
 	private final Random dadoRandom = new Random();
+	private int extraWallDamage = 1;
 
 
 	public Battle(ISettingsManager properties, IBattleManager battleManager, IHostManager hostManager, ICpuManager cpuManager, BattleEventDispatcher eventDispatcher) { // NO_UCD (unused code)
@@ -383,9 +384,10 @@ public final class Battle extends BaseBattle {
 				//aca tiro los dados
 				tiempoTranscurrido = 0;
 				intervaloDado = dadoRandom.nextInt(150)+50;
+				extraWallDamage = dadoRandom.nextInt(6) + 1;
 				if (!RobocodeProperties.isTestingOn()){
 					Logger.logMessage("este es el intervalo de tiempo " + intervaloDado);
-					Logger.logMessage("este es el valor del dado");
+					Logger.logMessage("este es el valor del dado" + extraWallDamage);
 				}
 
 			}
@@ -565,7 +567,7 @@ public final class Battle extends BaseBattle {
 
 		// Move all bots
 		for (RobotPeer robotPeer : getRobotsAtRandom()) {
-			robotPeer.performMove(getRobotsAtRandom(), zapEnergy);
+			robotPeer.performMove(getRobotsAtRandom(), zapEnergy, extraWallDamage);
 		}
 
 		// Correct bounding box after collisions

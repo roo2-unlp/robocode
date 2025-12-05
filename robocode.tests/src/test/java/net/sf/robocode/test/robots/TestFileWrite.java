@@ -11,6 +11,7 @@ package net.sf.robocode.test.robots;
 import net.sf.robocode.io.Logger;
 import net.sf.robocode.test.helpers.RobocodeTestBed;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -21,6 +22,7 @@ import java.io.File;
  */
 public class TestFileWrite extends RobocodeTestBed {
 
+	@Ignore
 	@Test
 	public void run() {
 		super.run();

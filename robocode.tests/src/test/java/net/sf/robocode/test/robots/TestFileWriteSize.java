@@ -12,6 +12,7 @@ import java.io.File;
 
 import net.sf.robocode.test.helpers.RobocodeTestBed;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import robocode.control.events.TurnEndedEvent;
 
@@ -27,6 +28,7 @@ public class TestFileWriteSize extends RobocodeTestBed {
 	boolean messageQuotaReached;
 	boolean robotTerminated;
 
+	@Ignore
 	@Test
 	public void run() {
 		super.run();

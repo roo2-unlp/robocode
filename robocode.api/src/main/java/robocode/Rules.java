@@ -174,8 +174,8 @@ public final class Rules {
 	 * @return wall hit damage in energy points.
 	 */
 
-	public static double getWallHitDamage(double velocity) {
-		return max(abs(velocity) / 2 - 1, 0);
+	public static double getWallHitDamage(double velocity, int extraWallDamage) {
+		return max(abs(velocity) / 2 - 1, 0) * extraWallDamage;
 	}
 
 	/**

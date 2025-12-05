@@ -885,7 +885,7 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 		}
 	}
 
-	public void performMove(List<RobotPeer> robots, double zapEnergy) {
+	public void performMove(List<RobotPeer> robots, double zapEnergy, int extraWallDamage) {
 
 		// Reset robot state to active if it is not dead
 		if (isDead()) {
@@ -914,11 +914,11 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 		// We could be touching a wall or another bot...
 
 		// First and foremost, we can never go through a wall:
-		checkWallCollision();
+		checkWallCollision(extraWallDamage);
 
 		// If this robot is a border sentry robot then check if it hits its "range border"
 		if (isSentryRobot()) {
-			checkSentryOutsideBorder();
+			checkSentryOutsideBorder(extraWallDamage);
 		}
 
 		// Now check for robot collision
@@ -1072,7 +1072,7 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 		}
 	}
 
-	private void checkWallCollision() {
+	private void checkWallCollision(int extraWallDamage) {
 		int minX = HALF_WIDTH_OFFSET;
 		int minY = HALF_HEIGHT_OFFSET;
 		int maxX = (int) getBattleFieldWidth() - HALF_WIDTH_OFFSET;
@@ -1138,9 +1138,11 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 				y = maxY;
 			}
 
+			if(!RobocodeProperties.isTestingOn())
+				println("Daño extra: " + extraWallDamage);
 			// Update energy, but do not reset inactiveTurnCount
 			if (statics.isAdvancedRobot()) {
-				setEnergy(energy - Rules.getWallHitDamage(velocity), false);
+				setEnergy(energy - Rules.getWallHitDamage(velocity, extraWallDamage), false); // enviar parametro distinto
 			}
 
 			updateBoundingBox();
@@ -1152,7 +1154,7 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 		}
 	}
 
-	private void checkSentryOutsideBorder() {
+	private void checkSentryOutsideBorder(int extraWallDamage) {
 		int range = battle.getBattleRules().getSentryBorderSize();
 
 		int minX = range - HALF_WIDTH_OFFSET;
@@ -1228,7 +1230,7 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 
 			// Update energy, but do not reset inactiveTurnCount
 			if (statics.isAdvancedRobot()) {
-				setEnergy(energy - Rules.getWallHitDamage(velocity), false);
+				setEnergy(energy - Rules.getWallHitDamage(velocity, extraWallDamage), false);
 			}
 
 			updateBoundingBox();
