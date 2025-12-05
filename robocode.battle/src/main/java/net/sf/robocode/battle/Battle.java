@@ -813,23 +813,58 @@ public final class Battle extends BaseBattle {
 	private void generateTraps() {
 		Random random = RandomFactory.getRandom();
 
-
-		// usa los valores de la ui
 		int count = battleRules.getTrapCount();
 		double configuredRadius = battleRules.getTrapRadius();
 		double configuredDamage = battleRules.getTrapDamage();
 
-		for (int i = 0; i < count; i++) {
+		double safeMarginFromEdge = configuredRadius + RobotPeer.WIDTH + 120;
+		
+		double fieldWidth = battleRules.getBattlefieldWidth();
+		double fieldHeight = battleRules.getBattlefieldHeight();
+		
+		if (fieldWidth < safeMarginFromEdge * 2 || fieldHeight < safeMarginFromEdge * 2) {
+			System.out.println("ADVERTENCIA: Campo muy pequeno para trampas seguras, reduciendo margen");
+			safeMarginFromEdge = Math.min(fieldWidth, fieldHeight) * 0.25;
+		}
 
-			double radius = configuredRadius;
-			double damage = configuredDamage;
+		int intentos = 0;
+		int maxIntentosPorTrampa = 100;
+		
+		for (int i = 0; i < count && intentos < count * maxIntentosPorTrampa; i++) {
+			boolean posicionValida = false;
+			double x = 0, y = 0;
+			
+			for (int intento = 0; intento < maxIntentosPorTrampa && !posicionValida; intento++) {
+				intentos++;
+				
+				double radius = configuredRadius;
+				double damage = configuredDamage;
 
-			double x = randomDouble(random, RobotPeer.WIDTH,
-					battleRules.getBattlefieldWidth() - RobotPeer.WIDTH);
-			double y = randomDouble(random, RobotPeer.HEIGHT,
-					battleRules.getBattlefieldHeight() - RobotPeer.HEIGHT);
+				x = randomDouble(random, safeMarginFromEdge, fieldWidth - safeMarginFromEdge);
+				y = randomDouble(random, safeMarginFromEdge, fieldHeight - safeMarginFromEdge);
 
-			addTrap(new DamageTrap(x, y, radius, damage));
+				posicionValida = true;
+				for (Trap trampaExistente : traps) {
+					double distancia = Math.sqrt(
+						Math.pow(x - trampaExistente.getX(), 2) + 
+						Math.pow(y - trampaExistente.getY(), 2)
+					);
+					
+					double distanciaMinima = radius + trampaExistente.getRadius() + 80;
+					
+					if (distancia < distanciaMinima) {
+						posicionValida = false;
+						break;
+					}
+				}
+			}
+			
+			if (posicionValida) {
+				addTrap(new DamageTrap(x, y, configuredRadius, configuredDamage));
+			} else {
+				System.out.println("No se pudo colocar trampa " + (i + 1) + " sin superposicion despues de " + maxIntentosPorTrampa + " intentos");
+				i--;
+			}
 		}
 
 		System.out.println("=== TRAMPAS GENERADAS: " + this.getTraps().size() + " ===");

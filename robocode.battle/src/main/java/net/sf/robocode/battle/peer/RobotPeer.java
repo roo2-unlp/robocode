@@ -143,7 +143,7 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 	private final RbSerializer rbSerializer;
 
 	//trampas
-	private static final int TRAP_COOLDOWN_TICKS = 50;
+	private static final int TRAP_COOLDOWN_TICKS = 100;
 
 	private int trapCooldown = 0;
 
