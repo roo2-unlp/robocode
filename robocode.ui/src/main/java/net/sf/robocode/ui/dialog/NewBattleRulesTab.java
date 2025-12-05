@@ -60,7 +60,7 @@ public class NewBattleRulesTab extends JPanel {
 	private JTextField inactivityTimeTextField;
 	private JTextField sentryBorderSizeTextField;
 	private final JCheckBox hideEnemyNamesCheckBox = new JCheckBox();
-	private JCheckBox randomCollisionDamageCheckBox; //NUEVO CHECKBOX RandomDAMAGE
+	private final JCheckBox randomCollisionDamageCheckBox = new JCheckBox();//NUEVO CHECKBOX RandomDAMAGE
 
 	private JSlider battlefieldWidthSlider;
 	private JSlider battlefieldHeightSlider;
@@ -173,68 +173,85 @@ public class NewBattleRulesTab extends JPanel {
 	}
 
 	private JPanel createRulesPanel() {
-		JPanel panel = new JPanel();
+    JPanel panel = new JPanel();
+    panel.setBorder(BorderFactory.createEtchedBorder());
 
-		panel.addAncestorListener(new EventHandler());
-		panel.setBorder(BorderFactory.createEtchedBorder());
+    // Configuración del Layout
+    GroupLayout layout = new GroupLayout(panel);
+    layout.setAutoCreateContainerGaps(true);
+    layout.setAutoCreateGaps(true);
+    panel.setLayout(layout);
 
-		GroupLayout layout = new GroupLayout(panel);
-		layout.setAutoCreateContainerGaps(true);
-		layout.setAutoCreateGaps(true);
-		panel.setLayout(layout);
+    // Definición de grupos
+    GroupLayout.SequentialGroup leftToRight = layout.createSequentialGroup();
+    GroupLayout.SequentialGroup topToBottom = layout.createSequentialGroup();
 
-		GroupLayout.SequentialGroup leftToRight = layout.createSequentialGroup();
+    // --- COLUMNA IZQUIERDA (Etiquetas) ---
+    // variables directas porque son final y están inicializadas arriba
+    GroupLayout.ParallelGroup left = layout.createParallelGroup();
+    left.addComponent(numberOfRoundsLabel);
+    left.addComponent(gunCoolingRateLabel);
+    left.addComponent(inactivityTimeLabel);
+    left.addComponent(sentryBorderSizeLabel);
+    left.addComponent(hideEnemyNamesLabel);
+    left.addComponent(randomCollisionDamageLabel); 
+    leftToRight.addGroup(left);
 
-		GroupLayout.ParallelGroup left = layout.createParallelGroup();
-		left.addComponent(numberOfRoundsLabel);
-		left.addComponent(gunCoolingRateLabel);
-		left.addComponent(inactivityTimeLabel);
-		left.addComponent(sentryBorderSizeLabel);
-		left.addComponent(hideEnemyNamesLabel);
-		left.addComponent(randomCollisionDamageLabel); //añado nuevo componente al layout (etiqueta)
-		leftToRight.addGroup(left);
+    // --- COLUMNA DERECHA (Inputs y Checkboxes) ---
+    //  getters para los TextField (patrón original de Robocode)
+    //  variables directas para los CheckBox (inicializados arriba)
+    GroupLayout.ParallelGroup right = layout.createParallelGroup();
+    right.addComponent(getNumberOfRoundsTextField());
+    right.addComponent(getGunCoolingRateTextField());
+    right.addComponent(getInactivityTimeTextField());
+    right.addComponent(getSentryBorderSizeTextField());
+    right.addComponent(hideEnemyNamesCheckBox);
+    right.addComponent(randomCollisionDamageCheckBox); 
+    leftToRight.addGroup(right);
 
-		GroupLayout.ParallelGroup right = layout.createParallelGroup();
-		right.addComponent(getNumberOfRoundsTextField());
-		right.addComponent(getGunCoolingRateTextField());
-		right.addComponent(getInactivityTimeTextField());
-		right.addComponent(getSentryBorderSizeTextField());
-		right.addComponent(hideEnemyNamesCheckBox);
-		right.addComponent(randomCollisionDamageCheckBox); //añado nuevo componente al layout (checkbox)
-		leftToRight.addGroup(right);
+    // --- FILAS (Alineación Vertical) ---
+    
+    // Fila 0
+    GroupLayout.ParallelGroup row0 = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
+    row0.addComponent(numberOfRoundsLabel);
+    row0.addComponent(getNumberOfRoundsTextField());
+    topToBottom.addGroup(row0);
 
-		GroupLayout.SequentialGroup topToBottom = layout.createSequentialGroup();
+    // Fila 1
+    GroupLayout.ParallelGroup row1 = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
+    row1.addComponent(gunCoolingRateLabel);
+    row1.addComponent(getGunCoolingRateTextField());
+    topToBottom.addGroup(row1);
 
-		GroupLayout.ParallelGroup row0 = layout.createParallelGroup(Alignment.BASELINE);
-		row0.addComponent(numberOfRoundsLabel);
-		row0.addComponent(numberOfRoundsTextField);
-		topToBottom.addGroup(row0);
+    // Fila 2
+    GroupLayout.ParallelGroup row2 = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
+    row2.addComponent(inactivityTimeLabel);
+    row2.addComponent(getInactivityTimeTextField());
+    topToBottom.addGroup(row2);
 
-		GroupLayout.ParallelGroup row1 = layout.createParallelGroup(Alignment.BASELINE);
-		row1.addComponent(gunCoolingRateLabel);
-		row1.addComponent(getGunCoolingRateTextField());
-		topToBottom.addGroup(row1);
+    // Fila 3
+    GroupLayout.ParallelGroup row3 = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
+    row3.addComponent(sentryBorderSizeLabel);
+    row3.addComponent(getSentryBorderSizeTextField());
+    topToBottom.addGroup(row3);
 
-		GroupLayout.ParallelGroup row2 = layout.createParallelGroup(Alignment.BASELINE);
-		row2.addComponent(inactivityTimeLabel);
-		row2.addComponent(inactivityTimeTextField);
-		topToBottom.addGroup(row2);
+    // Fila 4
+    GroupLayout.ParallelGroup row4 = layout.createParallelGroup(GroupLayout.Alignment.CENTER);
+    row4.addComponent(hideEnemyNamesLabel);
+    row4.addComponent(hideEnemyNamesCheckBox);
+    topToBottom.addGroup(row4);
 
-		GroupLayout.ParallelGroup row3 = layout.createParallelGroup(Alignment.BASELINE);
-		row3.addComponent(sentryBorderSizeLabel);
-		row3.addComponent(sentryBorderSizeTextField);
-		topToBottom.addGroup(row3);
+    // Fila 5 (Tu nueva funcionalidad)
+    GroupLayout.ParallelGroup row5 = layout.createParallelGroup(GroupLayout.Alignment.CENTER);
+    row5.addComponent(randomCollisionDamageLabel);
+    row5.addComponent(randomCollisionDamageCheckBox);
+    topToBottom.addGroup(row5);
 
-		GroupLayout.ParallelGroup row4 = layout.createParallelGroup(Alignment.CENTER);
-		row4.addComponent(hideEnemyNamesLabel);
-		row4.addComponent(hideEnemyNamesCheckBox);
-		topToBottom.addGroup(row4);
+    layout.setHorizontalGroup(leftToRight);
+    layout.setVerticalGroup(topToBottom);
 
-		layout.setHorizontalGroup(leftToRight);
-		layout.setVerticalGroup(topToBottom);
-
-		return panel;
-	}
+    return panel;
+}
 
 	private JTextField getNumberOfRoundsTextField() {
 		if (numberOfRoundsTextField == null) {
