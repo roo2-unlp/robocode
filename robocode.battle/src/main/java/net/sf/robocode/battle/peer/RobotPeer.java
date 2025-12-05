@@ -1107,16 +1107,19 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 
 		if (hitWall) {
 			if (battleRules.getInfiniteMap()) {
+				double fieldWidth = getBattleFieldWidth();
+				double fieldHeight = getBattleFieldHeight();
 
 				if (x < minX) {
-					x = maxX;
+					x += fieldWidth;
 				} else if (x > maxX) {
-					x = minX;
+					x -= fieldWidth;
 				}
+
 				if (y < minY) {
-					y = maxY;
+					y += fieldHeight;
 				} else if (y > maxY) {
-					y = minY;
+					y -= fieldHeight;
 				}
 
 				updateBoundingBox();
