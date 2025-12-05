@@ -133,6 +133,7 @@ public class SettingsManager implements ISettingsManager {
 	private int battleDefaultSentryBorderSize = 100;
 	private boolean battleDefaultHideEnemyNames = false;
 	private int battleDefaultNumberOfRounds = 10;
+	private boolean battleDefaultInfiniteMap = false;
 
 	private final Properties props = new SortedProperties();
 
@@ -701,6 +702,15 @@ public class SettingsManager implements ISettingsManager {
 		props.setProperty(BATTLE_DEFAULT_NUMBER_OF_ROUNDS, "" + this.battleDefaultNumberOfRounds);
 	}
 
+	public boolean getBattleDefaultInfiniteMap() {
+		return battleDefaultInfiniteMap;
+	}
+
+	public void setBattleDefaultInfiniteMap(boolean infiniteMap) {
+		this.battleDefaultInfiniteMap = infiniteMap;
+		props.setProperty(BATTLE_DEFAULT_INFINITE_MAP, "" + this.battleDefaultInfiniteMap);
+	}
+
 	public void store(FileOutputStream out, String desc) throws IOException {
 		props.store(out, desc);
 	}
@@ -790,6 +800,7 @@ public class SettingsManager implements ISettingsManager {
 		battleDefaultInactivityTime = Long.parseLong(props.getProperty(BATTLE_DEFAULT_INACTIVITY_TIME, "450"));
 		battleDefaultHideEnemyNames = Boolean.parseBoolean(props.getProperty(BATTLE_DEFAULT_HIDE_ENEMY_NAMES, "false"));
 		battleDefaultNumberOfRounds = Integer.parseInt(props.getProperty(BATTLE_DEFAULT_NUMBER_OF_ROUNDS, "10"));
+		battleDefaultInfiniteMap = Boolean.parseBoolean(props.getProperty(BATTLE_DEFAULT_INFINITE_MAP, "false"));
 
 		robotFilesystemQuota = Long.parseLong(props.getProperty(ROBOT_FILESYSTEM_QUOTA, "" + 200000));
 		consoleQuota = Long.parseLong(props.getProperty(CONSOLE_QUOTA, "8192"));

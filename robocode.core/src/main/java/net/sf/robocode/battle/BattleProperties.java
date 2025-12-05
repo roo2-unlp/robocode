@@ -38,7 +38,10 @@ public class BattleProperties implements Serializable {
 			BATTLE_HIDE_ENEMY_NAMES = "robocode.battle.hideEnemyNames",
 			BATTLE_SELECTEDROBOTS = "robocode.battle.selectedRobots",
 			BATTLE_INITIAL_POSITIONS = "robocode.battle.initialPositions",
-			BATTLE_SENTRY_BORDER_SIZE = "robocode.battle.sentryBorderSize";
+			BATTLE_SENTRY_BORDER_SIZE = "robocode.battle.sentryBorderSize",
+			BATTLE_INFINITE_MAP = "robocode.battle.infiniteMap";
+
+
 
 	private int battlefieldWidth = 800;
 	private int battlefieldHeight = 600;
@@ -49,6 +52,7 @@ public class BattleProperties implements Serializable {
 	private int sentryBorderSize = 100;
 	private String selectedRobots;
 	private String initialPositions;
+	private boolean infiniteMap = false;
 
 	private final Properties props = new Properties();
 
@@ -63,6 +67,7 @@ public class BattleProperties implements Serializable {
 		inactivityTime = properties.getBattleDefaultInactivityTime();
 		hideEnemyNames = properties.getBattleDefaultHideEnemyNames();
 		sentryBorderSize = properties.getBattleDefaultSentryBorderSize();
+		infiniteMap = properties.getBattleDefaultInfiniteMap();
 	}
 
 	/**
@@ -328,6 +333,24 @@ public class BattleProperties implements Serializable {
 		props.setProperty(BATTLE_SENTRY_BORDER_SIZE, "" + sentryBorderSize);
 	}
 
+	/**Returns the sentry border size for a {@link robocode.BorderSentry
+	 * BorderSentry}.
+	 * @param borderSize is the sentry border size in units/pixels.
+	 */
+	public boolean getInfiniteMap() {
+		return infiniteMap;
+	}
+
+	/**
+	 * Returns the sentry border size for a {@link robocode.BorderSentry
+	 * BorderSentry}.
+	 * @param borderSize is the sentry border size in units/pixels.
+	 */
+	public void setInfiniteMap(boolean infiniteMap) {
+		this.infiniteMap = infiniteMap;
+		props.setProperty(BATTLE_INFINITE_MAP, "" + infiniteMap);
+	}
+
 	public void store(FileOutputStream out, String desc) throws IOException {
 		props.store(out, desc);
 	}
@@ -343,5 +366,6 @@ public class BattleProperties implements Serializable {
 		selectedRobots = props.getProperty(BATTLE_SELECTEDROBOTS, "");
 		initialPositions = props.getProperty(BATTLE_INITIAL_POSITIONS, "");
 		sentryBorderSize = Integer.parseInt(props.getProperty(BATTLE_SENTRY_BORDER_SIZE, "100"));
+		infiniteMap = Boolean.parseBoolean(props.getProperty(BATTLE_INFINITE_MAP, "false"));
 	}
 }

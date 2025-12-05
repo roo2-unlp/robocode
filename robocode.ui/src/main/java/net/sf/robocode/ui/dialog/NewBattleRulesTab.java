@@ -431,18 +431,8 @@ public class NewBattleRulesTab extends JPanel {
 
 			
 			boolean infinite = infiniteMapCheckBox.isSelected();
-			try {
-			    java.lang.reflect.Method mSettings = settingsManager.getClass().getMethod("setBoolean", String.class, boolean.class);
-    			mSettings.invoke(settingsManager, "infiniteMap", infinite);
-			} catch (Exception e) {
-				//no hace nada
-			}
-			try {
-    			java.lang.reflect.Method mProp = battleProperties.getClass().getMethod("setBoolean", String.class, boolean.class);
-    			mProp.invoke(battleProperties, "infiniteMap", infinite);
-			} catch (Exception e) {
-    			//no hace nada
-			}
+			settingsManager.setBattleDefaultInfiniteMap(infinite);
+			battleProperties.setInfiniteMap(infiniteMapCheckBox.isSelected());
 
 
 			int weight = battlefieldWidthSlider.getValue();
@@ -496,14 +486,7 @@ public class NewBattleRulesTab extends JPanel {
 			getInactivityTimeTextField().setText("" + battleProperties.getInactivityTime());
 			getSentryBorderSizeTextField().setText("" + battleProperties.getSentryBorderSize());
 			hideEnemyNamesCheckBox.setSelected(battleProperties.getHideEnemyNames());
-
-			try {
-    			java.lang.reflect.Method m = battleProperties.getClass().getMethod("getBoolean", String.class, boolean.class);
-   				boolean infinite = (Boolean) m.invoke(battleProperties, "infiniteMap", false);
-    			infiniteMapCheckBox.setSelected(infinite);
-			} catch (Exception e) {
-    		infiniteMapCheckBox.setSelected(false);
-			}
+			infiniteMapCheckBox.setSelected(battleProperties.getInfiniteMap());
 
 		}
 	}

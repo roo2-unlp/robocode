@@ -7,7 +7,6 @@
  */
 package net.sf.robocode.host;
 
-
 import net.sf.robocode.peer.IRobotStatics;
 import net.sf.robocode.repository.IRobotItem;
 import net.sf.robocode.security.HiddenAccess;
@@ -20,7 +19,6 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * @author Pavel Savara (original)
@@ -56,7 +54,8 @@ public final class RobotStatics implements IRobotStatics, Serializable {
 	private final int robotIndex;
 	private final int teamIndex;
 
-	public RobotStatics(RobotSpecification robotSpecification, String name, String suffix, boolean isLeader, BattleRules rules, String teamName,
+	public RobotStatics(RobotSpecification robotSpecification, String name, String suffix, boolean isLeader,
+			BattleRules rules, String teamName,
 			List<String> teamMembers, int robotIndex, int teamIndex) {
 		IRobotItem robotItem = (IRobotItem) HiddenAccess.getFileSpecification(robotSpecification);
 
@@ -96,8 +95,10 @@ public final class RobotStatics implements IRobotStatics, Serializable {
 		}
 	}
 
-	private RobotStatics(String robocodeVersion, boolean isJuniorRobot, boolean isInteractiveRobot, boolean isPaintRobot, boolean isAdvancedRobot,
-			boolean isTeamRobot, boolean isTeamLeader, boolean isDroid, boolean isSentryRobot, String name, String shortName,
+	private RobotStatics(String robocodeVersion, boolean isJuniorRobot, boolean isInteractiveRobot,
+			boolean isPaintRobot, boolean isAdvancedRobot,
+			boolean isTeamRobot, boolean isTeamLeader, boolean isDroid, boolean isSentryRobot, String name,
+			String shortName,
 			String veryShortName, String fullClassName, String shortClassName, BattleRules battleRules,
 			String[] teammates, String teamName, int robotIndex, int teamIndex) {
 
@@ -197,7 +198,7 @@ public final class RobotStatics implements IRobotStatics, Serializable {
 	public int getRobotIndex() {
 		return robotIndex;
 	}
-	
+
 	public int getTeamIndex() {
 		return teamIndex;
 	}
@@ -285,7 +286,8 @@ public final class RobotStatics implements IRobotStatics, Serializable {
 					serializer.deserializeDouble(buffer), // gunCoolingRate
 					serializer.deserializeLong(buffer), // inactivityTime
 					serializer.deserializeBoolean(buffer), // hideEnemyNames
-					serializer.deserializeInt(buffer)); // sentryBorderSize
+					serializer.deserializeInt(buffer), // sentryBorderSize
+					serializer.deserializeBoolean(buffer)); // infiniteMap
 
 			List<String> teammates = new ArrayList<String>();
 			Object item = serializer.deserializeString(buffer);

@@ -1106,7 +1106,7 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 		}
 
 		if (hitWall) {
-			if (battleRules.isInfiniteMap()) { // falta implementacion de boton
+			if (battleRules.getInfiniteMap()) {
 
 				if (x < minX) {
 					x = maxX;

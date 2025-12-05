@@ -232,6 +232,10 @@ public interface ISettingsManager {
 
 	void setBattleDefaultNumberOfRounds(int numberOfRounds);
 
+	boolean getBattleDefaultInfiniteMap();
+
+	void setBattleDefaultInfiniteMap(boolean value);
+
 	void store(FileOutputStream out, String desc) throws IOException;
 
 	void load(FileInputStream in) throws IOException;
@@ -313,5 +317,6 @@ public interface ISettingsManager {
 			BATTLE_DEFAULT_GUN_COOLING_RATE = "robocode.battle.default.gunCoolingRate",
 			BATTLE_DEFAULT_INACTIVITY_TIME = "robocode.battle.default.inactivityTime",
 			BATTLE_DEFAULT_SENTRY_BORDER_SIZE = "robocode.battle.default.sentryBorderSize",
-			BATTLE_DEFAULT_HIDE_ENEMY_NAMES = "robocode.battle.default.hideEnemyNames";
+			BATTLE_DEFAULT_HIDE_ENEMY_NAMES = "robocode.battle.default.hideEnemyNames",
+			BATTLE_DEFAULT_INFINITE_MAP = "robocode.battle.default.infiniteMap";
 }
