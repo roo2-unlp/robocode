@@ -37,6 +37,7 @@ public class PreferencesViewOptionsTab extends WizardPanel {
 	private JCheckBox visibleRobotEnergyCheckBox;
 	private JCheckBox visibleRobotNameCheckBox;
 	private JCheckBox visibleScanArcsCheckBox;
+	private JCheckBox visibleScanBulletsCheckBox;
 	private JCheckBox visibleExplosionsCheckBox;
 	private JCheckBox visibleGroundCheckBox;
 	private JCheckBox visibleExplosionDebrisCheckBox;
@@ -106,12 +107,14 @@ public class PreferencesViewOptionsTab extends WizardPanel {
 	private void defaultViewOptionsButtonActionPerformed() {
 		setAllViewOptionsButtonsEnabled(true);
 		getVisibleScanArcsCheckBox().setSelected(false);
+		getVisibleScanBulletsCheckBox().setSelected(false);
 	}
 
 	private void setAllViewOptionsButtonsEnabled(boolean enabled) {
 		getVisibleRobotEnergyCheckBox().setSelected(enabled);
 		getVisibleRobotNameCheckBox().setSelected(enabled);
 		getVisibleScanArcsCheckBox().setSelected(enabled);
+		getVisibleScanBulletsCheckBox().setSelected(enabled);
 		getVisibleExplosionsCheckBox().setSelected(enabled);
 		getVisibleGroundCheckBox().setSelected(enabled);
 		getVisibleExplosionDebrisCheckBox().setSelected(enabled);
@@ -328,6 +331,7 @@ public class PreferencesViewOptionsTab extends WizardPanel {
 			visibleOptionsPanel.add(getVisibleRobotEnergyCheckBox(), c);
 			visibleOptionsPanel.add(getVisibleRobotNameCheckBox(), c);
 			visibleOptionsPanel.add(getVisibleScanArcsCheckBox(), c);
+			visibleOptionsPanel.add(getVisibleScanBulletsCheckBox(),c);
 			visibleOptionsPanel.add(getVisibleExplosionsCheckBox(), c);
 			visibleOptionsPanel.add(getVisibleGroundCheckBox(), c);
 			visibleOptionsPanel.add(getVisibleExplosionDebrisCheckBox(), c);
@@ -369,6 +373,13 @@ public class PreferencesViewOptionsTab extends WizardPanel {
 			visibleScanArcsCheckBox.setDisplayedMnemonicIndex(4);
 		}
 		return visibleScanArcsCheckBox;
+	}
+
+	private JCheckBox getVisibleScanBulletsCheckBox() {
+		if (visibleScanBulletsCheckBox == null) {
+			visibleScanBulletsCheckBox = new JCheckBox("Visible Scan Bullet Arcs");
+		}
+		return visibleScanBulletsCheckBox;
 	}
 
 	private JCheckBox getVisibleExplosionsCheckBox() {
@@ -431,6 +442,7 @@ public class PreferencesViewOptionsTab extends WizardPanel {
 		getVisibleRobotNameCheckBox().setSelected(robocodeProperties.getOptionsViewRobotNames());
 		getVisibleRobotEnergyCheckBox().setSelected(robocodeProperties.getOptionsViewRobotEnergy());
 		getVisibleScanArcsCheckBox().setSelected(robocodeProperties.getOptionsViewScanArcs());
+		getVisibleScanBulletsCheckBox().setSelected(robocodeProperties.getOptionsViewScanBullets());
 		getVisibleExplosionsCheckBox().setSelected(robocodeProperties.getOptionsViewExplosions());
 		getVisibleGroundCheckBox().setSelected(robocodeProperties.getOptionsViewGround());
 		getVisibleExplosionDebrisCheckBox().setSelected(robocodeProperties.getOptionsViewExplosionDebris());
@@ -448,6 +460,7 @@ public class PreferencesViewOptionsTab extends WizardPanel {
 		props.setOptionsViewRobotNames(getVisibleRobotNameCheckBox().isSelected());
 		props.setOptionsViewRobotEnergy(getVisibleRobotEnergyCheckBox().isSelected());
 		props.setOptionsViewScanArcs(getVisibleScanArcsCheckBox().isSelected());
+		props.setOptionsViewScanBullets(getVisibleScanBulletsCheckBox().isSelected());
 		props.setOptionsViewExplosions(getVisibleExplosionsCheckBox().isSelected());
 		props.setOptionsViewGround(getVisibleGroundCheckBox().isSelected());
 		props.setOptionsViewExplosionDebris(getVisibleExplosionDebrisCheckBox().isSelected());

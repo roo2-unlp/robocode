@@ -30,6 +30,10 @@ public interface ISettingsManager {
 
 	void setOptionsViewScanArcs(boolean optionsViewScanArcs);
 
+	boolean getOptionsViewScanBullets();
+
+	void setOptionsViewScanBullets(boolean optionsViewScanBullets);
+
 	boolean getOptionsViewRobotEnergy();
 
 	void setOptionsViewRobotEnergy(boolean optionsViewRobotEnergy);
@@ -247,6 +251,7 @@ public interface ISettingsManager {
 	String
 			OPTIONS_VIEW_ROBOTNAMES = "robocode.options.view.robotNames",
 			OPTIONS_VIEW_SCANARCS = "robocode.options.view.scanArcs",
+			OPTIONS_VIEW_SCANBULLETS = "robocode.options.view.scanArcs",
 			OPTIONS_VIEW_ROBOTENERGY = "robocode.options.view.robotEnergy",
 			OPTIONS_VIEW_GROUND = "robocode.options.view.ground",
 			OPTIONS_VIEW_TPS = "robocode.options.view.TPS",

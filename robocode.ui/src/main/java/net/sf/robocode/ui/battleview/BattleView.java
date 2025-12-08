@@ -74,6 +74,7 @@ public class BattleView extends Canvas {
 	private boolean drawRobotName;
 	private boolean drawRobotEnergy;
 	private boolean drawScanArcs;
+	private boolean drawScanBullets;
 	private boolean drawExplosions;
 	private boolean drawGround;
 	private boolean drawExplosionDebris;
@@ -195,6 +196,7 @@ public class BattleView extends Canvas {
 		drawRobotName = props.getOptionsViewRobotNames();
 		drawRobotEnergy = props.getOptionsViewRobotEnergy();
 		drawScanArcs = props.getOptionsViewScanArcs();
+		drawScanBullets = props.getOptionsViewScanBullets();
 		drawGround = props.getOptionsViewGround();
 		drawExplosions = props.getOptionsViewExplosions();
 		drawExplosionDebris = props.getOptionsViewExplosionDebris();
@@ -317,6 +319,9 @@ public class BattleView extends Canvas {
 			// Draw scan arcs
 			drawScanArcs(g, snapShot);
 
+			// Draw bullet scan arcs
+			drawScanBullets(g, snapShot);
+
 			// Draw robots
 			drawRobots(g, snapShot);
 
@@ -399,6 +404,16 @@ public class BattleView extends Canvas {
 			for (IRobotSnapshot robotSnapshot : snapShot.getRobots()) {
 				if (robotSnapshot.getState().isAlive()) {
 					drawScanArc(g, robotSnapshot);
+				}
+			}
+		}
+	}
+
+	private void drawScanBullets(Graphics2D g, ITurnSnapshot snapShot) {
+		if (drawScanBullets) {
+			for (IBulletSnapshot bulletSnapshot : snapShot.getBullets()) {
+				if (bulletSnapshot.getState().isActive()) {
+					drawScanBullet(g, bulletSnapshot);
 				}
 			}
 		}
@@ -661,6 +676,23 @@ public class BattleView extends Canvas {
 		}
 
 		g.setComposite(savedComposite);
+	}
+
+	private void drawScanBullet(Graphics2D g, IBulletSnapshot bulletSnapshot) {
+		double x = bulletSnapshot.getPaintX();
+		double y = battleField.getHeight() - bulletSnapshot.getPaintY();
+
+		double radius = 110;
+
+		Shape circle = new Ellipse2D.Double(
+				x - radius,
+				y - radius,
+				radius * 2,
+				radius * 2
+		);
+
+		g.setColor(new Color(bulletSnapshot.getColor(), true));
+		g.draw(circle);
 	}
 
 	private void paintRobocodeLogo(Graphics2D g) {

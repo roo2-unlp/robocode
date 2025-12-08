@@ -43,6 +43,7 @@ public class SettingsManager implements ISettingsManager {
 			optionsViewRobotEnergy = true,
 			optionsViewRobotNames = true,
 			optionsViewScanArcs = false,
+			optionsViewScanBullets = false,
 			optionsViewExplosions = true,
 			optionsViewGround = true,
 			optionsViewExplosionDebris = true,
@@ -194,6 +195,15 @@ public class SettingsManager implements ISettingsManager {
 	public void setOptionsViewScanArcs(boolean optionsViewScanArcs) {
 		this.optionsViewScanArcs = optionsViewScanArcs;
 		props.setProperty(OPTIONS_VIEW_SCANARCS, "" + optionsViewScanArcs);
+	}
+
+	public boolean getOptionsViewScanBullets() {
+		return optionsViewScanBullets;
+	}
+
+	public void setOptionsViewScanBullets(boolean optionsViewScanBullets) {
+		this.optionsViewScanBullets = optionsViewScanBullets;
+		props.setProperty(OPTIONS_VIEW_SCANBULLETS, "" + optionsViewScanBullets);
 	}
 
 	public boolean getOptionsViewRobotEnergy() {
@@ -710,6 +720,7 @@ public class SettingsManager implements ISettingsManager {
 
 		optionsViewRobotNames = Boolean.valueOf(props.getProperty(OPTIONS_VIEW_ROBOTNAMES, "true"));
 		optionsViewScanArcs = Boolean.valueOf(props.getProperty(OPTIONS_VIEW_SCANARCS, "false"));
+		optionsViewScanBullets = Boolean.valueOf(props.getProperty(OPTIONS_VIEW_SCANBULLETS, "false"));
 		optionsViewRobotEnergy = Boolean.valueOf(props.getProperty(OPTIONS_VIEW_ROBOTENERGY, "true"));
 		optionsViewGround = Boolean.valueOf(props.getProperty(OPTIONS_VIEW_GROUND, "true"));
 		optionsViewTPS = Boolean.valueOf(props.getProperty(OPTIONS_VIEW_TPS, "true"));
