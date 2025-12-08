@@ -102,26 +102,24 @@ public final class Battle extends BaseBattle {
 				battleProps.getHideEnemyNames(), battleProps.getSentryBorderSize(), battleProps.getRandomDamage());
 		robotsCount = battlingRobotsList.length;
 		computeInitialPositions(battleProps.getInitialPositions());
-		instanciarTipoDaño();// [NUEVO] se instancia el tipo de daño
+		instanciarTipoDaño(battleProps);// [NUEVO] se instancia el tipo de daño
 		createPeers(battlingRobotsList);
 		
 	}
 
-	private void instanciarTipoDaño(){
-		// [NUEVO] SELECCIÓN DE MODELO DE DAÑO
-        // seleccion de reglas para esta batalla.
-        // se asume que el objeto 'battleRules' ya trae la bandera desde la UI.
-        if (battleRules.getRandomDamage()) { 
-            // Si la UI mandó "true", instanciamos el modelo aleatorio
-            damageModel = new RandomDamageModel();
-           //Log para confirmar en consola que el modo está activo:
-            //net.sf.robocode.io.Logger.logMessage("SYSTEM: Random Damage Mode Activated! 🎲");
+	private void instanciarTipoDaño(BattleProperties battleProps) {
+        
+        if (battleProps.getRandomDamage()) {
+            
+            double min = battleProps.getRandomDamageMin();
+            double max = battleProps.getRandomDamageMax();
+            this.damageModel = new RandomDamageModel(min, max);
         } else {
-            // Si no (por defecto),  el estándar de siempre (0.6)
-            damageModel = new StandardDamageModel();
+            // Por defecto, estrategia estándar.
+            this.damageModel = new StandardDamageModel();
         }
-        // -------------------------------------------------------------------
-	}
+    }
+        
 	private void createPeers(RobotSpecification[] battlingRobotsList) {
 
 		List<String> teamNames = new ArrayList<String>();

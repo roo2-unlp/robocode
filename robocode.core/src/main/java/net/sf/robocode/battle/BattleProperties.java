@@ -11,6 +11,7 @@ package net.sf.robocode.battle;
 import net.sf.robocode.settings.ISettingsManager;
 import robocode.AdvancedRobot;
 import robocode.Robot;
+import robocode.Rules;
 import robocode.control.RobotSetup;
 import robocode.control.RobotSpecification;
 
@@ -39,7 +40,9 @@ public class BattleProperties implements Serializable {
 			BATTLE_SELECTEDROBOTS = "robocode.battle.selectedRobots",
 			BATTLE_INITIAL_POSITIONS = "robocode.battle.initialPositions",
 			BATTLE_SENTRY_BORDER_SIZE = "robocode.battle.sentryBorderSize",
-			BATTLE_RANDOM_DAMAGE = "robocode.battle.randomDamage";//nuevo!!!!!!!!
+			BATTLE_RANDOM_DAMAGE = "robocode.battle.randomDamage",//nuevo!!!!!!!
+			BATTLE_RANDOM_DAMAGE_MIN = "robocode.battle.randomDamageMin",//nuevo!!!!!!!
+            BATTLE_RANDOM_DAMAGE_MAX = "robocode.battle.randomDamageMax";//nuevo!!!!!!!
 
 	private int battlefieldWidth = 800;
 	private int battlefieldHeight = 600;
@@ -51,6 +54,8 @@ public class BattleProperties implements Serializable {
 	private String selectedRobots;
 	private String initialPositions;
 	private boolean randomDamage = false;//nuevo!!!!!!!!!
+	private double randomDamageMin = 0.1;//nuevo!!!!!!!!!
+    private double randomDamageMax = Rules.ROBOT_HIT_DAMAGE;//nuevo!!!!!!!!!
 
 	private final Properties props = new Properties();
 
@@ -68,13 +73,27 @@ public class BattleProperties implements Serializable {
 	}
 
 	public boolean getRandomDamage() {
-    return randomDamage;
-}
-
-	public void setRandomDamage(boolean randomDamage) {//nuevo!!!!!!!
-		this.randomDamage = randomDamage;
-		props.setProperty(BATTLE_RANDOM_DAMAGE, "" + randomDamage);
+    	return randomDamage;
 	}
+
+	// --- GETTERS Y SETTERS NUEVOS---
+    public double getRandomDamageMin() {
+        return randomDamageMin;
+    }
+
+    public void setRandomDamageMin(double randomDamageMin) {
+        this.randomDamageMin = randomDamageMin;
+        props.setProperty(BATTLE_RANDOM_DAMAGE_MIN, String.valueOf(randomDamageMin));
+    }
+
+    public double getRandomDamageMax() {
+        return randomDamageMax;
+    }
+
+    public void setRandomDamageMax(double randomDamageMax) {
+        this.randomDamageMax = randomDamageMax;
+        props.setProperty(BATTLE_RANDOM_DAMAGE_MAX, String.valueOf(randomDamageMax));
+    }
 	
 	/**
 	 * Gets the battlefieldWidth.
@@ -354,6 +373,31 @@ public class BattleProperties implements Serializable {
 		selectedRobots = props.getProperty(BATTLE_SELECTEDROBOTS, "");
 		initialPositions = props.getProperty(BATTLE_INITIAL_POSITIONS, "");
 		sentryBorderSize = Integer.parseInt(props.getProperty(BATTLE_SENTRY_BORDER_SIZE, "100"));
-		randomDamage = Boolean.parseBoolean(props.getProperty(BATTLE_RANDOM_DAMAGE, "false"));
+		
+        loadRandomDamageProperties();//nuevo!!!!!!!
 	}
+		
+
+	//--- NUEVO!!!!!!!
+	// Método que Encapsula la lógica de carga y validación
+    private void loadRandomDamageProperties() {
+        this.randomDamage = Boolean.parseBoolean(props.getProperty(BATTLE_RANDOM_DAMAGE, "false"));
+       
+        // Si falla la lectura (null o error), mantenemos el valor que ya tenía la variable (el default o el seteado).
+        this.randomDamageMin = parseDoubleSafe(BATTLE_RANDOM_DAMAGE_MIN, this.randomDamageMin);
+        this.randomDamageMax = parseDoubleSafe(BATTLE_RANDOM_DAMAGE_MAX, this.randomDamageMax);
+    }
+
+    // parseo seguro
+    private double parseDoubleSafe(String key, double defaultValue) {
+        String value = props.getProperty(key); // Puede devolver NULL si la clave no existe en el archivo
+        if (value == null) {
+            return defaultValue;
+        }
+        try {
+            return Double.parseDouble(value); // Puede fallar si el usuario editó el archivo con texto inválido
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
 }
