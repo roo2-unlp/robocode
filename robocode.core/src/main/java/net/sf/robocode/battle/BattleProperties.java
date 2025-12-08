@@ -76,6 +76,11 @@ public class BattleProperties implements Serializable {
     	return randomDamage;
 	}
 
+	public void setRandomDamage(boolean randomDamage) {
+        this.randomDamage = randomDamage;        
+        props.setProperty(BATTLE_RANDOM_DAMAGE, "" + randomDamage);
+    }
+
 	// --- GETTERS Y SETTERS NUEVOS---
     public double getRandomDamageMin() {
         return randomDamageMin;

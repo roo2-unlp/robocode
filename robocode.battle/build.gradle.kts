@@ -10,6 +10,8 @@ dependencies {
     runtimeOnly(project(":robocode.repository"))
 
     implementation(libs.picocontainer)
+
+    testImplementation(testLibs.junit)
 }
 
 description = "Robocode Battle"
