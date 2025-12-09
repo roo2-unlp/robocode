@@ -196,10 +196,9 @@ public class BulletPeer {
 				owner.addEvent(
 						new BulletHitEvent(owner.getNameForEvent(otherRobot), otherRobot.getEnergy(), createBullet(false))); // Bugfix #366
 
- 				// Stun the target if StunningBullets are in use
-				if (battleRules.getStunningBullets()) {
-					otherRobot.skipNextTurns((int) (power * 10)); 
- 				}
+ 				
+				//TODO cuando implementes el getBulletEffect descomenta esta linea
+				// battleRules.getBulletEffect().applyEffect(otherRobot, power);
 
 				double newX, newY;
 
