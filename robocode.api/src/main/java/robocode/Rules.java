@@ -171,6 +171,7 @@ public final class Rules {
 	 * specific velocity.
 	 *
 	 * @param velocity the velocity of the robot.
+	 * @param extraWallDamage el daño extra por chocar una pared
 	 * @return wall hit damage in energy points.
 	 */
 

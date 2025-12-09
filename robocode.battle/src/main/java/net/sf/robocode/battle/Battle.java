@@ -387,7 +387,7 @@ public final class Battle extends BaseBattle {
 				extraWallDamage = dadoRandom.nextInt(6) + 1;
 				if (!RobocodeProperties.isTestingOn()){
 					Logger.logMessage("este es el intervalo de tiempo " + intervaloDado);
-					Logger.logMessage("este es el valor del dado" + extraWallDamage);
+					Logger.logMessage("este es el valor del dado " + extraWallDamage);
 				}
 
 			}
