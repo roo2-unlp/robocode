@@ -18,6 +18,27 @@ import robocode.Rules;
  */
 public class TestBattleModeSelection {
 
+    // --- Método Auxiliar para Stubs ---
+    
+    private Battle createBattleWithStubs() {
+        // Implementación anónima de ICpuManager para satisfacer el contrato de la interfaz.
+        ICpuManager cpuManagerStub = new ICpuManager() {
+            @Override
+            public long getCpuConstant() {
+                return 1000;
+            }
+
+            @Override
+            public void calculateCpuConstant() {
+                // Método no requerido para la prueba de selección.
+            }
+        };
+
+        // Dependencias nulas permitidas ya que no intervienen en el método setup() para este propósito.
+        return new Battle(null, null, null, cpuManagerStub, null);
+    }
+
+
     @Before
     public void setUp() {
         // Inicialización de la infraestructura interna de Robocode.
@@ -77,23 +98,4 @@ public class TestBattleModeSelection {
                 0.0001);
     }
 
-    // --- Método Auxiliar para Stubs ---
-    
-    private Battle createBattleWithStubs() {
-        // Implementación anónima de ICpuManager para satisfacer el contrato de la interfaz.
-        ICpuManager cpuManagerStub = new ICpuManager() {
-            @Override
-            public long getCpuConstant() {
-                return 1000;
-            }
-
-            @Override
-            public void calculateCpuConstant() {
-                // Método no requerido para la prueba de selección.
-            }
-        };
-
-        // Dependencias nulas permitidas ya que no intervienen en el método setup() para este propósito.
-        return new Battle(null, null, null, cpuManagerStub, null);
-    }
 }
