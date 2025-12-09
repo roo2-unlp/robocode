@@ -494,6 +494,40 @@ public class Robot extends _Robot implements IInteractiveRobot, IPaintRobot, IBa
 		return null;
 	}
 
+    public Bullet hurlBullet(double power) {
+        if (peer != null) {
+            return peer.hurl(power);
+        }
+        uninitializedException();
+        return null;
+    }
+
+    public Bullet hurlBullet(double power, double maxDistance) {
+        if (peer != null) {
+            return peer.hurl(power, maxDistance);
+        }
+        uninitializedException();
+        return null;
+    }
+
+    public void hurl(double power) {
+        if (peer != null) {
+            peer.setHurl(power);
+            peer.execute();
+        } else {
+            uninitializedException();
+        }
+    }
+
+    public void hurl(double power, double maxDistance) {
+        if (peer != null) {
+            peer.setHurl(power, maxDistance);
+            peer.execute();
+        } else {
+            uninitializedException();
+        }
+    }
+
 	/**
 	 * Returns the rate at which the gun will cool down, i.e. the amount of heat
 	 * the gun heat will drop per turn.

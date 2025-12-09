@@ -118,7 +118,17 @@ public class BasicRobotProxy extends HostingRobotProxy implements IBasicRobotPee
 		return setFireImpl(power);
 	}
 
-	// blocking actions
+    public Bullet setHurl(double power) {
+        this.setCall();
+        return setHurlImpl(power);
+    }
+
+    public Bullet setHurl(double power, double maxDistance) {
+        this.setCall();
+        return setHurlImpl(power, maxDistance);
+    }
+
+    // blocking actions
 	public void execute() {
 		executeImpl();
 	}
@@ -150,6 +160,20 @@ public class BasicRobotProxy extends HostingRobotProxy implements IBasicRobotPee
 		execute();
 		return bullet;
 	}
+
+    public Bullet hurl(double power) {
+        Bullet bullet = this.setHurl(power);
+
+        execute();
+        return bullet;
+    }
+
+    public Bullet hurl(double power, double maxDistance) {
+        Bullet bullet = this.setHurl(power, maxDistance);
+
+        execute();
+        return bullet;
+    }
 
 	// fast setters
 	public void setBodyColor(Color color) {
@@ -477,6 +501,54 @@ public class BasicRobotProxy extends HostingRobotProxy implements IBasicRobotPee
 		commands.setDistanceRemaining(distance);
 		commands.setMoved(true);
 	}
+
+    private final Bullet setHurlImpl(double power) {
+        // default boomerang distance if not specified
+        return setHurlImpl(power, 300.0);
+    }
+
+    private final Bullet setHurlImpl(double power, double maxDistance) {
+        if (Double.isNaN(power)) {
+            this.println("SYSTEM: You cannot call hurl(NaN)");
+            return null;
+        }
+        if (this.getGunHeatImpl() > 0 || this.getEnergyImpl() == 0) {
+            return null;
+        }
+
+        power = min(this.getEnergyImpl(), min(max(power, Rules.MIN_BULLET_POWER), Rules.MAX_BULLET_POWER));
+
+        Bullet bullet;
+        BulletCommand wrapper;
+        Event currentTopEvent = this.eventManager.getCurrentTopEvent();
+
+        this.nextBulletId++;
+
+        if (currentTopEvent != null && currentTopEvent.getTime() == this.status.getTime() && !this.statics.isAdvancedRobot()
+                && this.status.getGunHeadingRadians() == this.status.getRadarHeadingRadians()
+                && ScannedRobotEvent.class.isAssignableFrom(currentTopEvent.getClass())) {
+            // this is angle assisted bullet
+            ScannedRobotEvent e = (ScannedRobotEvent) currentTopEvent;
+            double fireAssistAngle = Utils.normalAbsoluteAngle(this.status.getHeadingRadians() + e.getBearingRadians());
+
+            bullet = new Bullet(fireAssistAngle, this.getX(), this.getY(), power, this.statics.getName(), null, true, this.nextBulletId);
+            wrapper = new BulletCommand(power, true, fireAssistAngle, this.nextBulletId, true, maxDistance);
+        } else {
+            // this is normal bullet
+            bullet = new Bullet(this.status.getGunHeadingRadians(), this.getX(), this.getY(), power, this.statics.getName(), null, true,
+                    this.nextBulletId);
+            wrapper = new BulletCommand(power, false, 0, this.nextBulletId, true, maxDistance);
+        }
+
+        this.firedEnergy += power;
+        this.firedHeat += Rules.getGunHeat(power);
+
+        this.commands.getBullets().add(wrapper);
+
+        this.bullets.put(this.nextBulletId, bullet);
+
+        return bullet;
+    }
 
 	private final Bullet setFireImpl(double power) {
 		if (Double.isNaN(power)) {

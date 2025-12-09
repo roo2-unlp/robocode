@@ -514,7 +514,37 @@ public interface IBasicRobotPeer {
 	 */
 	Bullet setFire(double power);
 
-	/**
+    /**
+     * Hurls a boomerang.
+     * @param power
+     * @return
+     */
+    Bullet hurl(double power);
+
+    /**
+     * Sets the gun to hurl a boomerang when the next execution takes place.
+     * @param power
+     * @return
+     */
+    Bullet setHurl(double power);
+
+    /**
+     * Hurls a boomerang that will return after traveling the given max distance.
+     * @param power bullet power
+     * @param maxDistance distance to travel before returning to origin
+     * @return the Bullet reference (for tracking) or null if not fired
+     */
+    Bullet hurl(double power, double maxDistance);
+
+    /**
+     * Schedules a boomerang hurl with a given max distance to be executed on next turn.
+     * @param power bullet power
+     * @param maxDistance distance to travel before returning to origin
+     * @return the Bullet reference (for tracking) or null if not scheduled
+     */
+    Bullet setHurl(double power, double maxDistance);
+
+    /**
 	 * Sets the color of the robot's body.
 	 * <p>
 	 * A {@code null} indicates the default (blue) color.

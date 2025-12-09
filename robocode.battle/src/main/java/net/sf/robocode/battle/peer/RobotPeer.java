@@ -851,7 +851,7 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 	private void fireBullets(List<BulletCommand> bulletCommands) {
 		BulletPeer newBullet = null;
 
-		for (BulletCommand bulletCmd : bulletCommands) {
+        for (BulletCommand bulletCmd : bulletCommands) {
 			if (Double.isNaN(bulletCmd.getPower())) {
 				println("SYSTEM: You cannot call fire(NaN)");
 				continue;
@@ -867,7 +867,12 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 
 			gunHeat += Rules.getGunHeat(firePower);
 
-			newBullet = new BulletPeer(this, battleRules, bulletCmd.getBulletId());
+            if (bulletCmd.isBoomerang()) { // TODO: pasar a BulletCommand la creación de BulletPeer...
+                newBullet = new BoomerangBulletPeer(this, battleRules, bulletCmd.getBulletId(), x, y,
+                        bulletCmd.getBoomerangMaxDistance());
+            } else {
+                newBullet = new BulletPeer(this, battleRules, bulletCmd.getBulletId());
+            }
 
 			newBullet.setPower(firePower);
 			if (!turnedRadarWithGun || !bulletCmd.isFireAssistValid() || statics.isAdvancedRobot()) {
@@ -875,9 +880,9 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 			} else {
 				newBullet.setHeading(bulletCmd.getFireAssistAngle());
 			}
-			newBullet.setX(x);
-			newBullet.setY(y);
-		}
+            newBullet.setX(x);
+            newBullet.setY(y);
+        }
 		// there is only last bullet in one turn
 		if (newBullet != null) {
 			// newBullet.update(robots, bullets);
