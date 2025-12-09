@@ -11,6 +11,7 @@ package net.sf.robocode.battle.peer;
 import static net.sf.robocode.io.Logger.logMessage;
 import net.sf.robocode.battle.Battle;
 import net.sf.robocode.battle.BoundingRectangle;
+import net.sf.robocode.battle.traps.Trap;
 import net.sf.robocode.host.IHostManager;
 import net.sf.robocode.host.RobotStatics;
 import net.sf.robocode.host.events.EventManager;
@@ -172,6 +173,27 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 
 	public void applyTrapDamage(double damage) {
 		setEnergy(energy - damage, true);
+	}
+	/**
+	 * Verifica si el robot ha colisionado con alguna trampa en la lista proporcionada.
+	 * Si hay una colisión y el robot no está en cooldown, se aplica el efecto de la trampa.
+	 */
+	public void checkTrapCollision(List<Trap> traps) {
+		if (this.isDead() || this.isInTrapCooldown() || this.getEnergy() <= 0) {
+			return; // No verificar si el robot está muerto, en cooldown o sin energía
+		}
+
+		final double ROBOT_HALF_SIZE = RobotPeer.WIDTH / 2.0;
+		double rx = this.getX();
+		double ry = this.getY();
+
+		// Iterar sobre las trampas
+		for (Trap trampa : traps) {
+			if (trampa.intersects(rx, ry, ROBOT_HALF_SIZE)) {
+				trampa.applyEffect(this);
+				break;
+			}
+		}
 	}
 
 	public RobotPeer(Battle battle, IHostManager hostManager, RobotSpecification robotSpecification, String name, String suffix, TeamPeer team, int robotIndex) {

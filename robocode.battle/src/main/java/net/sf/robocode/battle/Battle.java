@@ -577,24 +577,8 @@ public final class Battle extends BaseBattle {
 
 			// Detección de coliciones con trampas
 			if (!this.traps.isEmpty()) {
-				// Obtener el tamaño del robot (asumiendo que RobotPeer.WIDTH es el tamaño)
-				final double ROBOT_HALF_SIZE = RobotPeer.WIDTH / 2.0;
-
 				for (RobotPeer robotPeer : getRobotsAtRandom()) {
-					if (robotPeer.isDead() || robotPeer.isInTrapCooldown() || robotPeer.getEnergy() <= 0) {
-						continue; // No verificar si el robot ya está muerto o sin energía
-					}
-
-					double rx = robotPeer.getX();
-					double ry = robotPeer.getY();
-
-					// Iterar sobre las trampas
-					for (Trap trampa : this.traps) {
-						if (trampa.intersects(rx, ry, ROBOT_HALF_SIZE)) {
-							trampa.applyEffect(robotPeer);
-							break;
-						}
-					}
+					robotPeer.checkTrapCollision(this.getTraps());
 				}
 			}
 		}
