@@ -17,14 +17,12 @@ public final class HitTrapEvent extends Event {
 	private final double trapX;
 	private final double trapY;
 	private final double radius;
-	private final TrapEffectType trapEffect;
 
-	public HitTrapEvent(double trapX, double trapY, double radius, TrapEffectType trapEffect) {
+	public HitTrapEvent(double trapX, double trapY, double radius) {
 		super();
 		this.trapX = trapX;
 		this.trapY = trapY;
 		this.radius = radius;
-		this.trapEffect = trapEffect;
 	}
 
 	public double getTrapX() {
@@ -41,9 +39,6 @@ public final class HitTrapEvent extends Event {
 	}
 	public double getRadius() {
 		return radius;
-	}
-	public TrapEffectType getTrapEffect() {
-		return trapEffect;
 	}
 
 	/**
@@ -87,12 +82,10 @@ public final class HitTrapEvent extends Event {
 
 	private static class SerializableHelper implements ISerializableHelper {
 
-		// El tamaño del evento es la suma del tamaño de tres doubles.
 		public int sizeOf(RbSerializer serializer, Object object) {
 
 			return RbSerializer.SIZEOF_TYPEINFO
-					+ (3 * RbSerializer.SIZEOF_DOUBLE)
-					+ RbSerializer.SIZEOF_INT;
+					+ (3 * RbSerializer.SIZEOF_DOUBLE);
 		}
 
 		public void serialize(RbSerializer serializer, ByteBuffer buffer, Object object) {
@@ -101,16 +94,14 @@ public final class HitTrapEvent extends Event {
 			serializer.serialize(buffer, obj.trapX);
 			serializer.serialize(buffer, obj.trapY);
 			serializer.serialize(buffer, obj.radius);
-			serializer.serialize(buffer, obj.trapEffect.ordinal());
 		}
 
 		public Object deserialize(RbSerializer serializer, ByteBuffer buffer) {
 			double trapX = buffer.getDouble();
 			double trapY = buffer.getDouble();
 			double radius = buffer.getDouble();
-			TrapEffectType trapEffect = TrapEffectType.values()[buffer.getInt()];
 
-			return new HitTrapEvent(trapX, trapY, radius, trapEffect);
+			return new HitTrapEvent(trapX, trapY, radius);
 		}
 	}
 }

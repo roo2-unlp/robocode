@@ -1,20 +1,14 @@
 package net.sf.robocode.battle.traps;
 
+import net.sf.robocode.battle.effect.DamageEffect;
 import net.sf.robocode.battle.peer.RobotPeer;
 import net.sf.robocode.io.Logger;
 import robocode.HitTrapEvent;
-import robocode.TrapEffectType;
 
 public class DamageTrap extends Trap{
 
-	private final double damage;
-
-	public DamageTrap(double x, double y, double radius, double damage) {
-		super(x, y, radius, TrapEffectType.DAMAGE);
-		this.damage = damage;
-	}
-	public double getDamage() {
-		return damage;
+	public DamageTrap(double x, double y, double radius, double damage, int duration) {
+		super(x, y, radius, new DamageEffect(damage, duration));
 	}
 
 	@Override
@@ -24,19 +18,18 @@ public class DamageTrap extends Trap{
 			return;
 		}
 
-		robot.applyTrapDamage(this.damage);
+		this.getTrapEffect().apply(robot);
+		double damage = ((DamageEffect) this.getTrapEffect()).getDamage();
 
 		if(robot.isDead() || robot.getEnergy() <= 0){
-			Logger.logMessage("TRAMPA: " + robot.getName() + " pisó una trampa de DAÑO. Daño: " + this.damage + " (FATAL)");
+			Logger.logMessage("TRAMPA: " + robot.getName() + " pisó una trampa de DAÑO. Daño: "+ damage +" (FATAL)");
 			return;
 		}
 
-		robot.resetTrapCooldown();
-
 		robot.addEvent(
-				new HitTrapEvent(this.getX(), this.getY(), this.getRadius(), TrapEffectType.DAMAGE)
+				new HitTrapEvent(this.getX(), this.getY(), this.getRadius())
 		);
 
-		Logger.logMessage("TRAMPA: " + robot.getName() + " pisó una trampa de DAÑO. Daño: " + this.damage);
+		Logger.logMessage("TRAMPA: " + robot.getName() + " pisó una trampa de DAÑO: " + damage);
 	}
 }

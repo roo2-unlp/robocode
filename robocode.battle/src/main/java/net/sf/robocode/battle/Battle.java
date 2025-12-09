@@ -16,6 +16,7 @@ import net.sf.robocode.battle.peer.TeamPeer;
 import net.sf.robocode.battle.snapshot.TrapSnapshot;
 import net.sf.robocode.battle.snapshot.TurnSnapshot;
 import net.sf.robocode.battle.traps.DamageTrap;
+import net.sf.robocode.battle.traps.StickyTrap;
 import net.sf.robocode.host.ICpuManager;
 import net.sf.robocode.host.IHostManager;
 import net.sf.robocode.io.Logger;
@@ -569,20 +570,6 @@ public final class Battle extends BaseBattle {
 			robotPeer.performMove(getRobotsAtRandom(), zapEnergy);
 		}
 
-		// FIX, SOLO SI LAS TRAMPAS ESTAN ACTIVADAS
-		if (battleRules.getTrapsEnabled()) {
-			for (RobotPeer robotPeer : getRobotsAtRandom()) {
-				robotPeer.decrementTrapCooldown();
-			}
-
-			// Detección de coliciones con trampas
-			if (!this.traps.isEmpty()) {
-				for (RobotPeer robotPeer : getRobotsAtRandom()) {
-					robotPeer.checkTrapCollision(this.getTraps());
-				}
-			}
-		}
-
 		// Correct bounding box after collisions
 		for (RobotPeer robotPeer : robots) {
 			robotPeer.updateAfterCollision();
@@ -788,7 +775,7 @@ public final class Battle extends BaseBattle {
 	}
 
 	//trampas
-	private ArrayList<Trap> getTraps() {
+	public ArrayList<Trap> getTraps() {
 		return (ArrayList<Trap>) traps;
 	}
 	private void addTrap(Trap trap) {
@@ -844,7 +831,8 @@ public final class Battle extends BaseBattle {
 			}
 			
 			if (posicionValida) {
-				addTrap(new DamageTrap(x, y, configuredRadius, configuredDamage));
+				//addTrap(new DamageTrap(x, y, configuredRadius, configuredDamage));
+				addTrap(new StickyTrap(x, y, configuredRadius, 0.5,50));
 			} else {
 				System.out.println("No se pudo colocar trampa " + (i + 1) + " sin superposicion despues de " + maxIntentosPorTrampa + " intentos");
 				i--;

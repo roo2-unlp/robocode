@@ -1,7 +1,7 @@
 package net.sf.robocode.battle.snapshot;
 
+import net.sf.robocode.battle.effect.ITrapEffect;
 import net.sf.robocode.battle.traps.Trap;
-import robocode.TrapEffectType;
 import robocode.control.snapshot.ITrapSnapshot;
 
 import java.io.Serializable;
@@ -17,20 +17,17 @@ public final class TrapSnapshot implements Serializable, ITrapSnapshot {
 	private final double x;
 	private final double y;
 	private final double radius;
-	private final TrapEffectType trapEffect;
 
 	public TrapSnapshot(Trap trap) {
 		this.x = trap.getX();
 		this.y = trap.getY();
 		this.radius = trap.getRadius();
-		this.trapEffect = trap.getTrapEffect();
 	}
 
-	public TrapSnapshot(double x, double y, double radius, TrapEffectType trapEffect) {
+	public TrapSnapshot(double x, double y, double radius) {
 		this.x = x;
 		this.y = y;
 		this.radius = radius;
-		this.trapEffect = trapEffect;
 	}
 
 	@Override
@@ -46,11 +43,6 @@ public final class TrapSnapshot implements Serializable, ITrapSnapshot {
 	@Override
 	public double getRadius() {
 		return radius;
-	}
-
-	@Override
-	public TrapEffectType getTrapEffect() {
-		return trapEffect;
 	}
 
 }
