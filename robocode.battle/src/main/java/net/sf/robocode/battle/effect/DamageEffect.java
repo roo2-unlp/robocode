@@ -29,8 +29,4 @@ public class DamageEffect implements ITrapEffect{
 	public String getMessage() {
 		return "Damage: " + damage;
 	}
-
-	public double getDamage() {
-		return damage;
-	}
 }

@@ -2,53 +2,46 @@
 
 ![Robocode logo](https://robocode.sourceforge.io/gfx/robocode_logo_tanks.png)
 
-**Motto: _Build the best — destroy the rest!_**
+## Implementación de trampas en el mapa
+- se activan desde la pestaña de "rules"
+- se pueden seleccionar la cantidad de trampas que se activan
+## Para crear un efecto de trampa personalizado:
+- implementar la interfaz ITrapEffect en "robocode.battle/src/main/java/net/sf/robocode/battle/effect"
+```java
+public class DamageEffect implements ITrapEffect{
+	private final double damage;
+	private final int duration;
 
-**Robocode** is an engaging and educational [programming game] that allows you to code, test, and improve robot battle
-tanks. The game's primary aim is to teach programming skills in a fun and interactive environment.
+	public DamageEffect(double damage, int duration)
+	{
+		this.damage = damage;
+		this.duration = duration;
+	}
+	@Override
+	public void apply(RobotPeer robot) {
+		robot.applyEnergyEffect(-damage);
+	}
 
-With Robocode, you can:
+	@Override
+	public void revert(RobotPeer robot) {
+	}
 
-- **Learn to Program**: Develop programming skills in languages like Java and Kotlin.
-- **Create Battle Tanks**: Design and program virtual robots that compete against each other in battles.
-- **Improve Problem-Solving**: Enhance your algorithmic thinking and problem-solving skills by writing better code to
-  outsmart opponents.
+	@Override
+	public int getDuration() {
+		return duration;
+	}
 
-Robocode is suitable for all levels—from beginners taking their first steps in coding to experienced developers looking
-for a fun challenge. Whether you are learning to program or just seeking a stimulating activity, Robocode offers a
-platform where you can have fun while honing your skills.
+	@Override
+	public String getMessage() {
+		return "Damage: " + damage;
+	}
+}
+```
+- `apply` se llama cuando se activa la trampa
+- `revert` se llama para revertir el efecto de la trampa cuando se acaba la duración
+- `getDuration` devuelve el tiempo que dura la trampa
+- `getMessage` devuelve el mensaje que se muestra en la consola cuando se activa la trampa`
 
-Get started with Robocode today and unleash your inner programmer!
-
-- [Robocode home page]
-- [Introduction] to Robocode
-- [RoboWiki] is the best way to learn about Robocoding
-- [Robocode group] is where you can ask questions
-- [Facebook group] is a community for enthusiasts of the Robocode programming game
-- [Robocode Application Developers] is for people that want to develop or experiments with the Robocode application (
-  game)
-- [Robocode Guide for building Robocode], if you want to build Robocode yourself
-
-Also note that a new version of Robocode supports C# as well (and more languages in the future):
-
-- [Robocode Tank Royale] is a new platform for Robocode
-
-Happy Robocoding! 🤖⌨️
-
-[programming game]: https://x-team.com/magazine/coding-games "23 Programming Games to Level Up Your Programming Skills"
-
-[Robocode home page]: https://robocode.sourceforge.io/ "Home page for Robocode"
-
-[Introduction]: https://robocode.sourceforge.io/docs/ReadMe.html "Introduction into Robocode"
-
-[RoboWiki]: https://robowiki.net/ "RoboWiki - Collecting Robocode knowledge since 2003"
-
-[Robocode group]: https://groups.google.com/g/robocode "The Robocode Group"
-
-[Facebook group]: https://www.facebook.com/groups/129627130234/ "The Facebook group for Robocode"
-
-[Robocode Guide for building Robocode]: https://robowiki.net/wiki/Robocode/Developers_Guide_for_building_Robocode "The guide for how to how to build Robocode (the game)"
-
-[Robocode Application Developers]: https://groups.google.com/g/robocode-developers "Group for developers of the Robocode application"
-
-[Robocode Tank Royale]: https://github.com/robocode-dev/tank-royale/blob/main/README.md "Robocode Tank Royale"
+### efectos aplicables al robot (se ampliara en el futuro)
+- `applyEnergyEffect` afecta a la energia del robot
+- `setMovementMultiplier` afecta a la velocidad del robot
