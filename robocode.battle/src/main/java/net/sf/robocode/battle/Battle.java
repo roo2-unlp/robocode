@@ -8,6 +8,8 @@
 package net.sf.robocode.battle;
 
 
+import net.sf.robocode.battle.effect.DamageEffect;
+import net.sf.robocode.battle.effect.StickyEffect;
 import net.sf.robocode.battle.events.BattleEventDispatcher;
 import net.sf.robocode.battle.peer.BulletPeer;
 import net.sf.robocode.battle.peer.ContestantPeer;
@@ -15,7 +17,6 @@ import net.sf.robocode.battle.peer.RobotPeer;
 import net.sf.robocode.battle.peer.TeamPeer;
 import net.sf.robocode.battle.snapshot.TrapSnapshot;
 import net.sf.robocode.battle.snapshot.TurnSnapshot;
-import net.sf.robocode.battle.traps.DamageTrap;
 import net.sf.robocode.host.ICpuManager;
 import net.sf.robocode.host.IHostManager;
 import net.sf.robocode.io.Logger;
@@ -569,36 +570,6 @@ public final class Battle extends BaseBattle {
 			robotPeer.performMove(getRobotsAtRandom(), zapEnergy);
 		}
 
-		// FIX, SOLO SI LAS TRAMPAS ESTAN ACTIVADAS
-		if (battleRules.getTrapsEnabled()) {
-			for (RobotPeer robotPeer : getRobotsAtRandom()) {
-				robotPeer.decrementTrapCooldown();
-			}
-
-			// Detección de coliciones con trampas
-			if (!this.traps.isEmpty()) {
-				// Obtener el tamaño del robot (asumiendo que RobotPeer.WIDTH es el tamaño)
-				final double ROBOT_HALF_SIZE = RobotPeer.WIDTH / 2.0;
-
-				for (RobotPeer robotPeer : getRobotsAtRandom()) {
-					if (robotPeer.isDead() || robotPeer.isInTrapCooldown() || robotPeer.getEnergy() <= 0) {
-						continue; // No verificar si el robot ya está muerto o sin energía
-					}
-
-					double rx = robotPeer.getX();
-					double ry = robotPeer.getY();
-
-					// Iterar sobre las trampas
-					for (Trap trampa : this.traps) {
-						if (trampa.intersects(rx, ry, ROBOT_HALF_SIZE)) {
-							trampa.applyEffect(robotPeer);
-							break;
-						}
-					}
-				}
-			}
-		}
-
 		// Correct bounding box after collisions
 		for (RobotPeer robotPeer : robots) {
 			robotPeer.updateAfterCollision();
@@ -804,7 +775,7 @@ public final class Battle extends BaseBattle {
 	}
 
 	//trampas
-	private ArrayList<Trap> getTraps() {
+	public ArrayList<Trap> getTraps() {
 		return (ArrayList<Trap>) traps;
 	}
 	private void addTrap(Trap trap) {
@@ -860,7 +831,9 @@ public final class Battle extends BaseBattle {
 			}
 			
 			if (posicionValida) {
-				addTrap(new DamageTrap(x, y, configuredRadius, configuredDamage));
+				addTrap(new Trap(x, y, configuredRadius, new DamageEffect(1,10)));
+				//descomentar para probar otro efecto
+				//addTrap(new Trap(x, y, configuredRadius, new StickyEffect(0.5,50)));
 			} else {
 				System.out.println("No se pudo colocar trampa " + (i + 1) + " sin superposicion despues de " + maxIntentosPorTrampa + " intentos");
 				i--;

@@ -1,19 +1,22 @@
 package net.sf.robocode.battle.traps;
 
+import net.sf.robocode.battle.effect.DamageEffect;
+import net.sf.robocode.battle.effect.ITrapEffect;
 import net.sf.robocode.battle.peer.RobotPeer;
-import robocode.TrapEffectType;
+import net.sf.robocode.io.Logger;
+import robocode.HitTrapEvent;
 
-public abstract class Trap {
+public class Trap {
 	private final double x;
 	private final double y;
 	private final double radius;
-	private final TrapEffectType effectType;
+	private final ITrapEffect effect;
 
-	public Trap(double x, double y, double radius, TrapEffectType effectType) {
+	public Trap(double x, double y, double radius, ITrapEffect effect) {
 		this.x = x;
 		this.y = y;
 		this.radius = radius;
-		this.effectType = effectType;
+		this.effect = effect;
 	}
 
 	public boolean contains(double rx, double ry) {
@@ -21,12 +24,23 @@ public abstract class Trap {
 		double dy = ry - y;
 		return dx * dx + dy * dy <= radius * radius;
 	}
-	public abstract void applyEffect(RobotPeer robot);
+	public void applyEffect(RobotPeer robot) {
+		// Verificar si el robot ya esta muerto o si energia
+		if(robot.isDead() || robot.getEnergy() <= 0){
+			return;
+		}
+
+		this.getTrapEffect().apply(robot);
+
+		robot.addEvent(
+				new HitTrapEvent(this.getX(), this.getY(), this.getRadius())
+		);
+	}
 
 	public double getX() { return x; }
 	public double getY() { return y; }
 	public double getRadius() { return radius; }
-	public TrapEffectType getTrapEffect() { return effectType; }
+	public ITrapEffect getTrapEffect() { return effect; }
 	public boolean intersects(double rx, double ry, double robotHalfSize) {
 		double closestX = Math.max(x - radius, Math.min(rx, x + radius));
 		double closestY = Math.max(y - radius, Math.min(ry, y + radius));

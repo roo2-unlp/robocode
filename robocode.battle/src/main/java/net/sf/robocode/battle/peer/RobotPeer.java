@@ -11,6 +11,8 @@ package net.sf.robocode.battle.peer;
 import static net.sf.robocode.io.Logger.logMessage;
 import net.sf.robocode.battle.Battle;
 import net.sf.robocode.battle.BoundingRectangle;
+import net.sf.robocode.battle.effect.ITrapEffect;
+import net.sf.robocode.battle.traps.Trap;
 import net.sf.robocode.host.IHostManager;
 import net.sf.robocode.host.RobotStatics;
 import net.sf.robocode.host.events.EventManager;
@@ -43,9 +45,7 @@ import java.io.IOException;
 import static java.lang.Math.*;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -142,36 +142,74 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 	private final BoundingRectangle boundingBox;
 	private final RbSerializer rbSerializer;
 
-	//trampas
-	private static final int TRAP_COOLDOWN_TICKS = 100;
+	//para trampas que modifican el movimiento del robot
+	private double movementMultiplier = 1.0;
 
-	private int trapCooldown = 0;
-
-	/**
-	 * Reduce el contador de cooldown en 1. Llamado por la simulación en Battle cada tick.
-	 */
-	public void decrementTrapCooldown() {
-		if (trapCooldown > 0) {
-			trapCooldown--;
-		}
+	public void setMovementMultiplier(double multiplier) {
+		this.movementMultiplier = multiplier;
 	}
-
-	/**
-	 * Reinicia el cooldown. Llamado por la trampa después de aplicar su efecto.
-	 */
-	public void resetTrapCooldown() {
-		this.trapCooldown = TRAP_COOLDOWN_TICKS;
-	}
+	//para manejar los efectos de trampas
+	private final Map<ITrapEffect, Integer> activeEffects = new HashMap<>();
 
 	/**
 	 * Indica si el robot está actualmente protegido contra la activación de una trampa.
 	 */
 	public boolean isInTrapCooldown() {
-		return trapCooldown > 0;
+		return !activeEffects.isEmpty();
 	}
 
-	public void applyTrapDamage(double damage) {
-		setEnergy(energy - damage, true);
+	public void applyEnergyEffect(double delta) {
+		final double MAX_ENERGY = 100.0;
+		// 1. Lógica de Regeneración (Delta Positivo)
+		if (delta > 0) {
+			setEnergy(Math.min(energy + delta, MAX_ENERGY), true);
+			return; // Aplicamos el cambio y salimos del método
+		}
+		// 2. Lógica de Daño/Pérdida (Delta Negativo o Cero)
+		if (!isExecFinishedAndDisabled && !isEnergyDrained) {
+			setEnergy(energy + delta, true);
+		}
+	}
+	/**
+	 * Verifica si el robot ha colisionado con alguna trampa en la lista proporcionada.
+	 * Si hay una colisión y el robot no está en cooldown, se aplica el efecto de la trampa.
+	 */
+	public void checkTrapCollision(List<Trap> traps) {
+		if (this.isDead() || this.isInTrapCooldown() || this.getEnergy() <= 0) {
+			return; // No verificar si el robot está muerto, en cooldown o sin energía
+		}
+
+		final double ROBOT_HALF_SIZE = RobotPeer.WIDTH / 2.0;
+		double rx = this.getX();
+		double ry = this.getY();
+
+		// Iterar sobre las trampas
+		for (Trap trampa : traps) {
+			if (trampa.intersects(rx, ry, ROBOT_HALF_SIZE)) {
+				trampa.applyEffect(this);
+				Logger.logMessage(trampa.getTrapEffect().getMessage());
+				this.activeEffects.put(trampa.getTrapEffect(), trampa.getTrapEffect().getDuration());
+			}
+		}
+	}
+	// metodo para actualizar la duracion de la trampa
+	private void updateTrapEffects() {
+		// 1. Manejo de Efectos Activos (copiado del diseño anterior)
+		Iterator<Map.Entry<ITrapEffect, Integer>> iterator = activeEffects.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Map.Entry<ITrapEffect, Integer> entry = iterator.next();
+			ITrapEffect effect = entry.getKey();
+			int remainingTicks = entry.getValue();
+
+			if (remainingTicks <= 1) {
+				// Revertir el efecto y eliminarlo
+				effect.revert(this);
+				iterator.remove();
+			} else {
+				// Reducir la duración en 1 tick
+				entry.setValue(remainingTicks - 1);
+			}
+		}
 	}
 
 	public RobotPeer(Battle battle, IHostManager hostManager, RobotSpecification robotSpecification, String name, String suffix, TeamPeer team, int robotIndex) {
@@ -924,6 +962,8 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 			return;
 		}
 
+		updateTrapEffects();
+
 		setState(RobotState.ACTIVE);
 
 		updateGunHeat();
@@ -941,6 +981,10 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 		updateGunHeading();
 		updateRadarHeading();
 		updateMovement();
+
+		if (this.battleRules.getTrapsEnabled()) {
+			this.checkTrapCollision(this.battle.getTraps());
+		}
 
 		// At this point, robot has turned then moved.
 		// We could be touching a wall or another bot...
@@ -1457,6 +1501,9 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 		}
 
 		velocity = getNewVelocity(velocity, distance);
+
+		velocity *= movementMultiplier;
+
 
 		// If we are over-driving our distance and we are now at velocity=0
 		// then we stopped.
