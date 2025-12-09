@@ -187,10 +187,8 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 		for (Trap trampa : traps) {
 			if (trampa.intersects(rx, ry, ROBOT_HALF_SIZE)) {
 				trampa.applyEffect(this);
-				if(trampa.getTrapEffect().getDuration() > 0){
-					this.activeEffects.put(trampa.getTrapEffect(), trampa.getTrapEffect().getDuration());
-				}
-				break;
+				Logger.logMessage(trampa.getTrapEffect().getMessage());
+				this.activeEffects.put(trampa.getTrapEffect(), trampa.getTrapEffect().getDuration());
 			}
 		}
 	}
@@ -210,7 +208,6 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 			} else {
 				// Reducir la duración en 1 tick
 				entry.setValue(remainingTicks - 1);
-				Logger.logMessage("duration: " + remainingTicks);
 			}
 		}
 	}

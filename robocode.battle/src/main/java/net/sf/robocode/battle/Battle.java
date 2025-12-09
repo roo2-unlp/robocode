@@ -8,6 +8,8 @@
 package net.sf.robocode.battle;
 
 
+import net.sf.robocode.battle.effect.DamageEffect;
+import net.sf.robocode.battle.effect.StickyEffect;
 import net.sf.robocode.battle.events.BattleEventDispatcher;
 import net.sf.robocode.battle.peer.BulletPeer;
 import net.sf.robocode.battle.peer.ContestantPeer;
@@ -15,8 +17,6 @@ import net.sf.robocode.battle.peer.RobotPeer;
 import net.sf.robocode.battle.peer.TeamPeer;
 import net.sf.robocode.battle.snapshot.TrapSnapshot;
 import net.sf.robocode.battle.snapshot.TurnSnapshot;
-import net.sf.robocode.battle.traps.DamageTrap;
-import net.sf.robocode.battle.traps.StickyTrap;
 import net.sf.robocode.host.ICpuManager;
 import net.sf.robocode.host.IHostManager;
 import net.sf.robocode.io.Logger;
@@ -831,8 +831,9 @@ public final class Battle extends BaseBattle {
 			}
 			
 			if (posicionValida) {
-				//addTrap(new DamageTrap(x, y, configuredRadius, configuredDamage));
-				addTrap(new StickyTrap(x, y, configuredRadius, 0.5,50));
+				addTrap(new Trap(x, y, configuredRadius, new DamageEffect(1,10)));
+				//descomentar para probar otro efecto
+				//addTrap(new Trap(x, y, configuredRadius, new StickyEffect(0.5,50)));
 			} else {
 				System.out.println("No se pudo colocar trampa " + (i + 1) + " sin superposicion despues de " + maxIntentosPorTrampa + " intentos");
 				i--;

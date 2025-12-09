@@ -25,7 +25,9 @@ public class StickyEffect implements ITrapEffect{
 		return duration;
 	}
 
-	public double getSlowFactor() {
-		return slowFactor;
+	@Override
+	public String getMessage() {
+		return "Slowed by factor: " + slowFactor;
 	}
+
 }
