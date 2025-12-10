@@ -87,7 +87,8 @@ public final class Battle extends BaseBattle {
 	private int intervaloDado = 0;
 	private int tiempoTranscurrido = 0;
 	private final Random dadoRandom = new Random();
-	private int extraWallDamage = 1;
+	private int extraWallDamage;
+	private WallHitDamageStrategy hitWallStrategy;
 
 
 	public Battle(ISettingsManager properties, IBattleManager battleManager, IHostManager hostManager, ICpuManager cpuManager, BattleEventDispatcher eventDispatcher) { // NO_UCD (unused code)
@@ -104,6 +105,7 @@ public final class Battle extends BaseBattle {
 		robotsCount = battlingRobotsList.length;
 		computeInitialPositions(battleProps.getInitialPositions());
 		createPeers(battlingRobotsList);
+		this.hitWallStrategy = new NullWallHitDamageStrategy();
 	}
 
 	private void createPeers(RobotSpecification[] battlingRobotsList) {
@@ -318,6 +320,8 @@ public final class Battle extends BaseBattle {
 	@Override
 	protected void initializeRound() {
 		super.initializeRound();
+		// aca si es true randomwalldamage inicializo
+		this.extraWallDamage = hitWallStrategy.getExtraWallDamage();
 		tiempoTranscurrido = 0;
 		intervaloDado = dadoRandom.nextInt(150)+50;
 
@@ -378,6 +382,10 @@ public final class Battle extends BaseBattle {
 	@Override
 	protected void runTurn() {
 		super.runTurn();
+		//aca se reemplaza por el strategy, si es nulo no hace nada, sino calcula
+		//extraWallDamage = hitWallStrategy.getExtraWallDamage();
+
+		//toda esta logica pasarla al strategy
 		if (battleRules.getRandomWallHitDamage()){
 			tiempoTranscurrido++;
 			if (tiempoTranscurrido >= intervaloDado){

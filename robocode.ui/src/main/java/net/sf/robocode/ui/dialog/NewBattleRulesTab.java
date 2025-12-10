@@ -439,6 +439,8 @@ public class NewBattleRulesTab extends JPanel {
 			se lo paso a settings manager y a battle properties
 			 */
 			boolean randomWallHitDamage = randomWallHitDamageCheckBox.isSelected();
+			//si esta seteado en true debe mostrar el min y max
+
 			settingsManager.setBattleDefaultRandomWallHitDamage(randomWallHitDamage);
 			battleProperties.setRandomWallHitDamage(randomWallHitDamage);
 
