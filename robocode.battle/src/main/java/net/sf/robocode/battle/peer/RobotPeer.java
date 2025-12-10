@@ -1107,78 +1107,92 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 
 		if (hitWall) {
 			if (battleRules.getInfiniteMap()) {
-				double fieldWidth = getBattleFieldWidth();
-				double fieldHeight = getBattleFieldHeight();
-
-				if (x < minX) {
-					x += fieldWidth;
-				} else if (x > maxX) {
-					x -= fieldWidth;
-				}
-
-				if (y < minY) {
-					y += fieldHeight;
-				} else if (y > maxY) {
-					y -= fieldHeight;
-				}
-
-				if (fieldWidth > 0) {
-					x = minX + ((x - minX) % fieldWidth + fieldWidth) % fieldWidth;
-				}
-
-				if (fieldHeight > 0) {
-					y = minY + ((y - minY) % fieldHeight + fieldHeight) % fieldHeight;
-				}
-
-				updateBoundingBox();
-
+				handleInfiniteMapWrapping(minX, minY, maxX, maxY);
 				return;
 			}
-			addEvent(new HitWallEvent(angle));
+			handleClassicWallCollision(adjustX, adjustY, angle, minX, minY, maxX, maxY);
 
-			// only fix both x and y values if hitting wall at an angle
-			if ((bodyHeading % (Math.PI / 2)) != 0) {
-				double tanHeading = tan(bodyHeading);
-
-				// if it hits bottom or top wall
-				if (adjustX == 0) {
-					adjustX = adjustY * tanHeading;
-				} // if it hits a side wall
-				else if (adjustY == 0) {
-					adjustY = adjustX / tanHeading;
-				} // if the robot hits 2 walls at the same time (rare, but just in case)
-				else if (abs(adjustX / tanHeading) > abs(adjustY)) {
-					adjustY = adjustX / tanHeading;
-				} else if (abs(adjustY * tanHeading) > abs(adjustX)) {
-					adjustX = adjustY * tanHeading;
-				}
-			}
-			x += adjustX;
-			y += adjustY;
-
-			if (x < minX) {
-				x = minX;
-			} else if (x > maxX) {
-				x = maxX;
-			}
-			if (y < minY) {
-				y = minY;
-			} else if (y > maxY) {
-				y = maxY;
-			}
-
-			// Update energy, but do not reset inactiveTurnCount
-			if (statics.isAdvancedRobot()) {
-				setEnergy(energy - Rules.getWallHitDamage(velocity), false);
-			}
-
-			updateBoundingBox();
-
-			currentCommands.setDistanceRemaining(0);
-			velocity = 0;
-
-			setState(RobotState.HIT_WALL);
 		}
+	}
+
+	private void handleClassicWallCollision(double adjustX, double adjustY, double angle, Integer minX, Integer minY,
+			Integer maxX, Integer maxY) {
+		addEvent(new HitWallEvent(angle));
+
+		// only fix both x and y values if hitting wall at an angle
+		if ((bodyHeading % (Math.PI / 2)) != 0) {
+			double tanHeading = tan(bodyHeading);
+
+			// if it hits bottom or top wall
+			if (adjustX == 0) {
+				adjustX = adjustY * tanHeading;
+			} // if it hits a side wall
+			else if (adjustY == 0) {
+				adjustY = adjustX / tanHeading;
+			} // if the robot hits 2 walls at the same time (rare, but just in case)
+			else if (abs(adjustX / tanHeading) > abs(adjustY)) {
+				adjustY = adjustX / tanHeading;
+			} else if (abs(adjustY * tanHeading) > abs(adjustX)) {
+				adjustX = adjustY * tanHeading;
+			}
+		}
+		x += adjustX;
+		y += adjustY;
+
+		if (x < minX) {
+			x = minX;
+		} else if (x > maxX) {
+			x = maxX;
+		}
+		if (y < minY) {
+			y = minY;
+		} else if (y > maxY) {
+			y = maxY;
+		}
+
+		applyWallCollisionDamage();
+
+		updateBoundingBox();
+
+		currentCommands.setDistanceRemaining(0);
+		velocity = 0;
+
+		setState(RobotState.HIT_WALL);
+	}
+
+	private void applyWallCollisionDamage() {
+		if (statics.isAdvancedRobot()) {
+			setEnergy(energy - Rules.getWallHitDamage(velocity), false);
+		}
+	}
+
+	private void handleInfiniteMapWrapping(Integer minX, Integer minY, Integer maxX, Integer maxY) {
+		double fieldWidth = getBattleFieldWidth();
+		double fieldHeight = getBattleFieldHeight();
+
+		if (x < minX) {
+			x += fieldWidth;
+		} else if (x > maxX) {
+			x -= fieldWidth;
+		}
+
+		if (y < minY) {
+			y += fieldHeight;
+		} else if (y > maxY) {
+			y -= fieldHeight;
+		}
+
+		if (fieldWidth > 0) {
+			x = minX + ((x - minX) % fieldWidth + fieldWidth) % fieldWidth;
+		}
+
+		if (fieldHeight > 0) {
+			y = minY + ((y - minY) % fieldHeight + fieldHeight) % fieldHeight;
+		}
+
+		updateBoundingBox();
+
+		return;
 	}
 
 	private void checkSentryOutsideBorder() {
