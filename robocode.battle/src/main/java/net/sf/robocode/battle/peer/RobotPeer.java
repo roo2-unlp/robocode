@@ -1122,6 +1122,14 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 					y -= fieldHeight;
 				}
 
+				if (fieldWidth > 0) {
+					x = minX + ((x - minX) % fieldWidth + fieldWidth) % fieldWidth;
+				}
+
+				if (fieldHeight > 0) {
+					y = minY + ((y - minY) % fieldHeight + fieldHeight) % fieldHeight;
+				}
+
 				updateBoundingBox();
 
 				return;
