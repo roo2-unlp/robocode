@@ -42,6 +42,9 @@ import java.util.regex.Pattern;
 
 //trampas
 import net.sf.robocode.battle.traps.Trap;
+import net.sf.robocode.battle.effect.ITrapEffect;
+import net.sf.robocode.battle.effect.DamageEffect;
+import net.sf.robocode.battle.effect.StickyEffect;
 
 
 /**
@@ -103,7 +106,8 @@ public final class Battle extends BaseBattle {
 		battleRules = HiddenAccess.createRules(battleProps.getBattlefieldWidth(), battleProps.getBattlefieldHeight(),
 				battleProps.getNumRounds(), battleProps.getGunCoolingRate(), battleProps.getInactivityTime(),
 				battleProps.getHideEnemyNames(), battleProps.getSentryBorderSize(), battleProps.getTrapsEnabled(),
-				battleProps.getTrapCount(), battleProps.getTrapRadius(), battleProps.getTrapDamage());
+				battleProps.getTrapCount(), battleProps.getTrapRadius(), battleProps.getTrapDamage(),
+				battleProps.getTrapEffect());
 		robotsCount = battlingRobotsList.length;
 		computeInitialPositions(battleProps.getInitialPositions());
 		createPeers(battlingRobotsList);
@@ -831,9 +835,17 @@ public final class Battle extends BaseBattle {
 			}
 			
 			if (posicionValida) {
-				addTrap(new Trap(x, y, configuredRadius, new DamageEffect(1,10)));
-				//descomentar para probar otro efecto
-				//addTrap(new Trap(x, y, configuredRadius, new StickyEffect(0.5,50)));
+				String trapEffect = battleRules.getTrapEffect();
+				ITrapEffect effect;
+				//revisar como mejorar esto
+				//nuevo tipo de efecto, agregar  aca
+				if ("Sticky".equals(trapEffect)) {
+					effect = new StickyEffect(0.5, 50);
+				} else {
+					effect = new DamageEffect(1, 10);
+				}
+				
+				addTrap(new Trap(x, y, configuredRadius, effect));
 			} else {
 				System.out.println("No se pudo colocar trampa " + (i + 1) + " sin superposicion despues de " + maxIntentosPorTrampa + " intentos");
 				i--;

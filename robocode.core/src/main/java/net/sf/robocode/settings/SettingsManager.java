@@ -138,6 +138,7 @@ public class SettingsManager implements ISettingsManager {
 	private int battleDefaultTrapCount = 5;
 	private double battleDefaultTrapRadius = 30.0;
 	private double battleDefaultTrapDamage = 5.0;
+	private String battleDefaultTrapEffect = "Damage";
 
 	private final Properties props = new SortedProperties();
 
@@ -739,6 +740,15 @@ public class SettingsManager implements ISettingsManager {
 		props.setProperty(BATTLE_DEFAULT_TRAP_DAMAGE, "" + trapDamage);
 	}
 
+	public String getBattleDefaultTrapEffect() {
+		return battleDefaultTrapEffect;
+	}
+
+	public void setBattleDefaultTrapEffect(String trapEffect) {
+		this.battleDefaultTrapEffect = trapEffect;
+		props.setProperty(BATTLE_DEFAULT_TRAP_EFFECT, trapEffect);
+	}
+
 	public void store(FileOutputStream out, String desc) throws IOException {
 		props.store(out, desc);
 	}
@@ -834,6 +844,7 @@ public class SettingsManager implements ISettingsManager {
 		battleDefaultTrapCount = Integer.parseInt(props.getProperty(BATTLE_DEFAULT_TRAP_COUNT, "5"));
 		battleDefaultTrapRadius = Double.parseDouble(props.getProperty(BATTLE_DEFAULT_TRAP_RADIUS, "30.0"));
 		battleDefaultTrapDamage = Double.parseDouble(props.getProperty(BATTLE_DEFAULT_TRAP_DAMAGE, "5.0"));
+		battleDefaultTrapEffect = props.getProperty(BATTLE_DEFAULT_TRAP_EFFECT, "Damage");
 
 		robotFilesystemQuota = Long.parseLong(props.getProperty(ROBOT_FILESYSTEM_QUOTA, "" + 200000));
 		consoleQuota = Long.parseLong(props.getProperty(CONSOLE_QUOTA, "8192"));

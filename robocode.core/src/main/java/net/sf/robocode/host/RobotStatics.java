@@ -255,6 +255,7 @@ public final class RobotStatics implements IRobotStatics, Serializable {
 			serializer.serialize(buffer, obj.battleRules.getTrapCount());
 			serializer.serialize(buffer, obj.battleRules.getTrapRadius());
 			serializer.serialize(buffer, obj.battleRules.getTrapDamage());
+			serializer.serialize(buffer, obj.battleRules.getTrapEffect());
 			if (obj.teammates != null) {
 				for (String mate : obj.teammates) {
 					serializer.serialize(buffer, mate);
@@ -293,7 +294,8 @@ public final class RobotStatics implements IRobotStatics, Serializable {
 					serializer.deserializeBoolean(buffer), // trapsEnabled
 					serializer.deserializeInt(buffer), // trapCount
 					serializer.deserializeDouble(buffer), // trapRadius
-					serializer.deserializeDouble(buffer)); // trapDamage
+					serializer.deserializeDouble(buffer), // trapDamage
+					serializer.deserializeString(buffer)); // trapEffect
 
 			List<String> teammates = new ArrayList<String>();
 			Object item = serializer.deserializeString(buffer);

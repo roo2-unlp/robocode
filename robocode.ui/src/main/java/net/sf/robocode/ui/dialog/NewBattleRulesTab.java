@@ -56,6 +56,7 @@ public class NewBattleRulesTab extends JPanel {
 	private final JLabel trapCountLabel = new JLabel("Cantidad trampas:");
 	private final JLabel trapRadiusLabel = new JLabel("Radio trampas:");
 	private final JLabel trapDamageLabel = new JLabel("Danio trampas:");
+	private final JLabel trapEffectLabel = new JLabel("Efecto trampas:");
 
 	private final JButton restoreDefaultsButton = new JButton("Restore Defaults");
 	
@@ -68,6 +69,7 @@ public class NewBattleRulesTab extends JPanel {
 	private JTextField trapDamageTextField;
 	private final JCheckBox hideEnemyNamesCheckBox = new JCheckBox();
 	private final JCheckBox trapsEnabledCheckBox = new JCheckBox();
+	private JComboBox<String> trapEffectComboBox;
 
 	private JSlider battlefieldWidthSlider;
 	private JSlider battlefieldHeightSlider;
@@ -97,6 +99,10 @@ public class NewBattleRulesTab extends JPanel {
 
 		battlefieldWidthSlider.addChangeListener(eventHandler);
 		battlefieldHeightSlider.addChangeListener(eventHandler);
+
+		//nuevo tipo de efecto, agregar al listado aca
+		trapEffectComboBox = new JComboBox<>(new String[]{"Damage", "Sticky"});
+		trapEffectComboBox.setSelectedItem(battleProperties.getTrapEffect());
 
 		JPanel rulesPanel = createRulesPanel();
 		rulesPanel.addAncestorListener(eventHandler);
@@ -202,6 +208,7 @@ public class NewBattleRulesTab extends JPanel {
 		left.addComponent(trapCountLabel);
 		left.addComponent(trapRadiusLabel);
 		left.addComponent(trapDamageLabel);
+		left.addComponent(trapEffectLabel);
 		leftToRight.addGroup(left);
 		
 		GroupLayout.ParallelGroup right = layout.createParallelGroup();
@@ -214,6 +221,7 @@ public class NewBattleRulesTab extends JPanel {
 		right.addComponent(getTrapCountTextField());
 		right.addComponent(getTrapRadiusTextField());
 		right.addComponent(getTrapDamageTextField());
+		right.addComponent(trapEffectComboBox);
 		leftToRight.addGroup(right);
 		
 		GroupLayout.SequentialGroup topToBottom = layout.createSequentialGroup();
@@ -262,6 +270,11 @@ public class NewBattleRulesTab extends JPanel {
 		row8.addComponent(trapDamageLabel);
 		row8.addComponent(getTrapDamageTextField());
 		topToBottom.addGroup(row8);
+
+		GroupLayout.ParallelGroup row9 = layout.createParallelGroup(Alignment.BASELINE);
+		row9.addComponent(trapEffectLabel);
+		row9.addComponent(trapEffectComboBox);
+		topToBottom.addGroup(row9);
 
 		layout.setHorizontalGroup(leftToRight);
 		layout.setVerticalGroup(topToBottom);
@@ -577,6 +590,10 @@ public class NewBattleRulesTab extends JPanel {
 				battleProperties.setTrapDamage(trapDamage);
 			}
 
+			String trapEffect = (String) trapEffectComboBox.getSelectedItem();
+			settingsManager.setBattleDefaultTrapEffect(trapEffect);
+			battleProperties.setTrapEffect(trapEffect);
+
 			int weight = battlefieldWidthSlider.getValue();
 			int height = battlefieldHeightSlider.getValue();
 
@@ -609,6 +626,7 @@ public class NewBattleRulesTab extends JPanel {
 				battleProperties.setTrapsEnabled(false);
 				battleProperties.setTrapRadius(30.0);
 				battleProperties.setTrapDamage(5.0);
+				battleProperties.setTrapEffect("Damage");
 
 				pushBattlePropertiesToUIComponents();
 			}
@@ -635,6 +653,7 @@ public class NewBattleRulesTab extends JPanel {
 			getTrapCountTextField().setText("" + battleProperties.getTrapCount());
 			getTrapRadiusTextField().setText("" + battleProperties.getTrapRadius());
 			getTrapDamageTextField().setText("" + battleProperties.getTrapDamage());
+			trapEffectComboBox.setSelectedItem(battleProperties.getTrapEffect());
 		}
 	}
 

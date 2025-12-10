@@ -43,7 +43,8 @@ public class BattleProperties implements Serializable {
 			BATTLE_TRAPS_ENABLED = "robocode.battle.trapsEnabled",
 			BATTLE_TRAP_COUNT = "robocode.battle.trapCount",
 			BATTLE_TRAP_RADIUS = "robocode.battle.trapRadius",
-			BATTLE_TRAP_DAMAGE = "robocode.battle.trapDamage";
+			BATTLE_TRAP_DAMAGE = "robocode.battle.trapDamage",
+			BATTLE_TRAP_EFFECT = "robocode.battle.trapEffect";
 
 	private int battlefieldWidth = 800;
 	private int battlefieldHeight = 600;
@@ -57,6 +58,7 @@ public class BattleProperties implements Serializable {
 	private int trapCount = 5;
 	private double trapRadius = 30.0;
 	private double trapDamage = 5.0;
+	private String trapEffect = "Damage";
 	private String selectedRobots;
 	private String initialPositions;
 
@@ -77,6 +79,7 @@ public class BattleProperties implements Serializable {
 		trapCount = properties.getBattleDefaultTrapCount();
 		trapRadius = properties.getBattleDefaultTrapRadius();
 		trapDamage = properties.getBattleDefaultTrapDamage();
+		trapEffect = properties.getBattleDefaultTrapEffect();
 	}
 
 	/**
@@ -381,6 +384,15 @@ public class BattleProperties implements Serializable {
 		props.setProperty(BATTLE_TRAP_COUNT, "" + trapCount);
 	}
 
+	public String getTrapEffect() {
+		return trapEffect;
+	}
+
+	public void setTrapEffect(String trapEffect) {
+		this.trapEffect = trapEffect;
+		props.setProperty(BATTLE_TRAP_EFFECT, trapEffect);
+	}
+
 	public void store(FileOutputStream out, String desc) throws IOException {
 		props.store(out, desc);
 	}
@@ -400,5 +412,6 @@ public class BattleProperties implements Serializable {
 		trapCount = Integer.parseInt(props.getProperty(BATTLE_TRAP_COUNT, "5"));
 		trapRadius = Double.parseDouble(props.getProperty(BATTLE_TRAP_RADIUS, "30.0"));
 		trapDamage = Double.parseDouble(props.getProperty(BATTLE_TRAP_DAMAGE, "5.0"));
+		trapEffect = props.getProperty(BATTLE_TRAP_EFFECT, "Damage");
 	}
 }

@@ -39,6 +39,7 @@ public final class BattleRules implements java.io.Serializable {
 	private final int trapCount;
 	private final double trapRadius;
 	private final double trapDamage;
+	private final String trapEffect;
 
 	/**
 	 * Returns the battlefield width.
@@ -143,10 +144,14 @@ public final class BattleRules implements java.io.Serializable {
 	public double getTrapDamage() {
 		return trapDamage;
 	}
+
+	public String getTrapEffect() {
+		return trapEffect;
+	}
 	
 	private BattleRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate,
 			long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean trapsEnabled, 
-			int trapCount, double trapRadius, double trapDamage) {
+			int trapCount, double trapRadius, double trapDamage, String trapEffect) {
 		this.battlefieldWidth = battlefieldWidth;
 		this.battlefieldHeight = battlefieldHeight;
 		this.numRounds = numRounds;
@@ -158,6 +163,7 @@ public final class BattleRules implements java.io.Serializable {
 		this.trapCount = trapCount;
 		this.trapRadius = trapRadius;
 		this.trapDamage = trapDamage;
+		this.trapEffect = trapEffect;
 	}
 
 	static IHiddenRulesHelper createHiddenHelper() {
@@ -166,9 +172,9 @@ public final class BattleRules implements java.io.Serializable {
 
 	private static class HiddenHelper implements IHiddenRulesHelper {
 
-		public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean trapsEnabled, int trapCount, double trapRadius, double trapDamage) {
+		public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean trapsEnabled, int trapCount, double trapRadius, double trapDamage, String trapEffect) {
 			return new BattleRules(battlefieldWidth, battlefieldHeight, numRounds, gunCoolingRate, inactivityTime,
-					hideEnemyNames, sentryBorderSize, trapsEnabled, trapCount, trapRadius, trapDamage);
+					hideEnemyNames, sentryBorderSize, trapsEnabled, trapCount, trapRadius, trapDamage, trapEffect);
 		}
 	}
 }

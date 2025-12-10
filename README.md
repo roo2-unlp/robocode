@@ -7,6 +7,8 @@
 - se pueden seleccionar la cantidad de trampas que se activan
 ## Para crear un efecto de trampa personalizado:
 - implementar la interfaz ITrapEffect en "robocode.battle/src/main/java/net/sf/robocode/battle/effect"
+- agregar nuevo tipo de efecto al input en NewBattleRulesTab.java, también en Battle.java
+
 ```java
 public class DamageEffect implements ITrapEffect{
 	private final double damage;
