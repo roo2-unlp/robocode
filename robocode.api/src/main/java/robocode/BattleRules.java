@@ -36,6 +36,7 @@ public final class BattleRules implements java.io.Serializable {
 	private final boolean hideEnemyNames;
 	private final boolean stunningBullets;
 	private final int sentryBorderSize;
+	private final int stunDuration;
 
 	/**
 	 * Returns the battlefield width.
@@ -53,6 +54,15 @@ public final class BattleRules implements java.io.Serializable {
 	 */
 	public int getBattlefieldHeight() {
 		return battlefieldHeight;
+	}
+
+	/**
+	 * Returns the stun Duration.
+	 *
+	 * @return the stun duration.
+	 */
+	public int getStunDuration() {
+		return stunDuration;
 	}
 
 	/**
@@ -133,7 +143,7 @@ public final class BattleRules implements java.io.Serializable {
 	}
 	
 	private BattleRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate,
-			long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean stunningBullets) {
+			long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean stunningBullets, int stunDuration) {
 		this.battlefieldWidth = battlefieldWidth;
 		this.battlefieldHeight = battlefieldHeight;
 		this.numRounds = numRounds;
@@ -142,6 +152,7 @@ public final class BattleRules implements java.io.Serializable {
 		this.hideEnemyNames = hideEnemyNames;
 		this.stunningBullets = stunningBullets;
 		this.sentryBorderSize = sentryBorderSize;
+		this.stunDuration = stunDuration;
 	}
 
 	static IHiddenRulesHelper createHiddenHelper() {
@@ -150,9 +161,9 @@ public final class BattleRules implements java.io.Serializable {
 
 	private static class HiddenHelper implements IHiddenRulesHelper {
 
-		public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean stunningBullets) {
+		public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean stunningBullets, int stunDuration) {
 			return new BattleRules(battlefieldWidth, battlefieldHeight, numRounds, gunCoolingRate, inactivityTime,
-					hideEnemyNames, sentryBorderSize, stunningBullets);
+					hideEnemyNames, sentryBorderSize, stunningBullets, stunDuration);
 		}
 	}
 }

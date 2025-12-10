@@ -134,6 +134,7 @@ public class SettingsManager implements ISettingsManager {
 	private boolean battleDefaultHideEnemyNames = false;
 	private boolean battleDefaultStunningBullets = false;
 	private int battleDefaultNumberOfRounds = 10;
+	private int battleDefaultStunDuration = 3;
 
 	private final Properties props = new SortedProperties();
 
@@ -711,6 +712,15 @@ public class SettingsManager implements ISettingsManager {
 		props.setProperty(BATTLE_DEFAULT_NUMBER_OF_ROUNDS, "" + this.battleDefaultNumberOfRounds);
 	}
 
+	public int getBattleDefaultStunDuration() {
+		return battleDefaultStunDuration;
+	}
+
+	public void setBattleDefaultStunDuration(int stunDuration) {
+		this.battleDefaultStunDuration = Math.max(1, stunDuration);
+		props.setProperty(BATTLE_DEFAULT_STUN_DURATION, "" + this.battleDefaultStunDuration);
+	}
+
 	public void store(FileOutputStream out, String desc) throws IOException {
 		props.store(out, desc);
 	}
@@ -801,6 +811,7 @@ public class SettingsManager implements ISettingsManager {
 		battleDefaultHideEnemyNames = Boolean.parseBoolean(props.getProperty(BATTLE_DEFAULT_HIDE_ENEMY_NAMES, "false"));
 		battleDefaultStunningBullets = Boolean.parseBoolean(props.getProperty(BATTLE_DEFAULT_STUNNING_BULLETS, "false"));
 		battleDefaultNumberOfRounds = Integer.parseInt(props.getProperty(BATTLE_DEFAULT_NUMBER_OF_ROUNDS, "10"));
+		battleDefaultStunDuration = Integer.parseInt(props.getProperty(BATTLE_DEFAULT_STUN_DURATION, "3"));
 
 		robotFilesystemQuota = Long.parseLong(props.getProperty(ROBOT_FILESYSTEM_QUOTA, "" + 200000));
 		consoleQuota = Long.parseLong(props.getProperty(CONSOLE_QUOTA, "8192"));

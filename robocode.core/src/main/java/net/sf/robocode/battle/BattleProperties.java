@@ -33,6 +33,7 @@ public class BattleProperties implements Serializable {
 			BATTLEFIELD_WIDTH = "robocode.battleField.width",
 			BATTLEFIELD_HEIGHT = "robocode.battleField.height",
 			BATTLE_NUMROUNDS = "robocode.battle.numRounds",
+			BATTLE_STUN_DURATION = "robocode.battle.stunDuration",
 			BATTLE_GUNCOOLINGRATE = "robocode.battle.gunCoolingRate",
 			BATTLE_RULES_INACTIVITYTIME = "robocode.battle.rules.inactivityTime",
 			BATTLE_HIDE_ENEMY_NAMES = "robocode.battle.hideEnemyNames",
@@ -44,6 +45,7 @@ public class BattleProperties implements Serializable {
 	private int battlefieldWidth = 800;
 	private int battlefieldHeight = 600;
 	private int numRounds = 10;
+	private int stunDuration = 3;
 	private double gunCoolingRate = 0.1;
 	private long inactivityTime = 450;
 	private boolean hideEnemyNames = false;
@@ -61,6 +63,7 @@ public class BattleProperties implements Serializable {
 		battlefieldWidth = properties.getBattleDefaultBattlefieldWidth();
 		battlefieldHeight = properties.getBattleDefaultBattlefieldHeight();
 		numRounds = properties.getBattleDefaultNumberOfRounds();
+		stunDuration = properties.getBattleDefaultStunDuration();
 		gunCoolingRate = properties.getBattleDefaultGunCoolingRate();
 		inactivityTime = properties.getBattleDefaultInactivityTime();
 		hideEnemyNames = properties.getBattleDefaultHideEnemyNames();
@@ -123,6 +126,25 @@ public class BattleProperties implements Serializable {
 	public void setNumRounds(int numRounds) {
 		this.numRounds = numRounds;
 		props.setProperty(BATTLE_NUMROUNDS, "" + numRounds);
+	}
+
+	/**
+	 * Gets the stunDuration.
+	 *
+	 * @return Returns a int
+	 */
+	public int getStunDuration() {
+		return stunDuration;
+	}
+
+	/**
+	 * Sets the stunDuration.
+	 *
+	 * @param stunDuration The stunDuration to set
+	 */
+	public void setStunDuration(int stunDuration) {
+		this.stunDuration = stunDuration;
+		props.setProperty(BATTLE_STUN_DURATION, "" + stunDuration);
 	}
 
 	/**
@@ -363,6 +385,7 @@ public class BattleProperties implements Serializable {
 		hideEnemyNames = Boolean.parseBoolean(props.getProperty(BATTLE_HIDE_ENEMY_NAMES, "false"));
 		stunningBullets = Boolean.parseBoolean(props.getProperty(BATTLE_STUNNING_BULLETS, "false"));
 		numRounds = Integer.parseInt(props.getProperty(BATTLE_NUMROUNDS, "10"));
+		stunDuration = Integer.parseInt(props.getProperty(BATTLE_STUN_DURATION, "3"));
 		selectedRobots = props.getProperty(BATTLE_SELECTEDROBOTS, "");
 		initialPositions = props.getProperty(BATTLE_INITIAL_POSITIONS, "");
 		sentryBorderSize = Integer.parseInt(props.getProperty(BATTLE_SENTRY_BORDER_SIZE, "100"));

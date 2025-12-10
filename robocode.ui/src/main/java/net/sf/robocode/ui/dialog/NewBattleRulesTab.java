@@ -52,6 +52,7 @@ public class NewBattleRulesTab extends JPanel {
 	private final JLabel sentryBorderSizeLabel = new JLabel("Sentry Border Size");
 	private final JLabel hideEnemyNamesLabel = new JLabel("Hide Enemy Names:");
 	private final JLabel stunningBulletsLabel = new JLabel("Use Stunning Bullets:");
+	private final JLabel stunDurationLabel = new JLabel("Stun Duration:");
 
 	private final JButton restoreDefaultsButton = new JButton("Restore Defaults");
 	
@@ -61,6 +62,7 @@ public class NewBattleRulesTab extends JPanel {
 	private JTextField sentryBorderSizeTextField;
 	private final JCheckBox hideEnemyNamesCheckBox = new JCheckBox();
 	private final JCheckBox stunningBulletsCheckBox = new JCheckBox();
+	private JTextField stunDurationTextField;
 
 	private JSlider battlefieldWidthSlider;
 	private JSlider battlefieldHeightSlider;
@@ -192,6 +194,7 @@ public class NewBattleRulesTab extends JPanel {
 		left.addComponent(sentryBorderSizeLabel);
 		left.addComponent(hideEnemyNamesLabel);
 		left.addComponent(stunningBulletsLabel);
+		left.addComponent(stunDurationLabel);
 		leftToRight.addGroup(left);
 		
 		GroupLayout.ParallelGroup right = layout.createParallelGroup();
@@ -201,6 +204,7 @@ public class NewBattleRulesTab extends JPanel {
 		right.addComponent(getSentryBorderSizeTextField());
 		right.addComponent(hideEnemyNamesCheckBox);
 		right.addComponent(stunningBulletsCheckBox);
+		right.addComponent(getStunDurationTextField());
 		leftToRight.addGroup(right);
 		
 		GroupLayout.SequentialGroup topToBottom = layout.createSequentialGroup();
@@ -234,6 +238,11 @@ public class NewBattleRulesTab extends JPanel {
 		row5.addComponent(stunningBulletsLabel);
 		row5.addComponent(stunningBulletsCheckBox);
 		topToBottom.addGroup(row5);
+
+		GroupLayout.ParallelGroup row6 = layout.createParallelGroup(Alignment.BASELINE);
+		row6.addComponent(stunDurationLabel);
+		row6.addComponent(stunDurationTextField);
+		topToBottom.addGroup(row6);
 
 		layout.setHorizontalGroup(leftToRight);
 		layout.setVerticalGroup(topToBottom);
@@ -350,6 +359,33 @@ public class NewBattleRulesTab extends JPanel {
 		return sentryBorderSizeTextField;
 	}
 
+	private JTextField getStunDurationTextField() {
+		if (stunDurationTextField == null) {
+			stunDurationTextField = new JTextField(5);
+			stunDurationTextField.setText("" + battleProperties.getStunDuration());
+			stunDurationTextField.setInputVerifier(
+					new InputVerifier() {
+				@Override
+				public boolean verify(JComponent input) {
+					boolean isValid = false;
+
+					String text = ((JTextField) input).getText();
+					if (text != null && text.matches("\\d+")) {
+						int duration = Integer.parseInt(text);
+						isValid = (duration > 0);
+					}
+					if (!isValid) {
+						WindowUtil.messageError(
+								"'Stun Duration' must be an integer value > 0.\n" + "Default value is 3.");
+						stunDurationTextField.setText("" + battleProperties.getStunDuration());
+					}
+					return isValid;
+				}
+			});
+		}
+		return stunDurationTextField;
+	}
+
 	private JSlider createBattlefieldSizeSlider() {
 		JSlider slider = new JSlider();
 		slider.setMinimum(MIN_BATTLEFIELD_SIZE);
@@ -396,6 +432,16 @@ public class NewBattleRulesTab extends JPanel {
 			if (numberOfRounds != null) {
 				settingsManager.setBattleDefaultNumberOfRounds(numberOfRounds);
 				battleProperties.setNumRounds(numberOfRounds);
+			}
+			Integer stunDuration;
+			try {
+				stunDuration = Integer.parseInt(getStunDurationTextField().getText());
+			} catch (NumberFormatException e) {
+				stunDuration = null;
+			}
+			if (stunDuration != null) {
+				settingsManager.setBattleDefaultStunDuration(stunDuration);
+				battleProperties.setStunDuration(stunDuration);
 			}
 			Double gunCoolingRate;
 			try {
@@ -463,7 +509,9 @@ public class NewBattleRulesTab extends JPanel {
 				battleProperties.setGunCoolingRate(0.1);
 				battleProperties.setInactivityTime(450);
 				battleProperties.setHideEnemyNames(false);
+				battleProperties.setStunningBullets(false);
 				battleProperties.setSentryBorderSize(100);
+				battleProperties.setStunDuration(3);
 
 				pushBattlePropertiesToUIComponents();
 			}
@@ -487,6 +535,7 @@ public class NewBattleRulesTab extends JPanel {
 			getSentryBorderSizeTextField().setText("" + battleProperties.getSentryBorderSize());
 			hideEnemyNamesCheckBox.setSelected(battleProperties.getHideEnemyNames());
 			stunningBulletsCheckBox.setSelected(battleProperties.getStunningBullets());
+			getStunDurationTextField().setText("" + battleProperties.getStunDuration());
 		}
 	}
 

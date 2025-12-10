@@ -236,6 +236,11 @@ public interface ISettingsManager {
 
 	void setBattleDefaultNumberOfRounds(int numberOfRounds);
 
+
+	int getBattleDefaultStunDuration();
+
+	void setBattleDefaultStunDuration(int stunDuration);
+
 	void store(FileOutputStream out, String desc) throws IOException;
 
 	void load(FileInputStream in) throws IOException;
@@ -314,6 +319,7 @@ public interface ISettingsManager {
 			BATTLE_DEFAULT_BATTLEFIELD_WIDTH = "robocode.battle.default.battlefieldWidth",
 			BATTLE_DEFAULT_BATTLEFIELD_HEIGHT = "robocode.battle.default.battlefieldHeight",
 			BATTLE_DEFAULT_NUMBER_OF_ROUNDS = "robocode.battle.default.numberOfBattles",
+			BATTLE_DEFAULT_STUN_DURATION = "robocode.battle.default.stunDuration",
 			BATTLE_DEFAULT_GUN_COOLING_RATE = "robocode.battle.default.gunCoolingRate",
 			BATTLE_DEFAULT_INACTIVITY_TIME = "robocode.battle.default.inactivityTime",
 			BATTLE_DEFAULT_SENTRY_BORDER_SIZE = "robocode.battle.default.sentryBorderSize",
