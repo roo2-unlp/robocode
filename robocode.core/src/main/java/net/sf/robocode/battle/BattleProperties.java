@@ -39,7 +39,7 @@ public class BattleProperties implements Serializable {
 			BATTLE_SELECTEDROBOTS = "robocode.battle.selectedRobots",
 			BATTLE_INITIAL_POSITIONS = "robocode.battle.initialPositions",
 			BATTLE_SENTRY_BORDER_SIZE = "robocode.battle.sentryBorderSize",
-			BATTLE_RANDOM_WALL_HIT_DAMAGE = "robocode.battle.randomWallHitDamage"; //agrego constante
+			BATTLE_RANDOM_WALL_HIT_DAMAGE = "robocode.battle.randomWallHitDamage";
 
 	private int battlefieldWidth = 800;
 	private int battlefieldHeight = 600;

@@ -134,6 +134,8 @@ public class SettingsManager implements ISettingsManager {
 	private boolean battleDefaultHideEnemyNames = false;
 	private int battleDefaultNumberOfRounds = 10;
 	private boolean battleDefaultRandomWallHitDamage = false;
+	private int battleRandomMin = 50;
+	private int battleRandomMax = 150;
 
 	private final Properties props = new SortedProperties();
 
@@ -702,6 +704,22 @@ public class SettingsManager implements ISettingsManager {
 	public void setBattleDefaultRandomWallHitDamage(boolean randomWallHitDamage){
 		this.battleDefaultRandomWallHitDamage = randomWallHitDamage;
 		props.setProperty(BATTLE_DEFAULT_RANDOM_WALL_HIT_DAMAGE, "" + this.battleDefaultRandomWallHitDamage);
+	}
+
+	public void setRandomMin(int randomMin) {
+		this.battleRandomMin = randomMin;
+	}
+
+	public int getRandomMin() {
+		return battleRandomMin;
+	}
+
+	public void setRandomMax(int randomMax) {
+		this.battleRandomMax = randomMax;
+	}
+
+	public int getRandomMax() {
+		return battleRandomMax;
 	}
 
 

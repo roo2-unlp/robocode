@@ -236,6 +236,14 @@ public interface ISettingsManager {
 
 	void setBattleDefaultRandomWallHitDamage(boolean randomWallHitDamage); // setear random wall hit damage
 
+	void setRandomMin(int randomMin);
+
+	int getRandomMin();
+
+	void setRandomMax(int randomMax);
+
+	int getRandomMax();
+
 
 	void store(FileOutputStream out, String desc) throws IOException;
 

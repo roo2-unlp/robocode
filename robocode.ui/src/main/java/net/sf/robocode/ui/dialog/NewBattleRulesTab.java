@@ -52,6 +52,9 @@ public class NewBattleRulesTab extends JPanel {
 	private final JLabel sentryBorderSizeLabel = new JLabel("Sentry Border Size");
 	private final JLabel hideEnemyNamesLabel = new JLabel("Hide Enemy Names:");
 	private final JLabel randomWallHitDamageLabel = new JLabel("Enable Random Wall Collision"); // agrego label nuevo
+	private final JLabel randomMixMaxLabel = new JLabel("<html>Seleccione los valores min y max<br>del tiempo random</html>");
+	private final JLabel randomMinLabel = new JLabel("Min: ");
+	private final JLabel randomMaxLabel = new JLabel("Max: ");
 
 	private final JButton restoreDefaultsButton = new JButton("Restore Defaults");
 	
@@ -61,6 +64,8 @@ public class NewBattleRulesTab extends JPanel {
 	private JTextField sentryBorderSizeTextField;
 	private final JCheckBox hideEnemyNamesCheckBox = new JCheckBox();
 	private final JCheckBox randomWallHitDamageCheckBox = new JCheckBox(); // agrego checkbox random wall hit
+	private JTextField randomMinTextField;
+	private JTextField randomMaxTextField;
 
 	private JSlider battlefieldWidthSlider;
 	private JSlider battlefieldHeightSlider;
@@ -192,6 +197,10 @@ public class NewBattleRulesTab extends JPanel {
 		left.addComponent(sentryBorderSizeLabel);
 		left.addComponent(hideEnemyNamesLabel);
 		left.addComponent(randomWallHitDamageLabel); //agrego el label
+		left.addComponent(randomMixMaxLabel);
+		left.addComponent(randomMinLabel);
+		left.addComponent(randomMaxLabel);
+
 		leftToRight.addGroup(left);
 		
 		GroupLayout.ParallelGroup right = layout.createParallelGroup();
@@ -200,7 +209,9 @@ public class NewBattleRulesTab extends JPanel {
 		right.addComponent(getInactivityTimeTextField());
 		right.addComponent(getSentryBorderSizeTextField());
 		right.addComponent(hideEnemyNamesCheckBox);
-		right.addComponent(randomWallHitDamageCheckBox); //agrego el checkbox
+		right.addComponent(randomWallHitDamageCheckBox);
+		right.addComponent(getRandomMinTextField());
+		right.addComponent(getRandomMaxTextField());
 		leftToRight.addGroup(right);
 		
 		GroupLayout.SequentialGroup topToBottom = layout.createSequentialGroup();
@@ -237,6 +248,23 @@ public class NewBattleRulesTab extends JPanel {
 		row5.addComponent(randomWallHitDamageLabel);
 		row5.addComponent(randomWallHitDamageCheckBox);
 		topToBottom.addGroup(row5);
+
+		/*
+		agrego el nuevo grupo de label con la seleccion de min y max para el tiempo
+		 */
+		GroupLayout.ParallelGroup row6 = layout.createParallelGroup(Alignment.BASELINE);
+		row6.addComponent(randomMixMaxLabel);
+		topToBottom.addGroup(row6);
+
+		GroupLayout.ParallelGroup row7 = layout.createParallelGroup(Alignment.BASELINE);
+		row7.addComponent(randomMinLabel);
+		row7.addComponent(randomMinTextField);
+		topToBottom.addGroup(row7);
+
+		GroupLayout.ParallelGroup row8 = layout.createParallelGroup(Alignment.BASELINE);
+		row8.addComponent(randomMaxLabel);
+		row8.addComponent(randomMaxTextField);
+		topToBottom.addGroup(row8);
 
 		layout.setHorizontalGroup(leftToRight);
 		layout.setVerticalGroup(topToBottom);
@@ -353,6 +381,21 @@ public class NewBattleRulesTab extends JPanel {
 		return sentryBorderSizeTextField;
 	}
 
+	private JTextField getRandomMinTextField() {
+		if (randomMinTextField == null) {
+			randomMinTextField = new JTextField(5);
+			randomMinTextField.setText("");
+		}
+		return randomMinTextField;
+	}
+	private JTextField getRandomMaxTextField() {
+		if (randomMaxTextField == null) {
+			randomMaxTextField = new JTextField(5);
+			randomMaxTextField.setText("");
+		}
+		return randomMaxTextField;
+	}
+
 	private JSlider createBattlefieldSizeSlider() {
 		JSlider slider = new JSlider();
 		slider.setMinimum(MIN_BATTLEFIELD_SIZE);
@@ -440,6 +483,10 @@ public class NewBattleRulesTab extends JPanel {
 			 */
 			boolean randomWallHitDamage = randomWallHitDamageCheckBox.isSelected();
 			//si esta seteado en true debe mostrar el min y max
+			if (randomWallHitDamage){
+				settingsManager.setRandomMin(Integer.parseInt(getRandomMinTextField().getText()));
+				settingsManager.setRandomMax(Integer.parseInt(getRandomMaxTextField().getText()));
+			}
 
 			settingsManager.setBattleDefaultRandomWallHitDamage(randomWallHitDamage);
 			battleProperties.setRandomWallHitDamage(randomWallHitDamage);
