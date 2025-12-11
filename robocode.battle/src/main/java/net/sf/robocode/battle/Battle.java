@@ -255,6 +255,14 @@ public final class Battle extends BaseBattle {
 		}
 	}
 
+	private List<TrapSnapshot> buildTrapSnapshots() {
+		List<TrapSnapshot> trapSnapshots = new ArrayList<>(this.traps.size());
+		for (Trap t : this.traps) {
+			trapSnapshots.add(new TrapSnapshot(t));
+		}
+		return trapSnapshots;
+	}
+
 	@Override
 	protected void initializeBattle() {
 		super.initializeBattle();
@@ -301,7 +309,8 @@ public final class Battle extends BaseBattle {
 	protected void preloadRound() {
 		super.preloadRound();
 
-		computeActiveRobots(); // Used for robotPeer.initializeRound()
+		computeActiveRobots(); // Used for robotPeer.
+		// ()
 
 		// At this point the unsafe loader thread will now set itself to wait for a notify
 
@@ -360,13 +369,13 @@ public final class Battle extends BaseBattle {
 			}
 		}
 		// 1. Convertir la lista de Trap a TrapSnapshot
-		List<TrapSnapshot> trapSnapshots = new ArrayList<>(this.traps.size());
-		for (Trap trampa : this.traps) {
-			trapSnapshots.add(new TrapSnapshot(trampa));
-		}
-		Logger.logMessage(""); // puts in a new-line in the log message
-		final ITurnSnapshot snapshot = new TurnSnapshot(this, robots, bullets, trapSnapshots, false, battleRules.getBattlefieldHeight());
+		List<TrapSnapshot> trapSnapshots = buildTrapSnapshots();
+		ITurnSnapshot snapshot =
+				new TurnSnapshot(this, robots, bullets, trapSnapshots, false, battleRules.getBattlefieldHeight());
+
 		eventDispatcher.onRoundStarted(new RoundStartedEvent(snapshot, getRoundNum(), robotObjects));
+
+		Logger.logMessage("");
 	}
 
 	@Override
@@ -478,12 +487,12 @@ public final class Battle extends BaseBattle {
 	@Override
 	protected void finalizeTurn() {
 		// 1. Crear la lista de TrapSnapshots a partir de las trampas activas
-		List<TrapSnapshot> trapSnapshots = new ArrayList<>(this.traps.size());
-		for (Trap trampa : this.traps) {
-			trapSnapshots.add(new TrapSnapshot(trampa));
-		}
-		eventDispatcher.onTurnEnded(new TurnEndedEvent(new TurnSnapshot(this, robots, bullets, trapSnapshots, true, battleRules.getBattlefieldHeight())));
-
+		List<TrapSnapshot> trapSnapshots = buildTrapSnapshots();
+		eventDispatcher.onTurnEnded(
+				new TurnEndedEvent(
+						new TurnSnapshot(this, robots, bullets, trapSnapshots, true, battleRules.getBattlefieldHeight())
+				)
+		);
 		super.finalizeTurn();
 	}
 
