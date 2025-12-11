@@ -189,11 +189,7 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 
 		this.robotProxy = (IHostingRobotProxy) hostManager.createRobotProxy(robotSpecification, statics, this);
 
-		if (this.battleRules.getStunningBullets()) {
-			this.bulletEffect = new StunningEffect(this.battleRules.getStunDuration());
-		} else {
-			this.bulletEffect = new NoEffect();
-		}
+		this.bulletEffect = BulletEffectCreator.createBulletEffect(battleRules);
 	}
 
 	public void println(String s) {

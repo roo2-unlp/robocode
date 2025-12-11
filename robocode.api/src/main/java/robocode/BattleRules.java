@@ -127,6 +127,14 @@ public final class BattleRules implements java.io.Serializable {
 	}
 
 	/**
+	 * Returns the bullet effect type used during a battle.
+	 * @return the bullet effect type as a String.
+	 */
+	public String getBulletEffect() {
+		return null;
+	}
+
+	/**
 	 * Returns the sentry border size for a {@link robocode.BorderSentry BorderSentry} that defines the how
 	 * far a BorderSentry is allowed to move from the border edges measured in units.<br>
 	 * Hence, the sentry border size defines the width/range of the border area surrounding the battlefield that
