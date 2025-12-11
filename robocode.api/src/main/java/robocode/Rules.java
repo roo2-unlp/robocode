@@ -70,6 +70,10 @@ public final class Rules {
 	 */
 	public static final double MAX_RADIOACTIVE_BULLET_POWER = 3;
 
+	public static final double MIN_PROXIMITY_RADIUS = 10;
+
+	public static final double MAX_PROXIMITY_RADIUS = 120;
+
 	/**
 	 * The maximum turning rate of the robot, in degrees, which is
 	 * 10 degress/turn.

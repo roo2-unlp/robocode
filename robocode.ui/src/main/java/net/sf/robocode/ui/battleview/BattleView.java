@@ -682,7 +682,7 @@ public class BattleView extends Canvas {
 		double x = bulletSnapshot.getPaintX();
 		double y = battleField.getHeight() - bulletSnapshot.getPaintY();
 
-		double radius = 110;
+		double radius = bulletSnapshot.getProximityRadius();
 
 		Shape circle = new Ellipse2D.Double(
 				x - radius,
@@ -691,8 +691,13 @@ public class BattleView extends Canvas {
 				radius * 2
 		);
 
+		final Composite saved = g.getComposite();
+
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
 		g.setColor(new Color(bulletSnapshot.getColor(), true));
-		g.draw(circle);
+		g.fill(circle);
+
+		g.setComposite(saved);
 	}
 
 	private void paintRobocodeLogo(Graphics2D g) {

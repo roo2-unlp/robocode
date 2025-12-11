@@ -869,6 +869,7 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 
 			if (bulletCmd.isRadioactive()) {
 				newBullet = new RadioactiveBulletPeer(this, battleRules, bulletCmd.getBulletId());
+				newBullet.setProximityRadius(bulletCmd.getProximityRadius());
 			} else {
 				newBullet = new BulletPeer(this, battleRules, bulletCmd.getBulletId());
 			}

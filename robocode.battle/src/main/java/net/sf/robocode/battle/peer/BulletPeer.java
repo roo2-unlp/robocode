@@ -39,8 +39,6 @@ public class BulletPeer {
 
   private static final int RADIUS = 3;
 
-  private static final double DEFAULT_PROXIMITY_RADIUS = 100.0;
-
   protected final RobotPeer owner;
 
   private final BattleRules battleRules;
@@ -59,6 +57,8 @@ public class BulletPeer {
   private double lastY;
 
   protected double power;
+
+  protected double proximityRadius;
 
   private double deltaX;
   private double deltaY;
@@ -144,6 +144,10 @@ public class BulletPeer {
     power = newPower;
   }
 
+  public void setProximityRadius(double newProximityRadius) {
+	  proximityRadius = newProximityRadius;
+  }
+
   public void setVictim(RobotPeer newVictim) {
     victim = newVictim;
   }
@@ -191,16 +195,16 @@ public class BulletPeer {
   /**
    * Checks whether the robot's bounding box intersects a proximity circle
    * centered at the
-   * current bullet position (x,y) with radius {@link #PROXIMITY_RADIUS}.
+   * current bullet position (x,y) with radius {@link #proximityRadius}.
    * This is a precise rectangle-circle intersection test using closest-point
    * distance.
    *
    * @param robot the robot peer to test
-   * @return true if the circle of radius PROXIMITY_RADIUS around the bullet
+   * @return true if the circle of radius proximityRadius around the bullet
    *         intersects the robot box
    */
   public double getProximityRadius() {
-    return DEFAULT_PROXIMITY_RADIUS;
+    return proximityRadius;
   }
 
   /**

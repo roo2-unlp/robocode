@@ -116,12 +116,12 @@ public class BasicRobotProxy extends HostingRobotProxy implements IRadioactiveRo
 	// asynchronous actions
 	public Bullet setFire(double power) {
 		setCall();
-		return fireImpl(power, false);
+		return fireImpl(power, 0.0,false);
 	}
 
-	public RadioactiveBullet setFireRadioactive(double power) {
+	public RadioactiveBullet setFireRadioactive(double power,double proximityRadius) {
 		setCall();
-		return (RadioactiveBullet) fireImpl(power, true);
+		return (RadioactiveBullet) fireImpl(power, proximityRadius, true);
 	}
 
 	// blocking actions
@@ -157,8 +157,8 @@ public class BasicRobotProxy extends HostingRobotProxy implements IRadioactiveRo
 		return bullet;
 	}
 
-	public RadioactiveBullet fireRadioactiveBullet(double power) {
-		RadioactiveBullet bullet = setFireRadioactive(power);
+	public RadioactiveBullet fireRadioactiveBullet(double power,double proximityRadius) {
+		RadioactiveBullet bullet = setFireRadioactive(power,proximityRadius);
 
 		execute();
 		return bullet;
@@ -532,7 +532,7 @@ public class BasicRobotProxy extends HostingRobotProxy implements IRadioactiveRo
 		return status.getGunHeat() + firedHeat;
 	}
 
-	private final Bullet fireImpl(double power, boolean isRadioactive) {
+	private final Bullet fireImpl(double power, double proximityRadius, boolean isRadioactive) {
 		if (Double.isNaN(power)) {
 			println("SYSTEM: You cannot call " + (isRadioactive ? "fireRadioactive" : "fire") + "(NaN)");
 			return null;
@@ -545,6 +545,11 @@ public class BasicRobotProxy extends HostingRobotProxy implements IRadioactiveRo
 		double maxPower = isRadioactive ? Rules.MAX_RADIOACTIVE_BULLET_POWER : Rules.MAX_BULLET_POWER;
 
 		power = min(getEnergyImpl(), min(max(power, minPower), maxPower));
+
+		double minPR = Rules.MIN_PROXIMITY_RADIUS;
+		double maxPR = Rules.MAX_PROXIMITY_RADIUS;
+
+		proximityRadius = min(getEnergyImpl(), min(max(proximityRadius, minPR), maxPR));
 
 		Bullet bullet;
 		BulletCommand wrapper;
@@ -560,21 +565,21 @@ public class BasicRobotProxy extends HostingRobotProxy implements IRadioactiveRo
 			double fireAssistAngle = Utils.normalAbsoluteAngle(status.getHeadingRadians() + e.getBearingRadians());
 
 			if (isRadioactive) {
-				bullet = new RadioactiveBullet(fireAssistAngle, getX(), getY(), power, statics.getName(), null, true, nextBulletId, 100);
+				bullet = new RadioactiveBullet(fireAssistAngle, getX(), getY(), power, statics.getName(), null, true, nextBulletId, proximityRadius);
 			} else {
 				bullet = new Bullet(fireAssistAngle, getX(), getY(), power, statics.getName(), null, true, nextBulletId);
 			}
-			wrapper = new BulletCommand(power, true, fireAssistAngle, nextBulletId, isRadioactive);
+			wrapper = new BulletCommand(power, true, fireAssistAngle, nextBulletId, proximityRadius, isRadioactive);
 		} else {
 			// this is normal bullet
 			if (isRadioactive) {
 				bullet = new RadioactiveBullet(status.getGunHeadingRadians(), getX(), getY(), power, statics.getName(), null, true,
-						nextBulletId, 20.0);
+						nextBulletId, proximityRadius);
 			} else {
 				bullet = new Bullet(status.getGunHeadingRadians(), getX(), getY(), power, statics.getName(), null, true,
 						nextBulletId);
 			}
-			wrapper = new BulletCommand(power, false, 0, nextBulletId, isRadioactive);
+			wrapper = new BulletCommand(power, false, 0, nextBulletId, proximityRadius, isRadioactive);
 		}
 
 		firedEnergy += power;

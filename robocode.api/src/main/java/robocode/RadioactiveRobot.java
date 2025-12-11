@@ -20,13 +20,14 @@ public class RadioactiveRobot extends Robot {
 	 *
 	 * @param power the amount of energy given to the bullet, and subtracted
 	 *              from the robot's energy.
+	 * @param radius the proximity radius used to determine the explosion's effective area.
 	 * @return a {@link RadioactiveBullet} that contains information about the bullet if it
 	 *         was actually fired, which can be used for tracking the bullet after it
 	 *         has been fired. If the bullet was not fired, {@code null} is returned.
 	 */
-	public RadioactiveBullet fireRadioactiveBullet(double power) {
+	public RadioactiveBullet fireRadioactiveBullet(double power, double radius) {
 		if (peer != null) {
-			return ((IRadioactiveRobotPeer) peer).fireRadioactiveBullet(power);
+			return ((IRadioactiveRobotPeer) peer).fireRadioactiveBullet(power,radius);
 		}
 		uninitializedException();
 		return null;

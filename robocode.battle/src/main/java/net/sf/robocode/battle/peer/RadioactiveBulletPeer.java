@@ -62,7 +62,12 @@ public class RadioactiveBulletPeer extends BulletPeer {
     return currentRadius;
   }
 
-  @Override
+	public void setProximityRadius(double radius) {
+		this.currentRadius = radius;
+	}
+
+
+	@Override
   protected void handleRobotImpact(RobotPeer otherRobot) {
     // Para balas de proximidad, calculamos el factor de impacto basado en la
     // distancia
