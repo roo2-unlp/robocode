@@ -177,6 +177,20 @@ public class NewBattleRulesTab extends JPanel {
 		return panel;
 	}
 
+	private void verMinMax(boolean estado){
+		randomMixMaxLabel.setVisible(estado);
+		randomMinLabel.setVisible(estado);
+		randomMinTextField.setVisible(estado);
+		randomMaxLabel.setVisible(estado);
+		randomMaxTextField.setVisible(estado);
+	}
+	private void listenerRandomWallHitDamage(){
+		randomWallHitDamageCheckBox.addActionListener(evento -> {
+			boolean habilitado = randomWallHitDamageCheckBox.isSelected();
+			verMinMax(habilitado);
+		});
+	}
+
 	private JPanel createRulesPanel() {
 		JPanel panel = new JPanel();
 
@@ -196,7 +210,7 @@ public class NewBattleRulesTab extends JPanel {
 		left.addComponent(inactivityTimeLabel);
 		left.addComponent(sentryBorderSizeLabel);
 		left.addComponent(hideEnemyNamesLabel);
-		left.addComponent(randomWallHitDamageLabel); //agrego el label
+		left.addComponent(randomWallHitDamageLabel);
 		left.addComponent(randomMixMaxLabel);
 		left.addComponent(randomMinLabel);
 		left.addComponent(randomMaxLabel);
@@ -268,7 +282,10 @@ public class NewBattleRulesTab extends JPanel {
 
 		layout.setHorizontalGroup(leftToRight);
 		layout.setVerticalGroup(topToBottom);
-		
+
+		verMinMax(false);
+		listenerRandomWallHitDamage();
+
 		return panel;
 	}	
 
