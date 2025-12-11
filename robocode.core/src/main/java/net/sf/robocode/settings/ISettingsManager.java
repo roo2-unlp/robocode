@@ -228,9 +228,9 @@ public interface ISettingsManager {
 
 	void setBattleDefaultHideEnemyNames(boolean hideEnemyNames);
 
-	boolean getBattleDefaultStunningBullets();
+	String getBattleDefaultBulletEffect();
 
-	void setBattleDefaultStunningBullets(boolean stunningBullets);
+	void setBattleDefaultBulletEffect(String bulletEffect);
 
 	int getBattleDefaultNumberOfRounds();
 
@@ -324,5 +324,5 @@ public interface ISettingsManager {
 			BATTLE_DEFAULT_INACTIVITY_TIME = "robocode.battle.default.inactivityTime",
 			BATTLE_DEFAULT_SENTRY_BORDER_SIZE = "robocode.battle.default.sentryBorderSize",
 			BATTLE_DEFAULT_HIDE_ENEMY_NAMES = "robocode.battle.default.hideEnemyNames",
-			BATTLE_DEFAULT_STUNNING_BULLETS = "robocode.battle.default.stunningBullets";
+			BATTLE_DEFAULT_BULLET_EFFECT = "robocode.battle.default.bulletEffect";
 }

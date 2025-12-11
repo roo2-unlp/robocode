@@ -34,7 +34,7 @@ public final class BattleRules implements java.io.Serializable {
 	private final double gunCoolingRate;
 	private final long inactivityTime;
 	private final boolean hideEnemyNames;
-	private final boolean stunningBullets;
+	private final String bulletEffect;
 	private final int sentryBorderSize;
 	private final int stunDuration;
 
@@ -119,19 +119,11 @@ public final class BattleRules implements java.io.Serializable {
 	}
 
 	/**
-	 * Returns true if stunning bullets are used during a battle; false otherwise.
-	 *
-	 */
-	public boolean getStunningBullets() {
-		return stunningBullets;
-	}
-
-	/**
 	 * Returns the bullet effect type used during a battle.
 	 * @return the bullet effect type as a String.
 	 */
 	public String getBulletEffect() {
-		return null;
+		return bulletEffect;
 	}
 
 	/**
@@ -151,14 +143,14 @@ public final class BattleRules implements java.io.Serializable {
 	}
 	
 	private BattleRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate,
-			long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean stunningBullets, int stunDuration) {
+			long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, String bulletEffect, int stunDuration) {
 		this.battlefieldWidth = battlefieldWidth;
 		this.battlefieldHeight = battlefieldHeight;
 		this.numRounds = numRounds;
 		this.gunCoolingRate = gunCoolingRate;
 		this.inactivityTime = inactivityTime;
 		this.hideEnemyNames = hideEnemyNames;
-		this.stunningBullets = stunningBullets;
+		this.bulletEffect = bulletEffect;
 		this.sentryBorderSize = sentryBorderSize;
 		this.stunDuration = stunDuration;
 	}
@@ -169,9 +161,9 @@ public final class BattleRules implements java.io.Serializable {
 
 	private static class HiddenHelper implements IHiddenRulesHelper {
 
-		public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean stunningBullets, int stunDuration) {
+		public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, String bulletEffect, int stunDuration) {
 			return new BattleRules(battlefieldWidth, battlefieldHeight, numRounds, gunCoolingRate, inactivityTime,
-					hideEnemyNames, sentryBorderSize, stunningBullets, stunDuration);
+					hideEnemyNames, sentryBorderSize, bulletEffect, stunDuration);
 		}
 	}
 }

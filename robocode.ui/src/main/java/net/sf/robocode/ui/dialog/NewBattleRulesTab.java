@@ -478,8 +478,9 @@ public class NewBattleRulesTab extends JPanel {
 			battleProperties.setHideEnemyNames(hideEnemyNames);
 
 			boolean stunningBullets = stunningBulletsCheckBox.isSelected();
-			settingsManager.setBattleDefaultStunningBullets(stunningBullets);
-			battleProperties.setStunningBullets(stunningBullets);
+			String bulletEffect = (stunningBullets) ? "StunningEffect" : "NoEffect";
+			settingsManager.setBattleDefaultBulletEffect(bulletEffect);
+			battleProperties.setBulletEffect(bulletEffect);
 
 			int weight = battlefieldWidthSlider.getValue();
 			int height = battlefieldHeightSlider.getValue();
@@ -509,7 +510,7 @@ public class NewBattleRulesTab extends JPanel {
 				battleProperties.setGunCoolingRate(0.1);
 				battleProperties.setInactivityTime(450);
 				battleProperties.setHideEnemyNames(false);
-				battleProperties.setStunningBullets(false);
+				battleProperties.setBulletEffect("NoEffect");
 				battleProperties.setSentryBorderSize(100);
 				battleProperties.setStunDuration(3);
 
@@ -534,7 +535,7 @@ public class NewBattleRulesTab extends JPanel {
 			getInactivityTimeTextField().setText("" + battleProperties.getInactivityTime());
 			getSentryBorderSizeTextField().setText("" + battleProperties.getSentryBorderSize());
 			hideEnemyNamesCheckBox.setSelected(battleProperties.getHideEnemyNames());
-			stunningBulletsCheckBox.setSelected(battleProperties.getStunningBullets());
+			stunningBulletsCheckBox.setSelected(battleProperties.getBulletEffect().equals("StunningEffect"));
 			getStunDurationTextField().setText("" + battleProperties.getStunDuration());
 		}
 	}

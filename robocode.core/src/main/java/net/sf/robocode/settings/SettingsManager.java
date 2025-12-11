@@ -132,7 +132,7 @@ public class SettingsManager implements ISettingsManager {
 	private long battleDefaultInactivityTime = 450;
 	private int battleDefaultSentryBorderSize = 100;
 	private boolean battleDefaultHideEnemyNames = false;
-	private boolean battleDefaultStunningBullets = false;
+	private String battleDefaultBulletEffect = "NoEffect";
 	private int battleDefaultNumberOfRounds = 10;
 	private int battleDefaultStunDuration = 3;
 
@@ -694,13 +694,13 @@ public class SettingsManager implements ISettingsManager {
 		props.setProperty(BATTLE_DEFAULT_HIDE_ENEMY_NAMES, "" + this.battleDefaultHideEnemyNames);
 	}
 
-	public boolean getBattleDefaultStunningBullets() {
-		return battleDefaultStunningBullets;
+	public String getBattleDefaultBulletEffect() {
+		return battleDefaultBulletEffect;
 	}
 
-	public void setBattleDefaultStunningBullets(boolean stunningBullets) {
-		this.battleDefaultStunningBullets = stunningBullets;
-		props.setProperty(BATTLE_DEFAULT_STUNNING_BULLETS, "" + this.battleDefaultStunningBullets);
+	public void setBattleDefaultBulletEffect(String bulletEffect) {
+		this.battleDefaultBulletEffect = bulletEffect;
+		props.setProperty(BATTLE_DEFAULT_BULLET_EFFECT, "" + this.battleDefaultBulletEffect);
 	}
 
 	public int getBattleDefaultNumberOfRounds() {
@@ -809,7 +809,7 @@ public class SettingsManager implements ISettingsManager {
 		battleDefaultGunCoolingRate = Double.parseDouble(props.getProperty(BATTLE_DEFAULT_GUN_COOLING_RATE, "0.1"));
 		battleDefaultInactivityTime = Long.parseLong(props.getProperty(BATTLE_DEFAULT_INACTIVITY_TIME, "450"));
 		battleDefaultHideEnemyNames = Boolean.parseBoolean(props.getProperty(BATTLE_DEFAULT_HIDE_ENEMY_NAMES, "false"));
-		battleDefaultStunningBullets = Boolean.parseBoolean(props.getProperty(BATTLE_DEFAULT_STUNNING_BULLETS, "false"));
+		battleDefaultBulletEffect = props.getProperty(BATTLE_DEFAULT_BULLET_EFFECT, "NoEffect");
 		battleDefaultNumberOfRounds = Integer.parseInt(props.getProperty(BATTLE_DEFAULT_NUMBER_OF_ROUNDS, "10"));
 		battleDefaultStunDuration = Integer.parseInt(props.getProperty(BATTLE_DEFAULT_STUN_DURATION, "3"));
 

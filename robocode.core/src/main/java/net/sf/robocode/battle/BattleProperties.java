@@ -37,7 +37,7 @@ public class BattleProperties implements Serializable {
 			BATTLE_GUNCOOLINGRATE = "robocode.battle.gunCoolingRate",
 			BATTLE_RULES_INACTIVITYTIME = "robocode.battle.rules.inactivityTime",
 			BATTLE_HIDE_ENEMY_NAMES = "robocode.battle.hideEnemyNames",
-			BATTLE_STUNNING_BULLETS = "robocode.battle.stunningBullets",
+			BATTLE_BULLET_EFFECT = "robocode.battle.bulletEffect",
 			BATTLE_SELECTEDROBOTS = "robocode.battle.selectedRobots",
 			BATTLE_INITIAL_POSITIONS = "robocode.battle.initialPositions",
 			BATTLE_SENTRY_BORDER_SIZE = "robocode.battle.sentryBorderSize";
@@ -49,7 +49,7 @@ public class BattleProperties implements Serializable {
 	private double gunCoolingRate = 0.1;
 	private long inactivityTime = 450;
 	private boolean hideEnemyNames = false;
-	private boolean stunningBullets = false;
+	private String bulletEffect = "NoEffect";
 	private int sentryBorderSize = 100;
 	private String selectedRobots;
 	private String initialPositions;
@@ -67,7 +67,7 @@ public class BattleProperties implements Serializable {
 		gunCoolingRate = properties.getBattleDefaultGunCoolingRate();
 		inactivityTime = properties.getBattleDefaultInactivityTime();
 		hideEnemyNames = properties.getBattleDefaultHideEnemyNames();
-		stunningBullets = properties.getBattleDefaultStunningBullets();
+		bulletEffect = properties.getBattleDefaultBulletEffect();
 		sentryBorderSize = properties.getBattleDefaultSentryBorderSize();
 	}
 
@@ -238,20 +238,20 @@ public class BattleProperties implements Serializable {
 	/**
 	 * Sets the flag defining if stunning bullets should be used during a battle.
 	 *
-	 * @param stunningBullets true if stunning bullets should be used; false otherwise.
+	 * @param bulletEffect, the BulletEffect to be used, NoEffect if none
 	 *
 	 */
-	public void setStunningBullets(boolean stunningBullets) {
-		this.stunningBullets = stunningBullets;
-		props.setProperty(BATTLE_STUNNING_BULLETS, "" + stunningBullets);
+	public void setBulletEffect(String bulletEffect) {
+		this.bulletEffect = bulletEffect;
+		props.setProperty(BATTLE_BULLET_EFFECT, "" + bulletEffect);
 	}
 
 	/**
-	 * Returns true if stunning bullets are used during a battle; false otherwise.
+	 * Returns the bullet effect
 	 *
 	 */
-	public boolean getStunningBullets() {
-		return stunningBullets;
+	public String getBulletEffect() {
+		return bulletEffect;
 	}
 	/**
 	 * Gets the selectedRobots.
@@ -383,7 +383,7 @@ public class BattleProperties implements Serializable {
 		gunCoolingRate = Double.parseDouble(props.getProperty(BATTLE_GUNCOOLINGRATE, "0.1"));
 		inactivityTime = Long.parseLong(props.getProperty(BATTLE_RULES_INACTIVITYTIME, "450"));
 		hideEnemyNames = Boolean.parseBoolean(props.getProperty(BATTLE_HIDE_ENEMY_NAMES, "false"));
-		stunningBullets = Boolean.parseBoolean(props.getProperty(BATTLE_STUNNING_BULLETS, "false"));
+		bulletEffect = props.getProperty(BATTLE_BULLET_EFFECT, "NoEffect");
 		numRounds = Integer.parseInt(props.getProperty(BATTLE_NUMROUNDS, "10"));
 		stunDuration = Integer.parseInt(props.getProperty(BATTLE_STUN_DURATION, "3"));
 		selectedRobots = props.getProperty(BATTLE_SELECTEDROBOTS, "");
