@@ -8,11 +8,20 @@
 ## Preview
 ![preview](./assets/readme/preview.gif)
 
+## Details
+The extension allows to create a new battle that uses `Stunning Bullets`. When a robot is hit by one of these bullets it will be stunned by a variable number of turns. The number of turns is proportional to the energy spent to fire the bullet and the `Stun Duration` parameter set in the `Rules` tab.
+
+When a robot is stunned it cannot move nor fire. If a robot is hit while being stunned the new stun duration will be the maximum between the current remaining stunned turns and the stun duration of this new bullet impact.
+
 ## Usage
-To use stunning bullets simply start a new battle, and check `Use Stunning Bullets` in the rules tab:
+To use stunning bullets simply start a new battle, and check `Use Stunning Bullets` in the rules tab. Additionally you can change the default `Stun Duration`.
 ![rules tab](./assets/readme/rules.png)
 
-
+## How It Works
+- When a new battle is created, the `BattleRules` class stores whether `Stunning Bullets` are enabled and what the configured `Stun Duration` is.
+- When each `RobotPeer` is constructed, it creates and stores an appropriate `BulletEffect` instance based on the values from `BattleRules`.
+- In the `BulletPeer` method `checkRobotCollision`, when a bullet hits a robot, the bullet notifies the corresponding `BulletEffect` (held by the shooting robot’s `RobotPeer`), which then applies the effect to the target robot.
+![uml](./assets/uml/uml.png)
 ## Resources
 - [Robocode home page]
 - [Introduction] to Robocode
