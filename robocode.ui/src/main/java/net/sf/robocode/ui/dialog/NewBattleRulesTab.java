@@ -52,6 +52,8 @@ public class NewBattleRulesTab extends JPanel {
 	private final JLabel sentryBorderSizeLabel = new JLabel("Sentry Border Size");
 	private final JLabel hideEnemyNamesLabel = new JLabel("Hide Enemy Names:");
 	private final JLabel randomCollisionDamageLabel = new JLabel("Random Collision Damage:"); //NUEVO, columna etiqueta
+	private final JLabel randomDamageMinLabel = new JLabel("Min Damage:");
+	private final JLabel randomDamageMaxLabel = new JLabel("Max Damage:");
 
 	private final JButton restoreDefaultsButton = new JButton("Restore Defaults");
 
@@ -59,6 +61,8 @@ public class NewBattleRulesTab extends JPanel {
 	private JTextField gunCoolingRateTextField;
 	private JTextField inactivityTimeTextField;
 	private JTextField sentryBorderSizeTextField;
+	private JTextField randomDamageMinTextField;
+	private JTextField randomDamageMaxTextField; //nuevo requerimiento ultima reunion
 	private final JCheckBox hideEnemyNamesCheckBox = new JCheckBox();
 	private final JCheckBox randomCollisionDamageCheckBox = new JCheckBox();//NUEVO CHECKBOX RandomDAMAGE
 
