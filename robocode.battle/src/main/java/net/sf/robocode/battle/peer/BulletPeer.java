@@ -196,9 +196,8 @@ public class BulletPeer {
 				owner.addEvent(
 						new BulletHitEvent(owner.getNameForEvent(otherRobot), otherRobot.getEnergy(), createBullet(false))); // Bugfix #366
 
- 				
-				//TODO cuando implementes el getBulletEffect descomenta esta linea
-				// battleRules.getBulletEffect().applyEffect(otherRobot, power);
+				//Apply the bullet effect
+				this.owner.getBulletEffect().applyEffect(this, otherRobot);
 
 				double newX, newY;
 

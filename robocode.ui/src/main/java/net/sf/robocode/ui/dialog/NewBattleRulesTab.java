@@ -372,11 +372,11 @@ public class NewBattleRulesTab extends JPanel {
 					String text = ((JTextField) input).getText();
 					if (text != null && text.matches("\\d+")) {
 						int duration = Integer.parseInt(text);
-						isValid = (duration > 0);
+						isValid = (duration > 0) && (duration < 101);
 					}
 					if (!isValid) {
 						WindowUtil.messageError(
-								"'Stun Duration' must be an integer value > 0.\n" + "Default value is 3.");
+								"'Stun Duration' must be an integer between 1 and 100.\n" + "Default value is 3.");
 						stunDurationTextField.setText("" + battleProperties.getStunDuration());
 					}
 					return isValid;

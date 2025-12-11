@@ -1,6 +1,7 @@
 package net.sf.robocode.battle.effects;
 
 import net.sf.robocode.battle.peer.RobotPeer;
+import net.sf.robocode.battle.peer.BulletPeer;
 
 public class StunningEffect implements BulletEffect {
     private final int stunDuration;
@@ -10,8 +11,7 @@ public class StunningEffect implements BulletEffect {
     }
 
     @Override
-    public void applyEffect(RobotPeer target, double bulletPower) {
-        target.skipNextTurns(stunDuration * (int) bulletPower);
-        
+    public void applyEffect(BulletPeer bullet, RobotPeer target) {
+        target.skipNextTurns((int) stunDuration * (int) bullet.getPower());
     }
 }

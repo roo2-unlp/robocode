@@ -11,6 +11,7 @@ package net.sf.robocode.battle.peer;
 import static net.sf.robocode.io.Logger.logMessage;
 import net.sf.robocode.battle.Battle;
 import net.sf.robocode.battle.BoundingRectangle;
+import net.sf.robocode.battle.effects.*;
 import net.sf.robocode.host.IHostManager;
 import net.sf.robocode.host.RobotStatics;
 import net.sf.robocode.host.events.EventManager;
@@ -100,6 +101,7 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 	private final StringBuilder proxyText = new StringBuilder(1024);
 	private RobotStatics statics;
 	private BattleRules battleRules;
+	private BulletEffect bulletEffect;
 
 	// for battle thread, during robots processing
 	private ExecCommands currentCommands;
@@ -143,7 +145,7 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 	private final RbSerializer rbSerializer;
 
 	//Remaining turns to skip
-	private int skipTurns;
+	private int skipTurns = 0;
 
 	public RobotPeer(Battle battle, IHostManager hostManager, RobotSpecification robotSpecification, String name, String suffix, TeamPeer team, int robotIndex) {
 		super();
@@ -186,6 +188,12 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 		this.isPaintEnabled = this.statics.isPaintRobot() && RobocodeProperties.isPaintingOn();
 
 		this.robotProxy = (IHostingRobotProxy) hostManager.createRobotProxy(robotSpecification, statics, this);
+
+		if (this.battleRules.getStunningBullets()) {
+			this.bulletEffect = new StunningEffect(this.battleRules.getStunDuration());
+		} else {
+			this.bulletEffect = new NoEffect();
+		}
 	}
 
 	public void println(String s) {
@@ -209,6 +217,10 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 			proxyText.setLength(0);
 			return robotText;
 		}
+	}
+
+	public BulletEffect getBulletEffect() {
+		return bulletEffect;
 	}
 
 	public RobotStatistics getRobotStatistics() {
@@ -780,6 +792,7 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 
 		newExecCommands.copyColors(commands.get());
 		commands = new AtomicReference<ExecCommands>(newExecCommands);
+		skipTurns = 0;
 	}
 
 	private boolean validSpot(List<RobotPeer> robots) {
@@ -1693,6 +1706,7 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 		updateEnergy(-energy);
 
 		setState(RobotState.DEAD);
+		skipTurns = 0;
 	}
 
 	public void waitForStop() {
@@ -1788,7 +1802,6 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 	}
 
 	public void skipNextTurns(int turns) {
-		skipTurns += turns;
-		// System.out.println(statics.getShortName() + " stunned! for " + turns + " turns");
+		skipTurns = Math.max(skipTurns, turns);
 	}
 }
