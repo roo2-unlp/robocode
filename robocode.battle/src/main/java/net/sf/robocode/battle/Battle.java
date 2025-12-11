@@ -851,7 +851,7 @@ public final class Battle extends BaseBattle {
 				if ("Sticky".equals(trapEffect)) {
 					effect = new StickyEffect(0.5, 50);
 				} else {
-					effect = new DamageEffect(1, 10);
+					effect = new DamageEffect(configuredDamage, 10);
 				}
 				
 				addTrap(new Trap(x, y, configuredRadius, effect));
