@@ -1,0 +1,46 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+interface BulletEffect {
+    +applyEffect(bullet: BulletPeer, target: RobotPeer)
+}
+
+class NoEffect {
+    +<<create>>NoEffect(): NoEffect
+    +applyEffect(bullet: BulletPeer, target: RobotPeer)
+}
+
+class StunningEffect {
+    + stunDuration: int
+    +<<create>>StunningEffect(stunDuration: int): StunningEffect
+    +applyEffect(bullet: BulletPeer, target: RobotPeer)
+}
+
+class BattleRules {
+    + stunningBullets : boolean
+    + stunDuration : int
+    + getStunningBullets() : boolean
+    + getStunDuration(): int
+}
+
+class BulletPeer {
+    + checkRobotCollision()
+}
+
+class RobotPeer {
+    + skipNextTurns(turns: int)
+    + getBulletEffect() : BulletEffect
+}
+
+RobotPeer *-- BulletPeer
+RobotPeer --* BulletEffect
+BulletEffect <|-- NoEffect
+BulletEffect <|-- StunningEffect
+RobotPeer --* BattleRules
+
+note right of BulletPeer::checkRobotCollision
+//Apply the bullet effect
+this.owner.getBulletEffect()
+    .applyEffect(this, otherRobot);
+end note
+@enduml
