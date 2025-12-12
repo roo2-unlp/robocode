@@ -198,7 +198,9 @@ public class NewBattleRulesTab extends JPanel {
     left.addComponent(inactivityTimeLabel);
     left.addComponent(sentryBorderSizeLabel);
     left.addComponent(hideEnemyNamesLabel);
-    left.addComponent(randomCollisionDamageLabel); 
+    left.addComponent(randomCollisionDamageLabel);
+	left.addComponent(randomDamageMinLabel); // nuevo req min y max
+	left.addComponent(randomDamageMaxLabel);
     leftToRight.addGroup(left);
 
     // --- COLUMNA DERECHA (Inputs y Checkboxes) ---
@@ -210,7 +212,9 @@ public class NewBattleRulesTab extends JPanel {
     right.addComponent(getInactivityTimeTextField());
     right.addComponent(getSentryBorderSizeTextField());
     right.addComponent(hideEnemyNamesCheckBox);
-    right.addComponent(randomCollisionDamageCheckBox); 
+    right.addComponent(randomCollisionDamageCheckBox);
+	right.addComponent(getRandomDamageMinTextField()); // NUEVO req min y max
+	right.addComponent(getRandomDamageMaxTextField());
     leftToRight.addGroup(right);
 
     // --- FILAS (Alineación Vertical) ---
@@ -245,7 +249,7 @@ public class NewBattleRulesTab extends JPanel {
     row4.addComponent(hideEnemyNamesCheckBox);
     topToBottom.addGroup(row4);
 
-    // Fila 5 (Tu nueva funcionalidad)
+    // Fila 5 Random checkbox
     GroupLayout.ParallelGroup row5 = layout.createParallelGroup(GroupLayout.Alignment.CENTER);
     row5.addComponent(randomCollisionDamageLabel);
     row5.addComponent(randomCollisionDamageCheckBox);
@@ -253,6 +257,18 @@ public class NewBattleRulesTab extends JPanel {
 
     layout.setHorizontalGroup(leftToRight);
     layout.setVerticalGroup(topToBottom);
+
+	// Fila 6 (Min Damage)
+	GroupLayout.ParallelGroup row6 = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
+	row6.addComponent(randomDamageMinLabel);
+	row6.addComponent(getRandomDamageMinTextField());
+	topToBottom.addGroup(row6);
+
+	// Fila 7 (Max Damage)
+	GroupLayout.ParallelGroup row7 = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
+	row7.addComponent(randomDamageMaxLabel);
+	row7.addComponent(getRandomDamageMaxTextField());
+	topToBottom.addGroup(row7);
 
     return panel;
 }
@@ -282,6 +298,57 @@ public class NewBattleRulesTab extends JPanel {
 			});
 		}
 		return numberOfRoundsTextField;
+	}
+
+	private JTextField getRandomDamageMinTextField() {  //NUEVO, logica parecia roundsNumber
+		if (randomDamageMinTextField == null) {
+			randomDamageMinTextField = new JTextField(5);
+			// Cargar valor actual de las propiedades
+			randomDamageMinTextField.setText("" + battleProperties.getRandomDamageMin());
+			randomDamageMinTextField.setInputVerifier(new InputVerifier() {
+				@Override
+				public boolean verify(JComponent input) {
+					boolean isValid = false;
+					String text = ((JTextField) input).getText();
+					if (text != null && text.matches("\\d*(\\.\\d+)?")) {
+						double val = Double.parseDouble(text);
+						// Validar que sea mayor a 0
+						isValid = (val >= 0.1);
+					}
+					if (!isValid) {
+						WindowUtil.messageError("Min Damage must be > 0.1");
+						randomDamageMinTextField.setText("" + battleProperties.getRandomDamageMin());
+					}
+					return isValid;
+				}
+			});
+		}
+		return randomDamageMinTextField;
+	}
+
+	private JTextField getRandomDamageMaxTextField() {  //idem anterior pero para max value
+		if (randomDamageMaxTextField == null) {
+			randomDamageMaxTextField = new JTextField(5);
+			randomDamageMaxTextField.setText("" + battleProperties.getRandomDamageMax());
+			randomDamageMaxTextField.setInputVerifier(new InputVerifier() {
+				@Override
+				public boolean verify(JComponent input) {
+					boolean isValid = false;
+					String text = ((JTextField) input).getText();
+					if (text != null && text.matches("\\d*(\\.\\d+)?")) {
+						double val = Double.parseDouble(text);
+						// Podrías validar aquí que Max > Min, o dejar que el Modelo lo corrija
+						isValid = (val >= 0.1);
+					}
+					if (!isValid) {
+						WindowUtil.messageError("Max Damage must be > 0.1");
+						randomDamageMaxTextField.setText("" + battleProperties.getRandomDamageMax());
+					}
+					return isValid;
+				}
+			});
+		}
+		return randomDamageMaxTextField;
 	}
 
 	private JTextField getGunCoolingRateTextField() {
@@ -456,6 +523,27 @@ public class NewBattleRulesTab extends JPanel {
 			// Nota: AVERIGUAR -? guardar en settingsManager requeriria modificar esa interfaz tambien.
 			boolean randomDamage = randomCollisionDamageCheckBox.isSelected();
 			battleProperties.setRandomDamage(randomDamage);
+
+			// --- NUEVO: Guardar Min y Max ---
+			Double minDmg = null;
+			try {
+				minDmg = Double.parseDouble(getRandomDamageMinTextField().getText());
+			} catch (NumberFormatException e) { } // Ignorar
+
+			if (minDmg != null) {
+				settingsManager.setBattleDefaultRandomDamageMin(minDmg);
+				battleProperties.setRandomDamageMin(minDmg);
+			}
+
+			Double maxDmg = null;
+			try {
+				maxDmg = Double.parseDouble(getRandomDamageMaxTextField().getText());
+			} catch (NumberFormatException e) { }
+
+			if (maxDmg != null) {
+				settingsManager.setBattleDefaultRandomDamageMax(maxDmg);
+				battleProperties.setRandomDamageMax(maxDmg);
+			}
 
 			int weight = battlefieldWidthSlider.getValue();
 			int height = battlefieldHeightSlider.getValue();
