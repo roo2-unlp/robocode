@@ -26,15 +26,40 @@ import net.sf.robocode.security.IHiddenRulesHelper;
  * @since 1.6.2
  */
 public final class BattleRules implements java.io.Serializable {
-	private static final long serialVersionUID = 1L;
+	private static class HiddenHelper implements IHiddenRulesHelper {
 
+		public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, double radioactiveBulletProximityRadius) {
+			return new BattleRules(battlefieldWidth, battlefieldHeight, numRounds, gunCoolingRate, inactivityTime,
+					hideEnemyNames, sentryBorderSize, radioactiveBulletProximityRadius);
+		}
+	}
+
+	private static final long serialVersionUID = 1L;
+	static IHiddenRulesHelper createHiddenHelper() {
+		return new HiddenHelper();
+	}
 	private final int battlefieldWidth;
 	private final int battlefieldHeight;
 	private final int numRounds;
 	private final double gunCoolingRate;
 	private final long inactivityTime;
 	private final boolean hideEnemyNames;
+
 	private final int sentryBorderSize;
+
+	private final double radioactiveBulletProximityRadius;
+
+	private BattleRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate,
+			long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, double radioactiveBulletProximityRadius) {
+		this.battlefieldWidth = battlefieldWidth;
+		this.battlefieldHeight = battlefieldHeight;
+		this.numRounds = numRounds;
+		this.gunCoolingRate = gunCoolingRate;
+		this.inactivityTime = inactivityTime;
+		this.hideEnemyNames = hideEnemyNames;
+		this.sentryBorderSize = sentryBorderSize;
+		this.radioactiveBulletProximityRadius = radioactiveBulletProximityRadius;
+	}
 
 	/**
 	 * Returns the battlefield width.
@@ -44,6 +69,8 @@ public final class BattleRules implements java.io.Serializable {
 	public int getBattlefieldWidth() {
 		return battlefieldWidth;
 	}
+
+
 
 	/**
 	 * Returns the battlefield height.
@@ -97,7 +124,7 @@ public final class BattleRules implements java.io.Serializable {
 	public long getInactivityTime() {
 		return inactivityTime;
 	}
-
+	
 	/**
 	 * @return true if the enemy names are hidden, i.e. anonymous; false otherwise.
 	 * 
@@ -122,27 +149,15 @@ public final class BattleRules implements java.io.Serializable {
 	public int getSentryBorderSize() {
 		return sentryBorderSize;
 	}
-	
-	private BattleRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate,
-			long inactivityTime, boolean hideEnemyNames, int sentryBorderSize) {
-		this.battlefieldWidth = battlefieldWidth;
-		this.battlefieldHeight = battlefieldHeight;
-		this.numRounds = numRounds;
-		this.gunCoolingRate = gunCoolingRate;
-		this.inactivityTime = inactivityTime;
-		this.hideEnemyNames = hideEnemyNames;
-		this.sentryBorderSize = sentryBorderSize;
-	}
 
-	static IHiddenRulesHelper createHiddenHelper() {
-		return new HiddenHelper();
-	}
-
-	private static class HiddenHelper implements IHiddenRulesHelper {
-
-		public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize) {
-			return new BattleRules(battlefieldWidth, battlefieldHeight, numRounds, gunCoolingRate, inactivityTime,
-					hideEnemyNames, sentryBorderSize);
-		}
+	/**
+	 * Returns the proximity radius for radioactive bullets that defines the distance
+	 * within which robots can be affected by radioactive bullet effects.
+	 * The proximity radius is measured in units/pixels from the bullet's position.
+	 * 
+	 * @return the radioactive bullet proximity radius in units/pixels.
+	 */
+	public double getRadioactiveBulletProximityRadius() {
+		return radioactiveBulletProximityRadius;
 	}
 }

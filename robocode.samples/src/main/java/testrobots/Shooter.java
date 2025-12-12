@@ -2,6 +2,7 @@ package testrobots;
 
 import java.awt.Color;
 
+import robocode.Rules;
 import robocode.ScannedRobotEvent;
 
 /**
@@ -14,7 +15,7 @@ import robocode.ScannedRobotEvent;
 
 public class Shooter extends robocode.RadioactiveRobot {
 	boolean shootNormalBullet = true;
-	double aumentar = 0;
+	double radius = Rules.DEFAULT_PROXIMITY_RADIUS;
 
 	public void run() {
 
@@ -35,9 +36,8 @@ public class Shooter extends robocode.RadioactiveRobot {
 				fire(0.1);
 				out.println("shot Normal Bullet: Power: 0.1");
 			} else {
-				fireRadioactiveBullet(3, aumentar);
-				out.println("shot Radioactive Bullet: Power: 3 ; Radius: "+aumentar);
-				aumentar = aumentar + 10;
+				fireRadioactiveBullet(3);
+				out.println("shot Radioactive Bullet: Power: 3 ; Radius (rule): " + radius);
 			}
 			shootNormalBullet = !shootNormalBullet;
 			scan();

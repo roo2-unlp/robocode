@@ -25,6 +25,7 @@ public class BattleSpecification implements java.io.Serializable {
 	private final long inactivityTime;
 	private final boolean hideEnemyNames;
 	private final int sentryBorderSize;
+	private final double radioactiveBulletProximityRadius;
 	private final RobotSpecification[] robots;
 	private final RobotSetup[] initialSetups;
 
@@ -83,7 +84,7 @@ public class BattleSpecification implements java.io.Serializable {
 	 * @since 1.9.0.0
 	 */
 	public BattleSpecification(BattlefieldSpecification battlefieldSize, int numRounds, long inactivityTime, double gunCoolingRate, int sentryBorderSize, boolean hideEnemyNames, RobotSpecification[] robots) {
-		this(battlefieldSize, numRounds, inactivityTime, gunCoolingRate, 100, hideEnemyNames, robots, null);
+		this(battlefieldSize, numRounds, inactivityTime, gunCoolingRate, sentryBorderSize, hideEnemyNames, robots, null);
 	}
 
 	/**
@@ -101,6 +102,10 @@ public class BattleSpecification implements java.io.Serializable {
 	 * @since 1.9.2.0
 	 */
 	public BattleSpecification(BattlefieldSpecification battlefieldSize, int numRounds, long inactivityTime, double gunCoolingRate, int sentryBorderSize, boolean hideEnemyNames, RobotSpecification[] robots, RobotSetup[] initialSetups) {
+		this(battlefieldSize, numRounds, inactivityTime, gunCoolingRate, sentryBorderSize, hideEnemyNames, robots, initialSetups, robocode.Rules.DEFAULT_PROXIMITY_RADIUS);
+	}
+
+	public BattleSpecification(BattlefieldSpecification battlefieldSize, int numRounds, long inactivityTime, double gunCoolingRate, int sentryBorderSize, boolean hideEnemyNames, RobotSpecification[] robots, RobotSetup[] initialSetups, double radioactiveBulletProximityRadius) {
 		if (battlefieldSize == null) {
 			throw new IllegalArgumentException("battlefieldSize cannot be null");
 		}
@@ -125,6 +130,11 @@ public class BattleSpecification implements java.io.Serializable {
 		if (sentryBorderSize < 50) {
 			throw new IllegalArgumentException("sentryBorderSize must be >= 50");
 		}
+		double minPR = robocode.Rules.MIN_PROXIMITY_RADIUS;
+		double maxPR = robocode.Rules.MAX_PROXIMITY_RADIUS;
+		if (radioactiveBulletProximityRadius < minPR || radioactiveBulletProximityRadius > maxPR) {
+			throw new IllegalArgumentException("radioactiveBulletProximityRadius must be between " + minPR + " and " + maxPR);
+		}
 		this.battlefieldWidth = battlefieldSize.getWidth();
 		this.battlefieldHeight = battlefieldSize.getHeight();
 		this.numRounds = numRounds;
@@ -132,6 +142,7 @@ public class BattleSpecification implements java.io.Serializable {
 		this.gunCoolingRate = gunCoolingRate;
 		this.sentryBorderSize = sentryBorderSize;
 		this.hideEnemyNames = hideEnemyNames;
+		this.radioactiveBulletProximityRadius = radioactiveBulletProximityRadius;
 		this.robots = robots;
 		this.initialSetups = initialSetups;
 	}
@@ -197,6 +208,10 @@ public class BattleSpecification implements java.io.Serializable {
 	 */
 	public int getSentryBorderSize() {
 		return sentryBorderSize;
+	}
+
+	public double getRadioactiveBulletProximityRadius() {
+		return radioactiveBulletProximityRadius;
 	}
 
 	/**

@@ -8,17 +8,17 @@
 package net.sf.robocode.battle;
 
 
-import net.sf.robocode.settings.ISettingsManager;
-import robocode.AdvancedRobot;
-import robocode.Robot;
-import robocode.control.RobotSetup;
-import robocode.control.RobotSpecification;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Properties;
+
+import net.sf.robocode.settings.ISettingsManager;
+import robocode.AdvancedRobot;
+import robocode.Robot;
+import robocode.control.RobotSetup;
+import robocode.control.RobotSpecification;
 
 
 /**
@@ -38,7 +38,8 @@ public class BattleProperties implements Serializable {
 			BATTLE_HIDE_ENEMY_NAMES = "robocode.battle.hideEnemyNames",
 			BATTLE_SELECTEDROBOTS = "robocode.battle.selectedRobots",
 			BATTLE_INITIAL_POSITIONS = "robocode.battle.initialPositions",
-			BATTLE_SENTRY_BORDER_SIZE = "robocode.battle.sentryBorderSize";
+			BATTLE_SENTRY_BORDER_SIZE = "robocode.battle.sentryBorderSize",
+			BATTLE_RADIOACTIVE_PROXIMITY_RADIUS = "robocode.battle.radioactiveProximityRadius";
 
 	private int battlefieldWidth = 800;
 	private int battlefieldHeight = 600;
@@ -47,6 +48,7 @@ public class BattleProperties implements Serializable {
 	private long inactivityTime = 450;
 	private boolean hideEnemyNames = false;
 	private int sentryBorderSize = 100;
+	private double radioactiveBulletProximityRadius = robocode.Rules.DEFAULT_PROXIMITY_RADIUS;
 	private String selectedRobots;
 	private String initialPositions;
 
@@ -63,6 +65,7 @@ public class BattleProperties implements Serializable {
 		inactivityTime = properties.getBattleDefaultInactivityTime();
 		hideEnemyNames = properties.getBattleDefaultHideEnemyNames();
 		sentryBorderSize = properties.getBattleDefaultSentryBorderSize();
+		radioactiveBulletProximityRadius = robocode.Rules.DEFAULT_PROXIMITY_RADIUS;
 	}
 
 	/**
@@ -328,6 +331,15 @@ public class BattleProperties implements Serializable {
 		props.setProperty(BATTLE_SENTRY_BORDER_SIZE, "" + sentryBorderSize);
 	}
 
+	public double getRadioactiveBulletProximityRadius() {
+		return radioactiveBulletProximityRadius;
+	}
+
+	public void setRadioactiveBulletProximityRadius(double radius) {
+		this.radioactiveBulletProximityRadius = radius;
+		props.setProperty(BATTLE_RADIOACTIVE_PROXIMITY_RADIUS, "" + radius);
+	}
+
 	public void store(FileOutputStream out, String desc) throws IOException {
 		props.store(out, desc);
 	}
@@ -343,5 +355,6 @@ public class BattleProperties implements Serializable {
 		selectedRobots = props.getProperty(BATTLE_SELECTEDROBOTS, "");
 		initialPositions = props.getProperty(BATTLE_INITIAL_POSITIONS, "");
 		sentryBorderSize = Integer.parseInt(props.getProperty(BATTLE_SENTRY_BORDER_SIZE, "100"));
+		radioactiveBulletProximityRadius = Double.parseDouble(props.getProperty(BATTLE_RADIOACTIVE_PROXIMITY_RADIUS, "" + robocode.Rules.DEFAULT_PROXIMITY_RADIUS));
 	}
 }

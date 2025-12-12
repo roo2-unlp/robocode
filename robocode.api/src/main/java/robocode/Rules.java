@@ -75,6 +75,11 @@ public final class Rules {
 	public static final double MAX_PROXIMITY_RADIUS = 120;
 
 	/**
+	 * The default proximity radius used for radioactive bullets when no radius is specified.
+	 */
+	public static final double DEFAULT_PROXIMITY_RADIUS = 50;
+
+	/**
 	 * The maximum turning rate of the robot, in degrees, which is
 	 * 10 degress/turn.
 	 * Note, that the turn rate of the robot depends on it's velocity.

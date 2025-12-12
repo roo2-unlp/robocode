@@ -8,18 +8,7 @@
 package net.sf.robocode.security;
 
 
-import net.sf.robocode.core.ContainerBase;
-import net.sf.robocode.io.Logger;
-import net.sf.robocode.peer.IRobotStatics;
-import robocode.BattleRules;
-import robocode.Bullet;
-import robocode.Event;
-import robocode.RobotStatus;
-import robocode.control.RobotSpecification;
-import robocode.control.events.IBattleListener;
-import robocode.robotinterfaces.IBasicRobot;
-
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.UnsupportedEncodingException;
@@ -31,6 +20,17 @@ import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+
+import net.sf.robocode.core.ContainerBase;
+import net.sf.robocode.io.Logger;
+import net.sf.robocode.peer.IRobotStatics;
+import robocode.BattleRules;
+import robocode.Bullet;
+import robocode.Event;
+import robocode.RobotStatus;
+import robocode.control.RobotSpecification;
+import robocode.control.events.IBattleListener;
+import robocode.robotinterfaces.IBasicRobot;
 
 
 /**
@@ -121,6 +121,118 @@ public class HiddenAccess {
 
 	}
 
+	public static boolean isCriticalEvent(Event e) {
+		return eventHelper.isCriticalEvent(e);
+	}
+
+	public static void setEventTime(Event e, long newTime) {
+		eventHelper.setTime(e, newTime);
+	}
+
+	public static void setEventPriority(Event e, int newPriority) {
+		eventHelper.setPriority(e, newPriority);
+	}
+
+	public static void dispatch(Event event, IBasicRobot robot, IRobotStatics statics, Graphics2D graphics) {
+		eventHelper.dispatch(event, robot, statics, graphics);
+	}
+
+	public static void setDefaultPriority(Event e) {
+		eventHelper.setDefaultPriority(e);
+	}
+
+	public static byte getSerializationType(Event e) {
+		return eventHelper.getSerializationType(e);
+	}
+
+	public static void update(Bullet bullet, double x, double y, String victimName, boolean isActive) {
+		bulletHelper.update(bullet, x, y, victimName, isActive);
+	}
+
+	public static RobotSpecification createSpecification(Object fileSpecification, String name, String author, String webpage, String version, String robocodeVersion, String jarFile, String fullClassName, String description) {
+		return specificationHelper.createSpecification(fileSpecification, name, author, webpage, version,
+				robocodeVersion, jarFile, fullClassName, description);
+	}
+
+	public static Object getFileSpecification(RobotSpecification specification) {
+		return specificationHelper.getFileSpecification(specification);
+	}
+
+	public static String getRobotTeamName(RobotSpecification specification) {
+		return specificationHelper.getTeamName(specification);
+	}
+
+	public static void setTeamName(RobotSpecification specification, String teamName) {
+		specificationHelper.setTeamName(specification, teamName);
+	}
+
+	public static RobotStatus createStatus(double energy, double x, double y, double bodyHeading, double gunHeading, double radarHeading, double velocity,
+			double bodyTurnRemaining, double radarTurnRemaining, double gunTurnRemaining, double distanceRemaining, double gunHeat, int others,
+			int numSentries, int roundNum, int numRounds, long time) {
+		return statusHelper.createStatus(energy, x, y, bodyHeading, gunHeading, radarHeading, velocity,
+				bodyTurnRemaining, radarTurnRemaining, gunTurnRemaining, distanceRemaining, gunHeat, others, numSentries,
+				roundNum, numRounds, time);
+	}
+
+	public static BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, double radioactiveBulletProximityRadius) {
+		return rulesHelper.createRules(battlefieldWidth, battlefieldHeight, numRounds, gunCoolingRate, inactivityTime,
+				hideEnemyNames, sentryBorderSize, radioactiveBulletProximityRadius);
+	}
+
+	public static boolean isSafeThread() {
+		final IThreadManagerBase threadManager = ContainerBase.getComponent(IThreadManagerBase.class);
+
+		return threadManager != null && threadManager.isSafeThread();
+	}
+
+	public static void initContainerForRobotEngine(File robocodeHome, IBattleListener listener) {
+		init();
+		try {
+			initContainerRe.invoke(null, robocodeHome, listener);
+		} catch (IllegalAccessException e) {
+			Logger.logError(e);
+		} catch (InvocationTargetException e) {
+			Logger.logError(e.getCause());
+			Logger.logError(e);
+		}
+	}
+
+	public static void initContainer() {
+		init();
+		try {
+			initContainer.invoke(null);
+		} catch (IllegalAccessException e) {
+			Logger.logError(e);
+		} catch (InvocationTargetException e) {
+			Logger.logError(e.getCause());
+			Logger.logError(e);
+		}
+	}
+
+	public static void cleanup() {
+		init();
+		try {
+			cleanup.invoke(null);
+		} catch (IllegalAccessException e) {
+			Logger.logError(e);
+		} catch (InvocationTargetException e) {
+			Logger.logError(e.getCause());
+			Logger.logError(e);
+		}
+	}
+
+	public static void robocodeMain(final String[] args) {
+		init();
+		try {
+			robocodeMain.invoke(null, (Object) args);
+		} catch (IllegalAccessException e) {
+			Logger.logError(e);
+		} catch (InvocationTargetException e) {
+			Logger.logError(e.getCause());
+			Logger.logError(e);
+		}
+	}
+
 	private static ClassLoader getClassLoader() throws MalformedURLException {
 		// if other modules are .jar next to robocode.jar on same path, we will create classloader which will load them
 		// otherwise we rely on that they are already on classpath
@@ -181,118 +293,6 @@ public class HiddenAccess {
 			}
 		}
 		return new URLClassLoader(urls.toArray(new URL[urls.size()]), loader);
-	}
-
-	public static boolean isCriticalEvent(Event e) {
-		return eventHelper.isCriticalEvent(e);
-	}
-
-	public static void setEventTime(Event e, long newTime) {
-		eventHelper.setTime(e, newTime);
-	}
-
-	public static void setEventPriority(Event e, int newPriority) {
-		eventHelper.setPriority(e, newPriority);
-	}
-
-	public static void dispatch(Event event, IBasicRobot robot, IRobotStatics statics, Graphics2D graphics) {
-		eventHelper.dispatch(event, robot, statics, graphics);
-	}
-
-	public static void setDefaultPriority(Event e) {
-		eventHelper.setDefaultPriority(e);
-	}
-
-	public static byte getSerializationType(Event e) {
-		return eventHelper.getSerializationType(e);
-	}
-
-	public static void update(Bullet bullet, double x, double y, String victimName, boolean isActive) {
-		bulletHelper.update(bullet, x, y, victimName, isActive);
-	}
-
-	public static RobotSpecification createSpecification(Object fileSpecification, String name, String author, String webpage, String version, String robocodeVersion, String jarFile, String fullClassName, String description) {
-		return specificationHelper.createSpecification(fileSpecification, name, author, webpage, version,
-				robocodeVersion, jarFile, fullClassName, description);
-	}
-
-	public static Object getFileSpecification(RobotSpecification specification) {
-		return specificationHelper.getFileSpecification(specification);
-	}
-
-	public static String getRobotTeamName(RobotSpecification specification) {
-		return specificationHelper.getTeamName(specification);
-	}
-
-	public static void setTeamName(RobotSpecification specification, String teamName) {
-		specificationHelper.setTeamName(specification, teamName);
-	}
-
-	public static RobotStatus createStatus(double energy, double x, double y, double bodyHeading, double gunHeading, double radarHeading, double velocity,
-			double bodyTurnRemaining, double radarTurnRemaining, double gunTurnRemaining, double distanceRemaining, double gunHeat, int others,
-			int numSentries, int roundNum, int numRounds, long time) {
-		return statusHelper.createStatus(energy, x, y, bodyHeading, gunHeading, radarHeading, velocity,
-				bodyTurnRemaining, radarTurnRemaining, gunTurnRemaining, distanceRemaining, gunHeat, others, numSentries,
-				roundNum, numRounds, time);
-	}
-
-	public static BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize) {
-		return rulesHelper.createRules(battlefieldWidth, battlefieldHeight, numRounds, gunCoolingRate, inactivityTime,
-				hideEnemyNames, sentryBorderSize);
-	}
-
-	public static boolean isSafeThread() {
-		final IThreadManagerBase threadManager = ContainerBase.getComponent(IThreadManagerBase.class);
-
-		return threadManager != null && threadManager.isSafeThread();
-	}
-
-	public static void initContainerForRobotEngine(File robocodeHome, IBattleListener listener) {
-		init();
-		try {
-			initContainerRe.invoke(null, robocodeHome, listener);
-		} catch (IllegalAccessException e) {
-			Logger.logError(e);
-		} catch (InvocationTargetException e) {
-			Logger.logError(e.getCause());
-			Logger.logError(e);
-		}
-	}
-
-	public static void initContainer() {
-		init();
-		try {
-			initContainer.invoke(null);
-		} catch (IllegalAccessException e) {
-			Logger.logError(e);
-		} catch (InvocationTargetException e) {
-			Logger.logError(e.getCause());
-			Logger.logError(e);
-		}
-	}
-
-	public static void cleanup() {
-		init();
-		try {
-			cleanup.invoke(null);
-		} catch (IllegalAccessException e) {
-			Logger.logError(e);
-		} catch (InvocationTargetException e) {
-			Logger.logError(e.getCause());
-			Logger.logError(e);
-		}
-	}
-
-	public static void robocodeMain(final String[] args) {
-		init();
-		try {
-			robocodeMain.invoke(null, (Object) args);
-		} catch (IllegalAccessException e) {
-			Logger.logError(e);
-		} catch (InvocationTargetException e) {
-			Logger.logError(e.getCause());
-			Logger.logError(e);
-		}
 	}
 
 }

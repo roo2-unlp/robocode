@@ -16,18 +16,17 @@ public class RadioactiveRobot extends Robot {
 
 	/**
 	 * Immediately fires a radioactive bullet. The bullet will travel in the direction the
-	 * gun is pointing.
+	 * gun is pointing, using the proximity radius defined by the current battle rules.
 	 *
 	 * @param power the amount of energy given to the bullet, and subtracted
 	 *              from the robot's energy.
-	 * @param radius the proximity radius used to determine the explosion's effective area.
 	 * @return a {@link RadioactiveBullet} that contains information about the bullet if it
 	 *         was actually fired, which can be used for tracking the bullet after it
 	 *         has been fired. If the bullet was not fired, {@code null} is returned.
 	 */
-	public RadioactiveBullet fireRadioactiveBullet(double power, double radius) {
+	public RadioactiveBullet fireRadioactiveBullet(double power) {
 		if (peer != null) {
-			return ((IRadioactiveRobotPeer) peer).fireRadioactiveBullet(power,radius);
+			return ((IRadioactiveRobotPeer) peer).fireRadioactiveBullet(power);
 		}
 		uninitializedException();
 		return null;

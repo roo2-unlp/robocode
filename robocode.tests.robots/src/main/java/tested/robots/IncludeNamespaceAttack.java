@@ -36,7 +36,7 @@ public class IncludeNamespaceAttack extends AdvancedRobot {
 
 	private void namespaceAttack() {
 		try {
-			HiddenAccess.createRules(10, 10, 10, 10, 1, false, 100);
+			HiddenAccess.createRules(10, 10, 10, 10, 1, false, 100, robocode.Rules.DEFAULT_PROXIMITY_RADIUS);
 		} catch (Throwable e) {
 			// Swallow security exception
 			e.printStackTrace(out);

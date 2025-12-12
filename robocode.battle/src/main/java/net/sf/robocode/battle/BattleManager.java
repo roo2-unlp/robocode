@@ -8,6 +8,16 @@
 package net.sf.robocode.battle;
 
 
+import static net.sf.robocode.io.Logger.logError;
+import static net.sf.robocode.io.Logger.logMessage;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import net.sf.robocode.battle.events.BattleEventDispatcher;
 import net.sf.robocode.core.Container;
 import net.sf.robocode.host.ICpuManager;
@@ -15,8 +25,6 @@ import net.sf.robocode.host.IHostManager;
 import net.sf.robocode.io.FileUtil;
 import net.sf.robocode.io.Logger;
 import net.sf.robocode.io.RobocodeProperties;
-import static net.sf.robocode.io.Logger.logError;
-import static net.sf.robocode.io.Logger.logMessage;
 import net.sf.robocode.recording.BattlePlayer;
 import net.sf.robocode.recording.IRecordManager;
 import net.sf.robocode.repository.IRepositoryManager;
@@ -30,9 +38,6 @@ import robocode.control.RobotSpecification;
 import robocode.control.events.BattlePausedEvent;
 import robocode.control.events.BattleResumedEvent;
 import robocode.control.events.IBattleListener;
-
-import java.io.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 
 /**
@@ -99,6 +104,7 @@ public class BattleManager implements IBattleManager {
 		battleProperties.setNumRounds(spec.getNumRounds());
 		battleProperties.setHideEnemyNames(spec.getHideEnemyNames());
 		battleProperties.setSentryBorderSize(spec.getSentryBorderSize());
+		battleProperties.setRadioactiveBulletProximityRadius(spec.getRadioactiveBulletProximityRadius());
 		battleProperties.setSelectedRobots(spec.getRobots());
 
 		final RobotSetup[] initialSetups = spec.getInitialSetups();
@@ -122,85 +128,10 @@ public class BattleManager implements IBattleManager {
 		}
 	}
 
-	private void startNewBattleImpl(RobotSpecification[] battlingRobotsList, boolean waitTillOver, boolean enableRecording) {
-		stop(true);
-
-		logMessage("Preparing battle...");
-
-		final boolean recording = (properties.getOptionsCommonEnableReplayRecording()
-				&& System.getProperty("TESTING", "none").equals("none"))
-						|| enableRecording;
-
-		if (recording) {
-			recordManager.attachRecorder(battleEventDispatcher);
-		} else {
-			recordManager.detachRecorder();
-		}
-
-		// resets seed for deterministic behavior of Random
-		final String seed = System.getProperty("RANDOMSEED", "none");
-
-		if (!seed.equals("none")) {
-			// init soon as it reads random
-			cpuManager.getCpuConstant();
-
-			RandomFactory.resetDeterministic(Long.valueOf(seed));
-		}
-
-		Battle realBattle = Container.createComponent(Battle.class);
-		realBattle.setup(battlingRobotsList, battleProperties, isPaused());
-
-		battle = realBattle;
-
-		battleThread = new Thread(Thread.currentThread().getThreadGroup(), realBattle);
-		battleThread.setPriority(Thread.NORM_PRIORITY);
-		battleThread.setName("Battle Thread");
-		realBattle.setBattleThread(battleThread);
-
-		if (RobocodeProperties.isSecurityOn()) {
-			hostManager.addSafeThread(battleThread);
-		}
-
-		// Start the realBattle thread
-		battleThread.start();
-
-		// Wait until the realBattle is running and ended.
-		// This must be done as a new realBattle could be started immediately after this one causing
-		// multiple realBattle threads to run at the same time, which must be prevented!
-		realBattle.waitTillStarted();
-		if (waitTillOver) {
-			realBattle.waitTillOver();
-		}
-	}
-
 	public void waitTillOver() {
 		if (battle != null) {
 			battle.waitTillOver();
 		}
-	}
-
-	private void replayBattle() {
-		if (!recordManager.hasRecord()) {
-			return;
-		}
-		logMessage("Preparing replay...");
-
-		if (battle != null && battle.isRunning()) {
-			battle.stop(true);
-		}
-
-		Logger.setLogListener(battleEventDispatcher);
-
-		recordManager.detachRecorder();
-		battle = Container.createComponent(BattlePlayer.class);
-
-		Thread battleThread = new Thread(Thread.currentThread().getThreadGroup(), battle);
-
-		battleThread.setPriority(Thread.NORM_PRIORITY);
-		battleThread.setName("BattlePlayer Thread");
-
-		// Start the battlePlayer thread
-		battleThread.start();
 	}
 
 	public String getBattleFilename() {
@@ -317,10 +248,6 @@ public class BattleManager implements IBattleManager {
 		replayBattle();
 	}
 
-	private boolean isPaused() {
-		return (pauseCount != 0);
-	}
-
 	public synchronized void togglePauseResumeBattle() {
 		if (isPaused()) {
 			resumeBattle();
@@ -411,5 +338,84 @@ public class BattleManager implements IBattleManager {
 		if (battle != null && battle.isRunning() && !isPaused() && battle instanceof Battle) {
 			((Battle) battle).sendInteractiveEvent(event);
 		}
+	}
+
+	private void startNewBattleImpl(RobotSpecification[] battlingRobotsList, boolean waitTillOver, boolean enableRecording) {
+		stop(true);
+
+		logMessage("Preparing battle...");
+
+		final boolean recording = (properties.getOptionsCommonEnableReplayRecording()
+				&& System.getProperty("TESTING", "none").equals("none"))
+						|| enableRecording;
+
+		if (recording) {
+			recordManager.attachRecorder(battleEventDispatcher);
+		} else {
+			recordManager.detachRecorder();
+		}
+
+		// resets seed for deterministic behavior of Random
+		final String seed = System.getProperty("RANDOMSEED", "none");
+
+		if (!seed.equals("none")) {
+			// init soon as it reads random
+			cpuManager.getCpuConstant();
+
+			RandomFactory.resetDeterministic(Long.valueOf(seed));
+		}
+
+		Battle realBattle = Container.createComponent(Battle.class);
+		realBattle.setup(battlingRobotsList, battleProperties, isPaused());
+
+		battle = realBattle;
+
+		battleThread = new Thread(Thread.currentThread().getThreadGroup(), realBattle);
+		battleThread.setPriority(Thread.NORM_PRIORITY);
+		battleThread.setName("Battle Thread");
+		realBattle.setBattleThread(battleThread);
+
+		if (RobocodeProperties.isSecurityOn()) {
+			hostManager.addSafeThread(battleThread);
+		}
+
+		// Start the realBattle thread
+		battleThread.start();
+
+		// Wait until the realBattle is running and ended.
+		// This must be done as a new realBattle could be started immediately after this one causing
+		// multiple realBattle threads to run at the same time, which must be prevented!
+		realBattle.waitTillStarted();
+		if (waitTillOver) {
+			realBattle.waitTillOver();
+		}
+	}
+
+	private void replayBattle() {
+		if (!recordManager.hasRecord()) {
+			return;
+		}
+		logMessage("Preparing replay...");
+
+		if (battle != null && battle.isRunning()) {
+			battle.stop(true);
+		}
+
+		Logger.setLogListener(battleEventDispatcher);
+
+		recordManager.detachRecorder();
+		battle = Container.createComponent(BattlePlayer.class);
+
+		Thread battleThread = new Thread(Thread.currentThread().getThreadGroup(), battle);
+
+		battleThread.setPriority(Thread.NORM_PRIORITY);
+		battleThread.setName("BattlePlayer Thread");
+
+		// Start the battlePlayer thread
+		battleThread.start();
+	}
+
+	private boolean isPaused() {
+		return (pauseCount != 0);
 	}
 }

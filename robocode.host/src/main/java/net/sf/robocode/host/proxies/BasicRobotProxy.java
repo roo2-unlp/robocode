@@ -116,12 +116,12 @@ public class BasicRobotProxy extends HostingRobotProxy implements IRadioactiveRo
 	// asynchronous actions
 	public Bullet setFire(double power) {
 		setCall();
-		return fireImpl(power, 0.0,false);
+		return fireImpl(power, false);
 	}
 
-	public RadioactiveBullet setFireRadioactive(double power,double proximityRadius) {
+	public RadioactiveBullet setFireRadioactive(double power) {
 		setCall();
-		return (RadioactiveBullet) fireImpl(power, proximityRadius, true);
+		return (RadioactiveBullet) fireImpl(power, true);
 	}
 
 	// blocking actions
@@ -157,8 +157,8 @@ public class BasicRobotProxy extends HostingRobotProxy implements IRadioactiveRo
 		return bullet;
 	}
 
-	public RadioactiveBullet fireRadioactiveBullet(double power,double proximityRadius) {
-		RadioactiveBullet bullet = setFireRadioactive(power,proximityRadius);
+	public RadioactiveBullet fireRadioactiveBullet(double power) {
+		RadioactiveBullet bullet = setFireRadioactive(power);
 
 		execute();
 		return bullet;
@@ -532,7 +532,7 @@ public class BasicRobotProxy extends HostingRobotProxy implements IRadioactiveRo
 		return status.getGunHeat() + firedHeat;
 	}
 
-	private final Bullet fireImpl(double power, double proximityRadius, boolean isRadioactive) {
+	private final Bullet fireImpl(double power, boolean isRadioactive) {
 		if (Double.isNaN(power)) {
 			println("SYSTEM: You cannot call " + (isRadioactive ? "fireRadioactive" : "fire") + "(NaN)");
 			return null;
@@ -546,11 +546,12 @@ public class BasicRobotProxy extends HostingRobotProxy implements IRadioactiveRo
 
 		power = min(getEnergyImpl(), min(max(power, minPower), maxPower));
 
-		double minPR = Rules.MIN_PROXIMITY_RADIUS;
+    double battleRuleRadius = statics.getBattleRules().getRadioactiveBulletProximityRadius();
+    double minPR = Rules.MIN_PROXIMITY_RADIUS;
 		double maxPR = Rules.MAX_PROXIMITY_RADIUS;
-
-		//proximityRadius = min(getEnergyImpl(), min(max(proximityRadius, minPR), maxPR)); Calculo de radio con energia involucrada
-		proximityRadius = min(max(proximityRadius, minPR), maxPR); //Calculo de radio sin energia involucrada
+		
+    //proximityRadius = min(getEnergyImpl(), min(max(proximityRadius, minPR), maxPR)); Calculo de radio con energia involucrada
+		double proximityRadius = min(max(battleRuleRadius, minPR), maxPR); //Calculo de radio sin energia involucrada
 
 		Bullet bullet;
 		BulletCommand wrapper;

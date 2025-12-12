@@ -8,6 +8,17 @@
 package net.sf.robocode.battle;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.sf.robocode.battle.events.BattleEventDispatcher;
 import net.sf.robocode.battle.peer.BulletPeer;
 import net.sf.robocode.battle.peer.ContestantPeer;
@@ -21,21 +32,27 @@ import net.sf.robocode.io.RobocodeProperties;
 import net.sf.robocode.repository.IRobotItem;
 import net.sf.robocode.security.HiddenAccess;
 import net.sf.robocode.settings.ISettingsManager;
-import robocode.*;
+import robocode.BattleEndedEvent;
+import robocode.BattleResults;
+import robocode.BattleRules;
+import robocode.Event;
+import robocode.RobotDeathEvent;
+import robocode.WinEvent;
 import robocode.control.RandomFactory;
 import robocode.control.RobotResults;
 import robocode.control.RobotSetup;
 import robocode.control.RobotSpecification;
-import robocode.control.events.*;
+import robocode.control.events.BattleCompletedEvent;
+import robocode.control.events.BattleFinishedEvent;
+import robocode.control.events.BattlePausedEvent;
+import robocode.control.events.BattleStartedEvent;
 import robocode.control.events.RoundEndedEvent;
+import robocode.control.events.RoundStartedEvent;
+import robocode.control.events.TurnEndedEvent;
+import robocode.control.events.TurnStartedEvent;
 import robocode.control.snapshot.BulletState;
 import robocode.control.snapshot.ITurnSnapshot;
 import robocode.robotinterfaces.IBasicRobot;
-
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -53,15 +70,64 @@ import java.util.regex.Pattern;
  */
 public final class Battle extends BaseBattle {
 
+	private class KillRobotCommand extends RobotCommand {
+		KillRobotCommand(int robotIndex) {
+			super(robotIndex);
+		}
+
+		public void execute() {
+			robots.get(robotIndex).kill();
+		}
+	}
+
+	private class EnableRobotPaintCommand extends RobotCommand {
+		final boolean enablePaint;
+
+		EnableRobotPaintCommand(int robotIndex, boolean enablePaint) {
+			super(robotIndex);
+			this.enablePaint = enablePaint;
+		}
+
+		public void execute() {
+			robots.get(robotIndex).setPaintEnabled(enablePaint);
+		}
+	}
+	private class EnableRobotSGPaintCommand extends RobotCommand {
+		final boolean enableSGPaint;
+
+		EnableRobotSGPaintCommand(int robotIndex, boolean enableSGPaint) {
+			super(robotIndex);
+			this.enableSGPaint = enableSGPaint;
+		}
+
+		public void execute() {
+			robots.get(robotIndex).setSGPaintEnabled(enableSGPaint);
+		}
+	}
+
+	private class SendInteractiveEventCommand extends Command {
+		public final Event event;
+
+		SendInteractiveEventCommand(Event event) {
+			this.event = event;
+		}
+
+		public void execute() {
+			for (RobotPeer robotPeer : robots) {
+				if (robotPeer.isInteractiveRobot()) {
+					robotPeer.addEvent(event);
+				}
+			}
+		}
+	}
 	private static final int DEBUG_TURN_WAIT_MILLIS = 10 * 60 * 1000; // 10 seconds
 
 	private final IHostManager hostManager;
 	private final long cpuConstant;
-
 	// Inactivity related items
 	private int inactiveTurnCount;
-	private double inactivityEnergy;
 
+	private double inactivityEnergy;
 	// Turn skip related items
 	private boolean parallelOn;
 	private long millisWait;
@@ -70,11 +136,14 @@ public final class Battle extends BaseBattle {
 	// Objects in the battle
 	private int robotsCount;
 	private List<RobotPeer> robots = new ArrayList<RobotPeer>();
+
 	private List<ContestantPeer> contestants = new ArrayList<ContestantPeer>();
+
 	private final List<BulletPeer> bullets = new CopyOnWriteArrayList<BulletPeer>();
 
 	// Robot counters
 	private int activeParticipants;
+
 	private int activeSentries;
 
 	// Death events
@@ -87,86 +156,6 @@ public final class Battle extends BaseBattle {
 		super(properties, battleManager, eventDispatcher);
 		this.hostManager = hostManager;
 		this.cpuConstant = cpuManager.getCpuConstant();
-	}
-
-	void setup(RobotSpecification[] battlingRobotsList, BattleProperties battleProps, boolean paused) {
-		isPaused = paused;
-		battleRules = HiddenAccess.createRules(battleProps.getBattlefieldWidth(), battleProps.getBattlefieldHeight(),
-				battleProps.getNumRounds(), battleProps.getGunCoolingRate(), battleProps.getInactivityTime(),
-				battleProps.getHideEnemyNames(), battleProps.getSentryBorderSize());
-		robotsCount = battlingRobotsList.length;
-		computeInitialPositions(battleProps.getInitialPositions());
-		createPeers(battlingRobotsList);
-	}
-
-	private void createPeers(RobotSpecification[] battlingRobotsList) {
-
-		List<String> teamNames = new ArrayList<String>();
-		Map<String, List<String>> teamMembers = new HashMap<String, List<String>>();
-		Map<String /* name */, Integer /* count */> robotNameCount = new HashMap<String, Integer>();
-		int[] robotSuffixNumbers = new int[battlingRobotsList.length];
-		String[] robotSuffixes = new String[battlingRobotsList.length];
-		String[] robotNames = new String[battlingRobotsList.length];
-		Map<String, TeamPeer> teamPeers = new HashMap<String, TeamPeer>();
-
-		// Populate raw names and suffix numbers (to be included when name duplicates exist)
-		for (int robotIndex = 0; robotIndex < battlingRobotsList.length; robotIndex++) {
-			final RobotSpecification specification = battlingRobotsList[robotIndex];
-			final String name = ((IRobotItem) HiddenAccess.getFileSpecification(specification)).getUniqueFullClassNameWithVersion();
-
-			robotNames[robotIndex] = name;
-
-			Integer count = robotNameCount.getOrDefault(name, 0);
-			robotNameCount.put(name, ++count);
-			robotSuffixNumbers[robotIndex] = count;
-		}
-
-		// Append name suffixes and populate team lists
-		for (int robotIndex = 0; robotIndex < battlingRobotsList.length; robotIndex++) {
-			String suffix = "";
-			if (robotNameCount.get(robotNames[robotIndex]) > 1)
-			{
-				suffix = " (" + robotSuffixNumbers[robotIndex] + ")";
-			}
-			robotSuffixes[robotIndex] = suffix;
-			robotNames[robotIndex] += suffix;
-
-			final RobotSpecification specification = battlingRobotsList[robotIndex];
-			final String teamName = HiddenAccess.getRobotTeamName(specification);
-			if (teamName != null) {
-				if (!teamNames.contains(teamName)) {
-					teamNames.add(teamName);
-					teamMembers.put(teamName, new ArrayList<>());
-				}
-				teamMembers.get(teamName).add(robotNames[robotIndex]);
-			}
-		}
-
-		for (int robotIndex = 0; robotIndex < battlingRobotsList.length; robotIndex++) {
-			final RobotSpecification specification = battlingRobotsList[robotIndex];
-
-			final String teamName = HiddenAccess.getRobotTeamName(specification);
-			TeamPeer team = null;
-			if (teamName != null) {
-				if (!teamPeers.containsKey(teamName)) {
-					int teamIndex = teamNames.indexOf(teamName);
-					String teamNameIndexed = teamName.substring(0, teamName.length() - 6) + " (" + (teamIndex + 1) + ')';
-
-					team = new TeamPeer(teamNameIndexed, teamMembers.get(teamName), teamIndex);
-	
-					teamPeers.put(teamName, team);
-					contestants.add(team);
-				} else {
-					team = teamPeers.get(teamName);
-				}
-			}
-
-			RobotPeer robotPeer = new RobotPeer(this, hostManager, specification, robotNames[robotIndex], robotSuffixes[robotIndex], team, robotIndex);
-			robots.add(robotPeer);
-			if (team == null) {
-				contestants.add(robotPeer);
-			}
-		}
 	}
 
 	public void registerDeathRobot(RobotPeer r) {
@@ -239,6 +228,10 @@ public final class Battle extends BaseBattle {
 		for (int i = 4; i >= 0; i--) { // Make sure it is run
 			System.gc();
 		}
+	}
+
+	public void setPaintEnabled(int robotIndex, boolean enable) {
+		sendCommand(new EnableRobotPaintCommand(robotIndex, enable));
 	}
 
 	@Override
@@ -460,6 +453,98 @@ public final class Battle extends BaseBattle {
 		super.finalizeTurn();
 	}
 
+	void setup(RobotSpecification[] battlingRobotsList, BattleProperties battleProps, boolean paused) {
+		isPaused = paused;
+		battleRules = HiddenAccess.createRules(battleProps.getBattlefieldWidth(), battleProps.getBattlefieldHeight(),
+				battleProps.getNumRounds(), battleProps.getGunCoolingRate(), battleProps.getInactivityTime(),
+				battleProps.getHideEnemyNames(), battleProps.getSentryBorderSize(), battleProps.getRadioactiveBulletProximityRadius());
+		robotsCount = battlingRobotsList.length;
+		computeInitialPositions(battleProps.getInitialPositions());
+		createPeers(battlingRobotsList);
+	}
+
+	void killRobot(int robotIndex) {
+		sendCommand(new KillRobotCommand(robotIndex));
+	}
+
+	void setSGPaintEnabled(int robotIndex, boolean enable) {
+		sendCommand(new EnableRobotSGPaintCommand(robotIndex, enable));
+	}
+
+	void sendInteractiveEvent(Event e) {
+		sendCommand(new SendInteractiveEventCommand(e));
+	}
+
+	private void createPeers(RobotSpecification[] battlingRobotsList) {
+
+		List<String> teamNames = new ArrayList<String>();
+		Map<String, List<String>> teamMembers = new HashMap<String, List<String>>();
+		Map<String /* name */, Integer /* count */> robotNameCount = new HashMap<String, Integer>();
+		int[] robotSuffixNumbers = new int[battlingRobotsList.length];
+		String[] robotSuffixes = new String[battlingRobotsList.length];
+		String[] robotNames = new String[battlingRobotsList.length];
+		Map<String, TeamPeer> teamPeers = new HashMap<String, TeamPeer>();
+
+		// Populate raw names and suffix numbers (to be included when name duplicates exist)
+		for (int robotIndex = 0; robotIndex < battlingRobotsList.length; robotIndex++) {
+			final RobotSpecification specification = battlingRobotsList[robotIndex];
+			final String name = ((IRobotItem) HiddenAccess.getFileSpecification(specification)).getUniqueFullClassNameWithVersion();
+
+			robotNames[robotIndex] = name;
+
+			Integer count = robotNameCount.getOrDefault(name, 0);
+			robotNameCount.put(name, ++count);
+			robotSuffixNumbers[robotIndex] = count;
+		}
+
+		// Append name suffixes and populate team lists
+		for (int robotIndex = 0; robotIndex < battlingRobotsList.length; robotIndex++) {
+			String suffix = "";
+			if (robotNameCount.get(robotNames[robotIndex]) > 1)
+			{
+				suffix = " (" + robotSuffixNumbers[robotIndex] + ")";
+			}
+			robotSuffixes[robotIndex] = suffix;
+			robotNames[robotIndex] += suffix;
+
+			final RobotSpecification specification = battlingRobotsList[robotIndex];
+			final String teamName = HiddenAccess.getRobotTeamName(specification);
+			if (teamName != null) {
+				if (!teamNames.contains(teamName)) {
+					teamNames.add(teamName);
+					teamMembers.put(teamName, new ArrayList<>());
+				}
+				teamMembers.get(teamName).add(robotNames[robotIndex]);
+			}
+		}
+
+		for (int robotIndex = 0; robotIndex < battlingRobotsList.length; robotIndex++) {
+			final RobotSpecification specification = battlingRobotsList[robotIndex];
+
+			final String teamName = HiddenAccess.getRobotTeamName(specification);
+			TeamPeer team = null;
+			if (teamName != null) {
+				if (!teamPeers.containsKey(teamName)) {
+					int teamIndex = teamNames.indexOf(teamName);
+					String teamNameIndexed = teamName.substring(0, teamName.length() - 6) + " (" + (teamIndex + 1) + ')';
+
+					team = new TeamPeer(teamNameIndexed, teamMembers.get(teamName), teamIndex);
+	
+					teamPeers.put(teamName, team);
+					contestants.add(team);
+				} else {
+					team = teamPeers.get(teamName);
+				}
+			}
+
+			RobotPeer robotPeer = new RobotPeer(this, hostManager, specification, robotNames[robotIndex], robotSuffixes[robotIndex], team, robotIndex);
+			robots.add(robotPeer);
+			if (team == null) {
+				contestants.add(robotPeer);
+			}
+		}
+	}
+
 	private BattleResults[] computeBattleResults() {
 		ArrayList<BattleResults> results = new ArrayList<BattleResults>();
 		for (int i = 0; i < contestants.size(); i++) {
@@ -593,6 +678,10 @@ public final class Battle extends BaseBattle {
 		deathRobots.clear();
 	}
 
+	// --------------------------------------------------------------------------
+	// Processing and maintaining robot and battle controls
+	// --------------------------------------------------------------------------
+
 	private void publishStatuses() {
 		for (RobotPeer robotPeer : robots) {
 			robotPeer.publishStatus(currentTime);
@@ -666,6 +755,7 @@ public final class Battle extends BaseBattle {
 		}
 	}
 
+
 	private int getActiveContestantCount(RobotPeer peer) {
 		int count = 0;
 
@@ -686,6 +776,7 @@ public final class Battle extends BaseBattle {
 		}
 		return count;
 	}
+
 
 	private void computeInitialPositions(String initialPositions) {
 		initialRobotSetups = null;
@@ -747,6 +838,7 @@ public final class Battle extends BaseBattle {
 		}
 	}
 
+
 	private boolean oneTeamRemaining() {
 		if (countActiveParticipants() <= 1) {
 			return true;
@@ -771,80 +863,5 @@ public final class Battle extends BaseBattle {
 			}
 		}
 		return true;
-	}
-
-	// --------------------------------------------------------------------------
-	// Processing and maintaining robot and battle controls
-	// --------------------------------------------------------------------------
-
-	void killRobot(int robotIndex) {
-		sendCommand(new KillRobotCommand(robotIndex));
-	}
-
-	public void setPaintEnabled(int robotIndex, boolean enable) {
-		sendCommand(new EnableRobotPaintCommand(robotIndex, enable));
-	}
-
-	void setSGPaintEnabled(int robotIndex, boolean enable) {
-		sendCommand(new EnableRobotSGPaintCommand(robotIndex, enable));
-	}
-
-	void sendInteractiveEvent(Event e) {
-		sendCommand(new SendInteractiveEventCommand(e));
-	}
-
-	private class KillRobotCommand extends RobotCommand {
-		KillRobotCommand(int robotIndex) {
-			super(robotIndex);
-		}
-
-		public void execute() {
-			robots.get(robotIndex).kill();
-		}
-	}
-
-
-	private class EnableRobotPaintCommand extends RobotCommand {
-		final boolean enablePaint;
-
-		EnableRobotPaintCommand(int robotIndex, boolean enablePaint) {
-			super(robotIndex);
-			this.enablePaint = enablePaint;
-		}
-
-		public void execute() {
-			robots.get(robotIndex).setPaintEnabled(enablePaint);
-		}
-	}
-
-
-	private class EnableRobotSGPaintCommand extends RobotCommand {
-		final boolean enableSGPaint;
-
-		EnableRobotSGPaintCommand(int robotIndex, boolean enableSGPaint) {
-			super(robotIndex);
-			this.enableSGPaint = enableSGPaint;
-		}
-
-		public void execute() {
-			robots.get(robotIndex).setSGPaintEnabled(enableSGPaint);
-		}
-	}
-
-
-	private class SendInteractiveEventCommand extends Command {
-		public final Event event;
-
-		SendInteractiveEventCommand(Event event) {
-			this.event = event;
-		}
-
-		public void execute() {
-			for (RobotPeer robotPeer : robots) {
-				if (robotPeer.isInteractiveRobot()) {
-					robotPeer.addEvent(event);
-				}
-			}
-		}
 	}
 }

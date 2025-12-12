@@ -8,17 +8,20 @@
 package net.sf.robocode.recording;
 
 
-import net.sf.robocode.battle.BattleProperties;
-import net.sf.robocode.security.HiddenAccess;
-import net.sf.robocode.serialization.*;
-import robocode.BattleResults;
-import robocode.BattleRules;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import net.sf.robocode.battle.BattleProperties;
+import net.sf.robocode.security.HiddenAccess;
+import net.sf.robocode.serialization.IXmlSerializable;
+import net.sf.robocode.serialization.SerializableOptions;
+import net.sf.robocode.serialization.XmlReader;
+import net.sf.robocode.serialization.XmlWriter;
+import robocode.BattleResults;
+import robocode.BattleRules;
 
 
 /**
@@ -26,135 +29,6 @@ import java.util.UUID;
  * @author Flemming N. Larsen (original)
  */
 public class BattleRecordInfo implements Serializable, IXmlSerializable {
-	private static final long serialVersionUID = 2L;
-
-	public int robotCount;
-	public int roundsCount;
-	public BattleRules battleRules;
-	public Integer[] turnsInRounds;
-	public List<BattleResults> results;
-	public UUID battleId;
-
-	public void writeXml(XmlWriter writer, SerializableOptions options) throws IOException {
-		writer.startElement("recordInfo"); {
-			writer.writeAttribute("robotCount", robotCount);
-			writer.writeAttribute("roundsCount", roundsCount);
-			if (!options.skipVersion) {
-				writer.writeAttribute("ver", serialVersionUID);
-			}
-			writer.startElement("rules"); {
-				writer.writeAttribute("battlefieldWidth", battleRules.getBattlefieldWidth());
-				writer.writeAttribute("battlefieldHeight", battleRules.getBattlefieldHeight());
-				writer.writeAttribute("numRounds", battleRules.getNumRounds());
-				writer.writeAttribute("gunCoolingRate", battleRules.getGunCoolingRate(), options.trimPrecision);
-				writer.writeAttribute("inactivityTime", battleRules.getInactivityTime());
-				writer.writeAttribute("ver", serialVersionUID);
-			}
-			writer.endElement();
-
-			writer.startElement("rounds"); {
-				for (int n : turnsInRounds) {
-					writer.startElement("turns"); {
-						writer.writeAttribute("value", Integer.toString(n));
-					}
-					writer.endElement();
-				}
-			}
-			writer.endElement();
-
-			if (results != null) {
-				writer.startElement("results"); {
-					for (BattleResults result : results) {
-						new BattleResultsWrapper(result).writeXml(writer, options);
-					}
-				}
-				writer.endElement();
-			}
-		}
-		writer.endElement();
-	}
-
-	public XmlReader.Element readXml(XmlReader reader) {
-		return reader.expect("recordInfo", new XmlReader.Element() {
-			public IXmlSerializable read(XmlReader reader) {
-				final BattleRecordInfo recordInfo = new BattleRecordInfo();
-
-				reader.expect("robotCount", new XmlReader.Attribute() {
-					public void read(String value) {
-						recordInfo.robotCount = Integer.parseInt(value);
-					}
-				});
-				reader.expect("roundsCount", new XmlReader.Attribute() {
-					public void read(String value) {
-						recordInfo.roundsCount = Integer.parseInt(value);
-					}
-				});
-
-				new BattleRulesWrapper(recordInfo).readXml(reader);
-
-				reader.expect("rounds", new XmlReader.ListElement() {
-					final ArrayList<Integer> ints = new ArrayList<Integer>();
-
-					public IXmlSerializable read(XmlReader reader) {
-						// prototype
-						return new IntValue("turns");
-					}
-
-					public void add(IXmlSerializable child) {
-						ints.add(((IntValue) child).intValue);
-					}
-
-					public void close() {
-						recordInfo.turnsInRounds = new Integer[ints.size()];
-						ints.toArray(recordInfo.turnsInRounds);
-					}
-				});
-
-				reader.expect("results", new XmlReader.ListElement() {
-
-					public IXmlSerializable read(XmlReader reader) {
-						recordInfo.results = new ArrayList<BattleResults>();
-						// prototype
-						return new BattleResultsWrapper();
-					}
-
-					public void add(IXmlSerializable child) {
-						recordInfo.results.add((BattleResults) child);
-					}
-
-					public void close() {}
-				});
-				return recordInfo;
-			}
-		});
-	}
-
-	private class IntValue implements IXmlSerializable {
-		private IntValue(String name) {
-			this.name = name;
-		}
-		private final String name;
-		private int intValue;
-
-		public void writeXml(XmlWriter writer, SerializableOptions options) throws IOException {}
-
-		public XmlReader.Element readXml(XmlReader reader) {
-			return reader.expect(name, new XmlReader.Element() {
-				public IXmlSerializable read(XmlReader reader) {
-					final IntValue recordInfo = new IntValue(name);
-
-					reader.expect("value", new XmlReader.Attribute() {
-						public void read(String value) {
-							recordInfo.intValue = Integer.parseInt(value);
-						}
-					});
-					return recordInfo;
-				}
-			});
-		}
-	}
-
-
 	/**
 	 * This class is used for wrapping a robocode.BattleResults object and provides
 	 * methods for XML serialization that are hidden from the BattleResults class,
@@ -271,14 +145,37 @@ public class BattleRecordInfo implements Serializable, IXmlSerializable {
 		}
 	}
 
+	private class IntValue implements IXmlSerializable {
+		private final String name;
+		private int intValue;
+		private IntValue(String name) {
+			this.name = name;
+		}
 
+		public void writeXml(XmlWriter writer, SerializableOptions options) throws IOException {}
+
+		public XmlReader.Element readXml(XmlReader reader) {
+			return reader.expect(name, new XmlReader.Element() {
+				public IXmlSerializable read(XmlReader reader) {
+					final IntValue recordInfo = new IntValue(name);
+
+					reader.expect("value", new XmlReader.Attribute() {
+						public void read(String value) {
+							recordInfo.intValue = Integer.parseInt(value);
+						}
+					});
+					return recordInfo;
+				}
+			});
+		}
+	}
 	private static class BattleRulesWrapper implements IXmlSerializable {
+		final BattleProperties props = new BattleProperties();
+
+		final BattleRecordInfo recinfo;
 		BattleRulesWrapper(BattleRecordInfo recinfo) {
 			this.recinfo = recinfo;
 		}
-
-		final BattleProperties props = new BattleProperties();
-		final BattleRecordInfo recinfo;
 
 		public void writeXml(XmlWriter writer, SerializableOptions options) throws IOException {}
 
@@ -320,10 +217,116 @@ public class BattleRecordInfo implements Serializable, IXmlSerializable {
 				public void close() {
 					recinfo.battleRules = HiddenAccess.createRules(props.getBattlefieldWidth(),
 							props.getBattlefieldHeight(), props.getNumRounds(), props.getGunCoolingRate(),
-							props.getInactivityTime(), props.getHideEnemyNames(), props.getSentryBorderSize());
+							props.getInactivityTime(), props.getHideEnemyNames(), props.getSentryBorderSize(), props.getRadioactiveBulletProximityRadius());
 				}
 			});
 		}
+	}
+	private static final long serialVersionUID = 2L;
+	public int robotCount;
+	public int roundsCount;
+	public BattleRules battleRules;
+
+	public Integer[] turnsInRounds;
+
+	public List<BattleResults> results;
+
+	public UUID battleId;
+
+
+	public void writeXml(XmlWriter writer, SerializableOptions options) throws IOException {
+		writer.startElement("recordInfo"); {
+			writer.writeAttribute("robotCount", robotCount);
+			writer.writeAttribute("roundsCount", roundsCount);
+			if (!options.skipVersion) {
+				writer.writeAttribute("ver", serialVersionUID);
+			}
+			writer.startElement("rules"); {
+				writer.writeAttribute("battlefieldWidth", battleRules.getBattlefieldWidth());
+				writer.writeAttribute("battlefieldHeight", battleRules.getBattlefieldHeight());
+				writer.writeAttribute("numRounds", battleRules.getNumRounds());
+				writer.writeAttribute("gunCoolingRate", battleRules.getGunCoolingRate(), options.trimPrecision);
+				writer.writeAttribute("inactivityTime", battleRules.getInactivityTime());
+				writer.writeAttribute("ver", serialVersionUID);
+			}
+			writer.endElement();
+
+			writer.startElement("rounds"); {
+				for (int n : turnsInRounds) {
+					writer.startElement("turns"); {
+						writer.writeAttribute("value", Integer.toString(n));
+					}
+					writer.endElement();
+				}
+			}
+			writer.endElement();
+
+			if (results != null) {
+				writer.startElement("results"); {
+					for (BattleResults result : results) {
+						new BattleResultsWrapper(result).writeXml(writer, options);
+					}
+				}
+				writer.endElement();
+			}
+		}
+		writer.endElement();
+	}
+
+
+	public XmlReader.Element readXml(XmlReader reader) {
+		return reader.expect("recordInfo", new XmlReader.Element() {
+			public IXmlSerializable read(XmlReader reader) {
+				final BattleRecordInfo recordInfo = new BattleRecordInfo();
+
+				reader.expect("robotCount", new XmlReader.Attribute() {
+					public void read(String value) {
+						recordInfo.robotCount = Integer.parseInt(value);
+					}
+				});
+				reader.expect("roundsCount", new XmlReader.Attribute() {
+					public void read(String value) {
+						recordInfo.roundsCount = Integer.parseInt(value);
+					}
+				});
+
+				new BattleRulesWrapper(recordInfo).readXml(reader);
+
+				reader.expect("rounds", new XmlReader.ListElement() {
+					final ArrayList<Integer> ints = new ArrayList<Integer>();
+
+					public IXmlSerializable read(XmlReader reader) {
+						// prototype
+						return new IntValue("turns");
+					}
+
+					public void add(IXmlSerializable child) {
+						ints.add(((IntValue) child).intValue);
+					}
+
+					public void close() {
+						recordInfo.turnsInRounds = new Integer[ints.size()];
+						ints.toArray(recordInfo.turnsInRounds);
+					}
+				});
+
+				reader.expect("results", new XmlReader.ListElement() {
+
+					public IXmlSerializable read(XmlReader reader) {
+						recordInfo.results = new ArrayList<BattleResults>();
+						// prototype
+						return new BattleResultsWrapper();
+					}
+
+					public void add(IXmlSerializable child) {
+						recordInfo.results.add((BattleResults) child);
+					}
+
+					public void close() {}
+				});
+				return recordInfo;
+			}
+		});
 	}
 
 }
