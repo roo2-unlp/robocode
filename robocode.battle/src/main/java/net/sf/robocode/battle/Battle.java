@@ -107,7 +107,7 @@ public final class Battle extends BaseBattle {
 				battleProps.getNumRounds(), battleProps.getGunCoolingRate(), battleProps.getInactivityTime(),
 				battleProps.getHideEnemyNames(), battleProps.getSentryBorderSize(), battleProps.getTrapsEnabled(),
 				battleProps.getTrapCount(), battleProps.getTrapRadius(), battleProps.getTrapDamage(),
-				battleProps.getTrapEffect());
+				battleProps.getTrapEffect(), battleProps.getTrapSlowFactor());
 		robotsCount = battlingRobotsList.length;
 		computeInitialPositions(battleProps.getInitialPositions());
 		createPeers(battlingRobotsList);
@@ -849,7 +849,10 @@ public final class Battle extends BaseBattle {
 				//revisar como mejorar esto
 				//nuevo tipo de efecto, agregar  aca
 				if ("Sticky".equals(trapEffect)) {
-					effect = new StickyEffect(0.5, 50);
+					double slow = battleRules.getTrapSlowFactor();
+					slow = Math.max(0.1, Math.min(0.9, slow));
+					System.out.println("=======================Slow factor: " + slow);
+					effect = new StickyEffect(slow, 50);
 				} else {
 					effect = new DamageEffect(configuredDamage, 10);
 				}

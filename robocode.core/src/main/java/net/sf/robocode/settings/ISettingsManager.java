@@ -253,6 +253,10 @@ public interface ISettingsManager {
 
 	void setBattleDefaultTrapEffect(String trapEffect);
 
+	double getBattleDefaultTrapSlowFactor();
+
+	void setBattleDefaultTrapSlowFactor(double v);
+
 	void store(FileOutputStream out, String desc) throws IOException;
 
 	void load(FileInputStream in) throws IOException;
@@ -340,5 +344,6 @@ public interface ISettingsManager {
 			BATTLE_DEFAULT_TRAP_COUNT = "robocode.battle.default.trapCount",
 			BATTLE_DEFAULT_TRAP_RADIUS = "robocode.battle.default.trapRadius",
 			BATTLE_DEFAULT_TRAP_DAMAGE = "robocode.battle.default.trapDamage",
-			BATTLE_DEFAULT_TRAP_EFFECT = "robocode.battle.default.trapEffect";
+			BATTLE_DEFAULT_TRAP_EFFECT = "robocode.battle.default.trapEffect",
+			BATTLE_DEFAULT_TRAP_SLOW_FACTOR = "robocode.battle.default.trapSlowFactor";
 }

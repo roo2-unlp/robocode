@@ -236,10 +236,16 @@ public class HiddenAccess {
 				roundNum, numRounds, time);
 	}
 
-	public static BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean trapsEnabled, int trapCount, double trapRadius, double trapDamage, String trapEffect) {
+	public static BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds,
+										  double gunCoolingRate, long inactivityTime, boolean hideEnemyNames,
+										  int sentryBorderSize, boolean trapsEnabled, int trapCount,
+										  double trapRadius, double trapDamage, String trapEffect,
+										  double trapSlowFactor) {
 		return rulesHelper.createRules(battlefieldWidth, battlefieldHeight, numRounds, gunCoolingRate, inactivityTime,
-				hideEnemyNames, sentryBorderSize, trapsEnabled, trapCount, trapRadius, trapDamage, trapEffect);
+				hideEnemyNames, sentryBorderSize, trapsEnabled, trapCount,
+				trapRadius, trapDamage, trapEffect, trapSlowFactor);
 	}
+
 
 	public static boolean isSafeThread() {
 		final IThreadManagerBase threadManager = ContainerBase.getComponent(IThreadManagerBase.class);

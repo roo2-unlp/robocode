@@ -295,7 +295,9 @@ public final class RobotStatics implements IRobotStatics, Serializable {
 					serializer.deserializeInt(buffer), // trapCount
 					serializer.deserializeDouble(buffer), // trapRadius
 					serializer.deserializeDouble(buffer), // trapDamage
-					serializer.deserializeString(buffer)); // trapEffect
+					serializer.deserializeString(buffer),
+					serializer.deserializeDouble(buffer)  // trapSlowFactor
+					); // trapEffect
 
 			List<String> teammates = new ArrayList<String>();
 			Object item = serializer.deserializeString(buffer);

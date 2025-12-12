@@ -44,7 +44,8 @@ public class BattleProperties implements Serializable {
 			BATTLE_TRAP_COUNT = "robocode.battle.trapCount",
 			BATTLE_TRAP_RADIUS = "robocode.battle.trapRadius",
 			BATTLE_TRAP_DAMAGE = "robocode.battle.trapDamage",
-			BATTLE_TRAP_EFFECT = "robocode.battle.trapEffect";
+			BATTLE_TRAP_EFFECT = "robocode.battle.trapEffect",
+			BATTLE_TRAP_SLOW_FACTOR = "robocode.battle.trapSlowFactor";
 
 	private int battlefieldWidth = 800;
 	private int battlefieldHeight = 600;
@@ -59,6 +60,8 @@ public class BattleProperties implements Serializable {
 	private double trapRadius = 30.0;
 	private double trapDamage = 5.0;
 	private String trapEffect = "Damage";
+	private double trapSlowFactor;
+
 	private String selectedRobots;
 	private String initialPositions;
 
@@ -80,6 +83,7 @@ public class BattleProperties implements Serializable {
 		trapRadius = properties.getBattleDefaultTrapRadius();
 		trapDamage = properties.getBattleDefaultTrapDamage();
 		trapEffect = properties.getBattleDefaultTrapEffect();
+		trapSlowFactor = properties.getBattleDefaultTrapSlowFactor();
 	}
 
 	/**
@@ -373,6 +377,15 @@ public class BattleProperties implements Serializable {
 	public void setTrapDamage(double trapDamage) {
 		this.trapDamage = trapDamage;
 		props.setProperty(BATTLE_TRAP_DAMAGE, "" + trapDamage);
+	}
+
+	public void setTrapSlowFactor(double v) {
+		this.trapSlowFactor = v;
+		props.setProperty(BATTLE_TRAP_SLOW_FACTOR, "" + v);
+	}
+
+	public double getTrapSlowFactor() {
+		return trapSlowFactor;
 	}
 
 	public int getTrapCount() {

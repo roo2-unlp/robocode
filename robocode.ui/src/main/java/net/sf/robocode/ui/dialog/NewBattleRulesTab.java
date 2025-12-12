@@ -56,6 +56,7 @@ public class NewBattleRulesTab extends JPanel {
 	private final JLabel trapCountLabel = new JLabel("Cantidad trampas:");
 	private final JLabel trapRadiusLabel = new JLabel("Radio trampas:");
 	private final JLabel trapDamageLabel = new JLabel("Danio trampas:");
+	private final JLabel trapSlowFactorLabel = new JLabel("Factor de ralentización:");
 	private final JLabel trapEffectLabel = new JLabel("Efecto trampas:");
 
 	private final JButton restoreDefaultsButton = new JButton("Restore Defaults");
@@ -67,6 +68,7 @@ public class NewBattleRulesTab extends JPanel {
 	private JTextField trapCountTextField;
 	private JTextField trapRadiusTextField;
 	private JTextField trapDamageTextField;
+	private JTextField trapSlowFactorTextField;
 	private final JCheckBox hideEnemyNamesCheckBox = new JCheckBox();
 	private final JCheckBox trapsEnabledCheckBox = new JCheckBox();
 	private JComboBox<String> trapEffectComboBox;
@@ -208,6 +210,7 @@ public class NewBattleRulesTab extends JPanel {
 		left.addComponent(trapCountLabel);
 		left.addComponent(trapRadiusLabel);
 		left.addComponent(trapDamageLabel);
+		left.addComponent(trapSlowFactorLabel);
 		left.addComponent(trapEffectLabel);
 		leftToRight.addGroup(left);
 		
@@ -221,6 +224,7 @@ public class NewBattleRulesTab extends JPanel {
 		right.addComponent(getTrapCountTextField());
 		right.addComponent(getTrapRadiusTextField());
 		right.addComponent(getTrapDamageTextField());
+		right.addComponent(getTrapSlowFactorTextField());
 		right.addComponent(trapEffectComboBox);
 		leftToRight.addGroup(right);
 		
@@ -270,6 +274,11 @@ public class NewBattleRulesTab extends JPanel {
 		row8.addComponent(trapDamageLabel);
 		row8.addComponent(getTrapDamageTextField());
 		topToBottom.addGroup(row8);
+
+		GroupLayout.ParallelGroup rowX = layout.createParallelGroup(Alignment.BASELINE);
+		rowX.addComponent(trapSlowFactorLabel);
+		rowX.addComponent(getTrapSlowFactorTextField());
+		topToBottom.addGroup(rowX);
 
 		GroupLayout.ParallelGroup row9 = layout.createParallelGroup(Alignment.BASELINE);
 		row9.addComponent(trapEffectLabel);
@@ -472,6 +481,30 @@ public class NewBattleRulesTab extends JPanel {
 		return trapDamageTextField;
 	}
 
+	private JTextField getTrapSlowFactorTextField() {
+		if (trapSlowFactorTextField == null) {
+			trapSlowFactorTextField = new JTextField(5);
+			trapSlowFactorTextField.setText("" + battleProperties.getTrapSlowFactor());
+			trapSlowFactorTextField.setInputVerifier(new InputVerifier() {
+				@Override
+				public boolean verify(JComponent input) {
+					boolean isValid = false;
+					String text = ((JTextField) input).getText();
+					if (text != null && text.matches("\\d*(\\.\\d+)?")) {
+						double value = Double.parseDouble(text);
+						isValid = (value >= 0.1 && value <= 0.9);
+					}
+					if (!isValid) {
+						WindowUtil.messageError("FACTOR DE RALENTIZACION TIENE QUE ESTAR ENTRE 0.1 Y 0.9");
+						trapSlowFactorTextField.setText("" + battleProperties.getTrapSlowFactor());
+					}
+					return isValid;
+				}
+			});
+		}
+		return trapSlowFactorTextField;
+	}
+
 	private JSlider createBattlefieldSizeSlider() {
 		JSlider slider = new JSlider();
 		slider.setMinimum(MIN_BATTLEFIELD_SIZE);
@@ -590,6 +623,17 @@ public class NewBattleRulesTab extends JPanel {
 				battleProperties.setTrapDamage(trapDamage);
 			}
 
+			Double trapSlowFactor;
+			try {
+				trapSlowFactor = Double.parseDouble(getTrapSlowFactorTextField().getText());
+			} catch (NumberFormatException e) {
+				trapSlowFactor = null;
+			}
+			if (trapSlowFactor != null) {
+				settingsManager.setBattleDefaultTrapSlowFactor(trapSlowFactor);
+				battleProperties.setTrapSlowFactor(trapSlowFactor);
+			}
+
 			String trapEffect = (String) trapEffectComboBox.getSelectedItem();
 			settingsManager.setBattleDefaultTrapEffect(trapEffect);
 			battleProperties.setTrapEffect(trapEffect);
@@ -626,6 +670,7 @@ public class NewBattleRulesTab extends JPanel {
 				battleProperties.setTrapsEnabled(false);
 				battleProperties.setTrapRadius(30.0);
 				battleProperties.setTrapDamage(5.0);
+				battleProperties.setTrapSlowFactor(0.5);
 				battleProperties.setTrapEffect("Damage");
 
 				pushBattlePropertiesToUIComponents();
@@ -653,6 +698,7 @@ public class NewBattleRulesTab extends JPanel {
 			getTrapCountTextField().setText("" + battleProperties.getTrapCount());
 			getTrapRadiusTextField().setText("" + battleProperties.getTrapRadius());
 			getTrapDamageTextField().setText("" + battleProperties.getTrapDamage());
+			getTrapSlowFactorTextField().setText("" + battleProperties.getTrapSlowFactor());
 			trapEffectComboBox.setSelectedItem(battleProperties.getTrapEffect());
 		}
 	}
