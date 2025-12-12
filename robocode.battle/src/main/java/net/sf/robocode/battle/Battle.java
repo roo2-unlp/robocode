@@ -328,7 +328,9 @@ public final class Battle extends BaseBattle {
 		// aca si es true randomwalldamage inicializo extraWallDamage
 		this.extraWallDamage = hitWallStrategy.getExtraWallDamage();
 		tiempoTranscurrido = 0;
-		intervaloDado = dadoRandom.nextInt(150)+50;
+		minRandom = battleRules.getMinRandom();
+		maxRandom = battleRules.getMaxRandom();
+		intervaloDado = rangoRandom(dadoRandom, minRandom, maxRandom);
 
 		inactiveTurnCount = 0;
 
@@ -385,7 +387,10 @@ public final class Battle extends BaseBattle {
 	}
 
 	private int rangoRandom(Random random, int min, int max){
-		return (min == max) ? min : min + random.nextInt(max - min);
+		return (min == max) ? min : min + random.nextInt((max - min) + 1);
+	}
+	private int getExtraWallDamage(){
+		return  dadoRandom.nextInt(6) + 1;
 	}
 	@Override
 	protected void runTurn() {
@@ -399,14 +404,12 @@ public final class Battle extends BaseBattle {
 			if (tiempoTranscurrido >= intervaloDado){
 				//aca tiro los dados
 				tiempoTranscurrido = 0;
-				minRandom = battleRules.getMinRandom();
-				maxRandom = battleRules.getMaxRandom();
 				intervaloDado = rangoRandom(dadoRandom, minRandom, maxRandom);
-				extraWallDamage = dadoRandom.nextInt(6) + 1;
-				if (!RobocodeProperties.isTestingOn()){
+				extraWallDamage = getExtraWallDamage();
+				//if (!RobocodeProperties.isTestingOn()){
 					Logger.logMessage("este es el intervalo de tiempo " + intervaloDado);
 					Logger.logMessage("este es el valor del dado " + extraWallDamage);
-				}
+				//}
 
 			}
 		}
