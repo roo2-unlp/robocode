@@ -149,6 +149,10 @@ public class BattleManager implements IBattleManager {
 
 		Battle realBattle = Container.createComponent(Battle.class);
 		realBattle.setup(battlingRobotsList, battleProperties, isPaused());
+		/*
+		aca definir la estrategia, asi battle solo hace el setStrategy
+		realBattle.setStrategy (elegir estrategia si es null o si es concreta
+		 */
 
 		battle = realBattle;
 

@@ -285,8 +285,10 @@ public final class RobotStatics implements IRobotStatics, Serializable {
 					serializer.deserializeDouble(buffer), // gunCoolingRate
 					serializer.deserializeLong(buffer), // inactivityTime
 					serializer.deserializeBoolean(buffer), // hideEnemyNames
-					serializer.deserializeInt(buffer),
-					serializer.deserializeBoolean(buffer)); // sentryBorderSize
+					serializer.deserializeInt(buffer),// sentryBorderSize
+					serializer.deserializeBoolean(buffer), // randomHitDamage
+					serializer.deserializeInt(buffer), //minRandom
+					serializer.deserializeInt(buffer)); //maxRandom
 
 			List<String> teammates = new ArrayList<String>();
 			Object item = serializer.deserializeString(buffer);

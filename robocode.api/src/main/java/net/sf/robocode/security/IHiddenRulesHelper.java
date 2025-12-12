@@ -15,5 +15,5 @@ import robocode.BattleRules;
  * @author Pavel Savara (original)
  */
 public interface IHiddenRulesHelper {
-	BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSizes, boolean randomWallHitDamage);
+	BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSizes, boolean randomWallHitDamage, int minRandom, int maxRandom);
 }

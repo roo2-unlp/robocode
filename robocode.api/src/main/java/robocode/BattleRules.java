@@ -36,6 +36,8 @@ public final class BattleRules implements java.io.Serializable {
 	private final boolean hideEnemyNames;
 	private final int sentryBorderSize;
 	private final boolean randomWallHitDamage; //agrego el check para habilitar la opcion de golpe random con dado
+	private final int minRandom;
+	private final int maxRandom;
 
 	/**
 	 * Returns the battlefield width.
@@ -124,15 +126,25 @@ public final class BattleRules implements java.io.Serializable {
 		return sentryBorderSize;
 	}
 
-	/*
-	retorna true si la opcion esta tildada
+	/**
+	 * @return true if the option for extra damage on wall collisions is enabled
 	 */
 	public boolean getRandomWallHitDamage(){
 		return this.randomWallHitDamage;
 	}
+
+	/**
+	 * @return the minimum random time value (in rounds)
+	 */
+	public int getMinRandom(){return this.minRandom;}
+
+	/**
+	 * @return the maximum random time value (in rounds)
+	 */
+	public int getMaxRandom(){return this.maxRandom;}
 	
 	private BattleRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate,
-			long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean randomWallHitDamage) {
+						long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean randomWallHitDamage, int minRandom, int maxRandom) {
 		this.battlefieldWidth = battlefieldWidth;
 		this.battlefieldHeight = battlefieldHeight;
 		this.numRounds = numRounds;
@@ -141,7 +153,8 @@ public final class BattleRules implements java.io.Serializable {
 		this.hideEnemyNames = hideEnemyNames;
 		this.sentryBorderSize = sentryBorderSize;
 		this.randomWallHitDamage = randomWallHitDamage;
-
+		this.minRandom = minRandom;
+		this.maxRandom = maxRandom;
 	}
 
 	static IHiddenRulesHelper createHiddenHelper() {
@@ -150,9 +163,9 @@ public final class BattleRules implements java.io.Serializable {
 
 	private static class HiddenHelper implements IHiddenRulesHelper {
 
-		public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean randomWallHitDamage) {
+		public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean randomWallHitDamage, int minRandom, int maxRandom) {
 			return new BattleRules(battlefieldWidth, battlefieldHeight, numRounds, gunCoolingRate, inactivityTime,
-					hideEnemyNames, sentryBorderSize, randomWallHitDamage);
+					hideEnemyNames, sentryBorderSize, randomWallHitDamage, minRandom, maxRandom);
 		}
 	}
 }

@@ -51,8 +51,8 @@ public class NewBattleRulesTab extends JPanel {
 	private final JLabel inactivityTimeLabel = new JLabel("Inactivity Time:");
 	private final JLabel sentryBorderSizeLabel = new JLabel("Sentry Border Size");
 	private final JLabel hideEnemyNamesLabel = new JLabel("Hide Enemy Names:");
-	private final JLabel randomWallHitDamageLabel = new JLabel("Enable Random Wall Collision"); // agrego label nuevo
-	private final JLabel randomMixMaxLabel = new JLabel("<html>Seleccione los valores min y max<br>del tiempo random</html>");
+	private final JLabel randomWallHitDamageLabel = new JLabel("Random Wall Collision:");
+	private final JLabel randomMixMaxLabel = new JLabel("Seleccione los valores random: ");
 	private final JLabel randomMinLabel = new JLabel("Min: ");
 	private final JLabel randomMaxLabel = new JLabel("Max: ");
 
@@ -189,6 +189,26 @@ public class NewBattleRulesTab extends JPanel {
 			boolean habilitado = randomWallHitDamageCheckBox.isSelected();
 			verMinMax(habilitado);
 		});
+	}
+	private void randomWallHitDamageHabilitado(){
+		int min = Integer.parseInt(getRandomMinTextField().getText());
+		int max = Integer.parseInt(getRandomMaxTextField().getText());
+				settingsManager.setRandomMin(min);
+				settingsManager.setRandomMax(max);
+				battleProperties.setRandomMin(min);
+				battleProperties.setRandomMax(max);
+	}
+	private boolean validarMinMax(){
+		int minValue = Integer.parseInt(getRandomMinTextField().getText());
+		int maxValue = Integer.parseInt(getRandomMaxTextField().getText());
+		if (minValue > maxValue){
+			WindowUtil.messageError("el min debe ser menor o igual al max");
+			randomMinTextField.setText("" + battleProperties.getRandomMin());
+			randomMaxTextField.setText("" + battleProperties.getRandomMax());
+
+			return false;
+		}
+		return true;
 	}
 
 	private JPanel createRulesPanel() {
@@ -398,10 +418,38 @@ public class NewBattleRulesTab extends JPanel {
 		return sentryBorderSizeTextField;
 	}
 
+	private boolean validarVacio(String text, String fieldValidar){
+		if (text == null || text.isEmpty()){
+			WindowUtil.messageError(fieldValidar + " no puede estar vacio");
+			return false;
+		}
+		return true;
+	}
+	private boolean validarEntero(String text, String fieldValidar){
+		if(!text.matches("\\d+")){
+			WindowUtil.messageError(fieldValidar + "debe ser un número entero positivo");
+			return false;
+		}
+		return true;
+	}
+	private boolean validarBasicoNum(String text, String inputValidar){
+		return validarVacio(text, inputValidar) && 	validarEntero(text, inputValidar);
+	}
 	private JTextField getRandomMinTextField() {
 		if (randomMinTextField == null) {
 			randomMinTextField = new JTextField(5);
 			randomMinTextField.setText("");
+			randomMinTextField.setInputVerifier(new InputVerifier() {
+				@Override
+				public boolean verify(JComponent input) {
+					JTextField field = (JTextField) input;
+					String text = field.getText();
+					if (!validarBasicoNum(text, "Min")) return false;
+
+					if (!validarMinMax()) return false;
+					return true;
+				}
+			});
 		}
 		return randomMinTextField;
 	}
@@ -409,6 +457,16 @@ public class NewBattleRulesTab extends JPanel {
 		if (randomMaxTextField == null) {
 			randomMaxTextField = new JTextField(5);
 			randomMaxTextField.setText("");
+			randomMaxTextField.setInputVerifier(new InputVerifier() {
+				@Override
+				public boolean verify(JComponent input) {
+					JTextField field = (JTextField) input;
+					String text = field.getText();
+					if (!validarBasicoNum(text, "Max")) return false;
+					if (!validarMinMax()) return false;
+					return true;
+				}
+			});
 		}
 		return randomMaxTextField;
 	}
@@ -500,14 +558,11 @@ public class NewBattleRulesTab extends JPanel {
 			 */
 			boolean randomWallHitDamage = randomWallHitDamageCheckBox.isSelected();
 			//si esta seteado en true debe mostrar el min y max
-			if (randomWallHitDamage){
-				settingsManager.setRandomMin(Integer.parseInt(getRandomMinTextField().getText()));
-				settingsManager.setRandomMax(Integer.parseInt(getRandomMaxTextField().getText()));
+			if(randomWallHitDamage){
+				randomWallHitDamageHabilitado();
 			}
-
 			settingsManager.setBattleDefaultRandomWallHitDamage(randomWallHitDamage);
 			battleProperties.setRandomWallHitDamage(randomWallHitDamage);
-
 
 			int weight = battlefieldWidthSlider.getValue();
 			int height = battlefieldHeightSlider.getValue();
@@ -539,6 +594,9 @@ public class NewBattleRulesTab extends JPanel {
 				battleProperties.setHideEnemyNames(false);
 				battleProperties.setSentryBorderSize(100);
 				battleProperties.setRandomWallHitDamage(false); //cuando se restaura a default vuelve a falso
+				verMinMax(false);
+				battleProperties.setRandomMin(50);
+				battleProperties.setRandomMax(150);
 
 				pushBattlePropertiesToUIComponents();
 			}
@@ -561,7 +619,9 @@ public class NewBattleRulesTab extends JPanel {
 			getInactivityTimeTextField().setText("" + battleProperties.getInactivityTime());
 			getSentryBorderSizeTextField().setText("" + battleProperties.getSentryBorderSize());
 			hideEnemyNamesCheckBox.setSelected(battleProperties.getHideEnemyNames());
-			randomWallHitDamageCheckBox.setSelected(battleProperties.getRandomWallHitDamage()); //obtiene el valor para pasarlo a ui component
+			randomWallHitDamageCheckBox.setSelected(battleProperties.getRandomWallHitDamage());
+			getRandomMinTextField().setText("" + battleProperties.getRandomMin());
+			getRandomMaxTextField().setText("" + battleProperties.getRandomMax());
 		}
 	}
 

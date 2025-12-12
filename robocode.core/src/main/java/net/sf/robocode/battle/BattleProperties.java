@@ -39,7 +39,9 @@ public class BattleProperties implements Serializable {
 			BATTLE_SELECTEDROBOTS = "robocode.battle.selectedRobots",
 			BATTLE_INITIAL_POSITIONS = "robocode.battle.initialPositions",
 			BATTLE_SENTRY_BORDER_SIZE = "robocode.battle.sentryBorderSize",
-			BATTLE_RANDOM_WALL_HIT_DAMAGE = "robocode.battle.randomWallHitDamage";
+			BATTLE_RANDOM_WALL_HIT_DAMAGE = "robocode.battle.randomWallHitDamage",
+			BATTLE_RANDOM_WALL_MIN = "robocode.battle.randomWallHitDamage.min",
+			BATTLE_RANDOM_WALL_MAX = "robocode.battle.randomWallHitDamage.max";
 
 	private int battlefieldWidth = 800;
 	private int battlefieldHeight = 600;
@@ -48,7 +50,9 @@ public class BattleProperties implements Serializable {
 	private long inactivityTime = 450;
 	private boolean hideEnemyNames = false;
 	private int sentryBorderSize = 100;
-	private boolean randomWallHitDamage = false; //agrego wall hit damage
+	private boolean randomWallHitDamage = false;
+	private int randomMin = 50;
+	private int randomMax = 150;
 	private String selectedRobots;
 	private String initialPositions;
 
@@ -66,6 +70,8 @@ public class BattleProperties implements Serializable {
 		hideEnemyNames = properties.getBattleDefaultHideEnemyNames();
 		sentryBorderSize = properties.getBattleDefaultSentryBorderSize();
 		randomWallHitDamage = properties.getBattleDefaultRamdomWallHitDamage();
+		randomMin = properties.getRandomMin();
+		randomMax = properties.getRandomMax();
 	}
 
 	/**
@@ -212,9 +218,6 @@ public class BattleProperties implements Serializable {
 		return hideEnemyNames;
 	}
 
-	/*
-	Setter y getter de wall hit damage
-	 */
 	public void setRandomWallHitDamage(boolean randomWallHitDamage){
 		this.randomWallHitDamage = randomWallHitDamage;
 		props.setProperty(BATTLE_RANDOM_WALL_HIT_DAMAGE, "" + randomWallHitDamage);
@@ -222,6 +225,21 @@ public class BattleProperties implements Serializable {
 	public boolean getRandomWallHitDamage(){
 		return randomWallHitDamage;
 	}
+	public void setRandomMin(int randomMin){
+		this.randomMin = randomMin;
+		props.setProperty(BATTLE_RANDOM_WALL_MIN, "" + randomMin);
+	}
+	public int getRandomMin(){
+		return randomMin;
+	}
+	public void setRandomMax(int randomMax){
+		this.randomMax = randomMax;
+		props.setProperty(BATTLE_RANDOM_WALL_MAX, "" + randomMax);
+	}
+	public int getRandomMax(){
+		return randomMax;
+	}
+
 	/**
 	 * Gets the selectedRobots.
 	 *
@@ -357,6 +375,7 @@ public class BattleProperties implements Serializable {
 		initialPositions = props.getProperty(BATTLE_INITIAL_POSITIONS, "");
 		sentryBorderSize = Integer.parseInt(props.getProperty(BATTLE_SENTRY_BORDER_SIZE, "100"));
 		randomWallHitDamage = Boolean.parseBoolean(props.getProperty(BATTLE_RANDOM_WALL_HIT_DAMAGE, "false"));
-
+		randomMin = Integer.parseInt(props.getProperty(BATTLE_RANDOM_WALL_MIN,"50"));
+		randomMax = Integer.parseInt(props.getProperty(BATTLE_RANDOM_WALL_MAX, "150"));
 	}
 }
