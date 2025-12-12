@@ -100,6 +100,8 @@ public class NewBattleRulesTab extends JPanel {
 
 		restoreDefaultsButton.addActionListener(eventHandler);
 
+		randomCollisionDamageCheckBox.addActionListener(eventHandler); //llama al event handler
+
 		setLayout(new BorderLayout());
 
 		add(rulesPanel, BorderLayout.WEST);
@@ -592,8 +594,14 @@ public class NewBattleRulesTab extends JPanel {
 				battleProperties.setHideEnemyNames(false);
 				battleProperties.setSentryBorderSize(100);
 				battleProperties.setRandomDamage(false);//nuevo valor por defecto randomDamage false
+				battleProperties.setRandomDamageMin(0.1);
+				battleProperties.setRandomDamageMax(0.6); // valores por defecto min y max
 
 				pushBattlePropertiesToUIComponents();
+			} else if (event.getSource() == randomCollisionDamageCheckBox) { //mostrar input min y max solo si checkbox on
+				boolean isSelected = randomCollisionDamageCheckBox.isSelected();
+				getRandomDamageMinTextField().setEnabled(isSelected);
+				getRandomDamageMaxTextField().setEnabled(isSelected);
 			}
 		}
 
@@ -615,6 +623,12 @@ public class NewBattleRulesTab extends JPanel {
 			getSentryBorderSizeTextField().setText("" + battleProperties.getSentryBorderSize());
 			hideEnemyNamesCheckBox.setSelected(battleProperties.getHideEnemyNames());
 			randomCollisionDamageCheckBox.setSelected(battleProperties.getRandomDamage());//nuevo
+
+			boolean isRandomEnabled = battleProperties.getRandomDamage();
+			getRandomDamageMinTextField().setEnabled(isRandomEnabled);
+			getRandomDamageMaxTextField().setEnabled(isRandomEnabled);
+			getRandomDamageMinTextField().setText("" + battleProperties.getRandomDamageMin());
+			getRandomDamageMaxTextField().setText("" + battleProperties.getRandomDamageMax());
 
 		}
 	}
