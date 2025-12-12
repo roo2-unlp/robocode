@@ -51,7 +51,7 @@ public class NewBattleRulesTab extends JPanel {
 	private final JLabel inactivityTimeLabel = new JLabel("Inactivity Time:");
 	private final JLabel sentryBorderSizeLabel = new JLabel("Sentry Border Size");
 	private final JLabel hideEnemyNamesLabel = new JLabel("Hide Enemy Names:");
-	private final JLabel stunningBulletsLabel = new JLabel("Use Stunning Bullets:");
+	private final JLabel bulletEffectLabel = new JLabel("Bullet Effect:");
 	private final JLabel stunDurationLabel = new JLabel("Stun Duration:");
 
 	private final JButton restoreDefaultsButton = new JButton("Restore Defaults");
@@ -61,7 +61,11 @@ public class NewBattleRulesTab extends JPanel {
 	private JTextField inactivityTimeTextField;
 	private JTextField sentryBorderSizeTextField;
 	private final JCheckBox hideEnemyNamesCheckBox = new JCheckBox();
-	private final JCheckBox stunningBulletsCheckBox = new JCheckBox();
+
+	//Bullet Effects dropdown
+	private final JComboBox<String> bulletEffectComboBox = new JComboBox<>(new String[] {
+		"Default Effect",
+		"Stunning Effect"});
 	private JTextField stunDurationTextField;
 
 	private JSlider battlefieldWidthSlider;
@@ -193,7 +197,7 @@ public class NewBattleRulesTab extends JPanel {
 		left.addComponent(inactivityTimeLabel);
 		left.addComponent(sentryBorderSizeLabel);
 		left.addComponent(hideEnemyNamesLabel);
-		left.addComponent(stunningBulletsLabel);
+		left.addComponent(bulletEffectLabel);
 		left.addComponent(stunDurationLabel);
 		leftToRight.addGroup(left);
 		
@@ -203,7 +207,7 @@ public class NewBattleRulesTab extends JPanel {
 		right.addComponent(getInactivityTimeTextField());
 		right.addComponent(getSentryBorderSizeTextField());
 		right.addComponent(hideEnemyNamesCheckBox);
-		right.addComponent(stunningBulletsCheckBox);
+		right.addComponent(bulletEffectComboBox);
 		right.addComponent(getStunDurationTextField());
 		leftToRight.addGroup(right);
 		
@@ -234,9 +238,9 @@ public class NewBattleRulesTab extends JPanel {
 		row4.addComponent(hideEnemyNamesCheckBox);
 		topToBottom.addGroup(row4);
 
-		GroupLayout.ParallelGroup row5 = layout.createParallelGroup(Alignment.CENTER);
-		row5.addComponent(stunningBulletsLabel);
-		row5.addComponent(stunningBulletsCheckBox);
+		GroupLayout.ParallelGroup row5 = layout.createParallelGroup(Alignment.BASELINE);
+		row5.addComponent(bulletEffectLabel);
+		row5.addComponent(bulletEffectComboBox);
 		topToBottom.addGroup(row5);
 
 		GroupLayout.ParallelGroup row6 = layout.createParallelGroup(Alignment.BASELINE);
@@ -477,8 +481,7 @@ public class NewBattleRulesTab extends JPanel {
 			settingsManager.setBattleDefaultHideEnemyNames(hideEnemyNames);
 			battleProperties.setHideEnemyNames(hideEnemyNames);
 
-			boolean stunningBullets = stunningBulletsCheckBox.isSelected();
-			String bulletEffect = (stunningBullets) ? "StunningEffect" : "NoEffect";
+			String bulletEffect = (String) bulletEffectComboBox.getSelectedItem();
 			settingsManager.setBattleDefaultBulletEffect(bulletEffect);
 			battleProperties.setBulletEffect(bulletEffect);
 
@@ -535,7 +538,7 @@ public class NewBattleRulesTab extends JPanel {
 			getInactivityTimeTextField().setText("" + battleProperties.getInactivityTime());
 			getSentryBorderSizeTextField().setText("" + battleProperties.getSentryBorderSize());
 			hideEnemyNamesCheckBox.setSelected(battleProperties.getHideEnemyNames());
-			stunningBulletsCheckBox.setSelected(battleProperties.getBulletEffect().equals("StunningEffect"));
+			bulletEffectComboBox.setSelectedItem(battleProperties.getBulletEffect());
 			getStunDurationTextField().setText("" + battleProperties.getStunDuration());
 		}
 	}
