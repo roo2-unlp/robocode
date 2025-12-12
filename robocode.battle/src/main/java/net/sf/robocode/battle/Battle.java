@@ -8,7 +8,7 @@
 package net.sf.robocode.battle;
 
 
-import net.sf.robocode.battle.damage.IDamageModel;// [NUEVO] se importa  estrategias de daño
+import net.sf.robocode.battle.damage.IDamageModel;// [NUEVO] se importa  el tipo de daño
 import net.sf.robocode.battle.damage.StandardDamageModel;
 import net.sf.robocode.battle.damage.RandomDamageModel;
 

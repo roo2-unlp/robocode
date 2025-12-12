@@ -134,6 +134,8 @@ public class SettingsManager implements ISettingsManager {
 	private boolean battleDefaultHideEnemyNames = false;
 	private int battleDefaultNumberOfRounds = 10;
 	private boolean battleDefaultRandomDamage = false;  //NUEVO PARA RANDOM DAMAGE buena practica para setear el defaultt
+	private double battleDefaultRandomDamageMin = 0.1;
+    private double battleDefaultRandomDamageMax = 1000.0;
 
 	private final Properties props = new SortedProperties();
 
@@ -800,11 +802,36 @@ public class SettingsManager implements ISettingsManager {
 		battleDefaultHideEnemyNames = Boolean.parseBoolean(props.getProperty(BATTLE_DEFAULT_HIDE_ENEMY_NAMES, "false"));
 		battleDefaultNumberOfRounds = Integer.parseInt(props.getProperty(BATTLE_DEFAULT_NUMBER_OF_ROUNDS, "10"));
 		battleDefaultRandomDamage = Boolean.parseBoolean(props.getProperty(BATTLE_DEFAULT_RANDOM_DAMAGE, "false")); // Nuevo
+		
+        battleDefaultRandomDamageMin = Double.parseDouble(props.getProperty(BATTLE_DEFAULT_RANDOM_DAMAGE_MIN, "0.1"));// Nuevo
+        battleDefaultRandomDamageMax = Double.parseDouble(props.getProperty(BATTLE_DEFAULT_RANDOM_DAMAGE_MAX, "1000.0"));// Nuevo
 
 		robotFilesystemQuota = Long.parseLong(props.getProperty(ROBOT_FILESYSTEM_QUOTA, "" + 200000));
 		consoleQuota = Long.parseLong(props.getProperty(CONSOLE_QUOTA, "8192"));
 		cpuConstant = Long.parseLong(props.getProperty(CPU_CONSTANT, "-1"));
 	}
+	
+    @Override
+    public double getBattleDefaultRandomDamageMin() {
+        return battleDefaultRandomDamageMin;
+    }
+
+    @Override
+    public void setBattleDefaultRandomDamageMin(double min) {
+        this.battleDefaultRandomDamageMin = min;
+        props.setProperty(BATTLE_DEFAULT_RANDOM_DAMAGE_MIN, "" + min);
+    }
+
+    @Override
+    public double getBattleDefaultRandomDamageMax() {
+        return battleDefaultRandomDamageMax;
+    }
+
+    @Override
+    public void setBattleDefaultRandomDamageMax(double max) {
+        this.battleDefaultRandomDamageMax = max;
+        props.setProperty(BATTLE_DEFAULT_RANDOM_DAMAGE_MAX, "" + max);
+    }
 
 	public String getLastRunVersion() {
 		return lastRunVersion;

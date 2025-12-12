@@ -595,13 +595,23 @@ public class NewBattleRulesTab extends JPanel {
 				battleProperties.setSentryBorderSize(100);
 				battleProperties.setRandomDamage(false);//nuevo valor por defecto randomDamage false
 				battleProperties.setRandomDamageMin(0.1);
-				battleProperties.setRandomDamageMax(0.6); // valores por defecto min y max
+				battleProperties.setRandomDamageMax(1000.0); // valores por defecto min y max
 
 				pushBattlePropertiesToUIComponents();
 			} else if (event.getSource() == randomCollisionDamageCheckBox) { //mostrar input min y max solo si checkbox on
 				boolean isSelected = randomCollisionDamageCheckBox.isSelected();
 				getRandomDamageMinTextField().setEnabled(isSelected);
 				getRandomDamageMaxTextField().setEnabled(isSelected);
+
+				// UX Improvement: Si el usuario lo activa, nos aseguramos que se vean los valores correctos
+       			 if (isSelected) {
+             // Forzar visualización de valores actuales de battleProperties si los campos estaban vacíos o incoherentes
+             		if(getRandomDamageMinTextField().getText().isEmpty()) 
+                 		getRandomDamageMinTextField().setText("" + battleProperties.getRandomDamageMin());
+           			if(getRandomDamageMaxTextField().getText().isEmpty()) 
+                		 getRandomDamageMaxTextField().setText("" + battleProperties.getRandomDamageMax());
+        		}
+				
 			}
 		}
 

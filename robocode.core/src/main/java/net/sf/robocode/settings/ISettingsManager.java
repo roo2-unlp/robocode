@@ -250,6 +250,8 @@ public interface ISettingsManager {
 
 	void removePropertyListener(ISettingsListener propertyListener);
 
+	
+
 	String
 			OPTIONS_VIEW_ROBOTNAMES = "robocode.options.view.robotNames",
 			OPTIONS_VIEW_SCANARCS = "robocode.options.view.scanArcs",
@@ -320,5 +322,9 @@ public interface ISettingsManager {
 			BATTLE_DEFAULT_INACTIVITY_TIME = "robocode.battle.default.inactivityTime",
 			BATTLE_DEFAULT_SENTRY_BORDER_SIZE = "robocode.battle.default.sentryBorderSize",
 			BATTLE_DEFAULT_HIDE_ENEMY_NAMES = "robocode.battle.default.hideEnemyNames",
-			BATTLE_DEFAULT_RANDOM_DAMAGE = "robocode.battle.default.randomDamage";
+			BATTLE_DEFAULT_RANDOM_DAMAGE = "robocode.battle.default.randomDamage",
+			BATTLE_DEFAULT_RANDOM_DAMAGE_MIN = "robocode.battle.default.randomDamageMin",
+            BATTLE_DEFAULT_RANDOM_DAMAGE_MAX = "robocode.battle.default.randomDamageMax";
+
+			
 }
