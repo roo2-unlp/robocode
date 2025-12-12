@@ -43,7 +43,7 @@ public class SettingsManager implements ISettingsManager {
 			optionsViewRobotEnergy = true,
 			optionsViewRobotNames = true,
 			optionsViewScanArcs = false,
-			optionsViewScanBullets = false,
+			optionsViewScanBullets = true,
 			optionsViewExplosions = true,
 			optionsViewGround = true,
 			optionsViewExplosionDebris = true,

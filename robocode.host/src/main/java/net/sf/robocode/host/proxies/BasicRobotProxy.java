@@ -541,15 +541,16 @@ public class BasicRobotProxy extends HostingRobotProxy implements IRadioactiveRo
 			return null;
 		}
 
-		double minPower = isRadioactive ? Rules.MIN_RADIOACTIVE_BULLET_POWER : Rules.MIN_BULLET_POWER;
-		double maxPower = isRadioactive ? Rules.MAX_RADIOACTIVE_BULLET_POWER : Rules.MAX_BULLET_POWER;
+		double minPower = Rules.MIN_BULLET_POWER;
+		double maxPower = Rules.MAX_BULLET_POWER;
 
 		power = min(getEnergyImpl(), min(max(power, minPower), maxPower));
 
 		double minPR = Rules.MIN_PROXIMITY_RADIUS;
 		double maxPR = Rules.MAX_PROXIMITY_RADIUS;
 
-		proximityRadius = min(getEnergyImpl(), min(max(proximityRadius, minPR), maxPR));
+		//proximityRadius = min(getEnergyImpl(), min(max(proximityRadius, minPR), maxPR)); Calculo de radio con energia involucrada
+		proximityRadius = min(max(proximityRadius, minPR), maxPR); //Calculo de radio sin energia involucrada
 
 		Bullet bullet;
 		BulletCommand wrapper;

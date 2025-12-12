@@ -27,7 +27,7 @@ public class RadioactiveBulletPeer extends BulletPeer {
     // Use a larger radius to match the RadioactiveBullet creation in
     // BasicRobotProxy
     // and ensure better detection
-    this.currentRadius = 100.0; // Default proximity radius
+    this.currentRadius = 0; // Default proximity radius
   }
 
   @Override
@@ -72,13 +72,7 @@ public class RadioactiveBulletPeer extends BulletPeer {
     // Para balas de proximidad, calculamos el factor de impacto basado en la
     // distancia
     double impactFactor = computeImpactFactor(otherRobot);
-    double originalPower = getPower();
-    double adjustedPower = originalPower * impactFactor;
-
-    // Asegurarnos de que el poder ajustado sea válido (no puede ser 0 o negativo)
-    if (adjustedPower <= 0) {
-      adjustedPower = 0.1; // Mínimo poder para que haya daño
-    }
+    double adjustedPower = getPower() * impactFactor;
 
     // Establecer el poder ajustado antes de llamar al método padre
     setPower(adjustedPower);
@@ -131,6 +125,8 @@ public class RadioactiveBulletPeer extends BulletPeer {
     double dy = robot.getY() - getY();
     double distance = Math.hypot(dx, dy);
     double normalized = Math.min(Math.max(distance, 0), currentRadius) / currentRadius;
-    return 1.0 - normalized;
+	double factor = 0.90 - 0.80 * normalized;
+
+    return factor;
   }
 }
