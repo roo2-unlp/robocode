@@ -17,9 +17,9 @@ class StunningEffect {
 }
 
 class BattleRules {
-    + stunningBullets : boolean
+    + bulletEffect : String
     + stunDuration : int
-    + getStunningBullets() : boolean
+    + getBulletEffect() : String
     + getStunDuration(): int
 }
 
@@ -32,8 +32,12 @@ class RobotPeer {
     + getBulletEffect() : BulletEffect
 }
 
+class BulletEffectCreator {
+    + {static} <<create>> createBulletEffect(battleRules: BattleRules): BulletEffect
+}
 RobotPeer *-- BulletPeer
 RobotPeer --* BulletEffect
+RobotPeer --> BulletEffectCreator
 BulletEffect <|-- NoEffect
 BulletEffect <|-- StunningEffect
 RobotPeer --* BattleRules
