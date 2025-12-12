@@ -232,6 +232,12 @@ public interface ISettingsManager {
 
 	void setBattleDefaultNumberOfRounds(int numberOfRounds);
 
+	void setBattleDefaultRandomDamageMin(double min);
+	double getBattleDefaultRandomDamageMin();
+
+	void setBattleDefaultRandomDamageMax(double max);
+	double getBattleDefaultRandomDamageMax();
+
 	void store(FileOutputStream out, String desc) throws IOException;
 
 	void load(FileInputStream in) throws IOException;
