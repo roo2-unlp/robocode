@@ -236,9 +236,9 @@ public class HiddenAccess {
 				roundNum, numRounds, time);
 	}
 
-	public static BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean infinityShot) {
+	public static BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean infinityShot, int infinityShotLaps) {
 		return rulesHelper.createRules(battlefieldWidth, battlefieldHeight, numRounds, gunCoolingRate, inactivityTime,
-				hideEnemyNames, sentryBorderSize, infinityShot);
+				hideEnemyNames, sentryBorderSize, infinityShot, infinityShotLaps);
 	}
 
 	public static boolean isSafeThread() {

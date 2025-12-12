@@ -37,6 +37,7 @@ public class BattleProperties implements Serializable {
 			BATTLE_RULES_INACTIVITYTIME = "robocode.battle.rules.inactivityTime",
 			BATTLE_HIDE_ENEMY_NAMES = "robocode.battle.hideEnemyNames",
 			BATTLE_INFINITY_SHOT = "robocode.battle.infinityShot",
+			BATTLE_INFINITY_SHOT_LAPS = "robocode.battle.infinityShotLaps",
 			BATTLE_SELECTEDROBOTS = "robocode.battle.selectedRobots",
 			BATTLE_INITIAL_POSITIONS = "robocode.battle.initialPositions",
 			BATTLE_SENTRY_BORDER_SIZE = "robocode.battle.sentryBorderSize";
@@ -48,6 +49,7 @@ public class BattleProperties implements Serializable {
 	private long inactivityTime = 450;
 	private boolean hideEnemyNames = false;
 	private boolean infinityShot = false;
+	private int infinityShotLaps = 3;
 	private int sentryBorderSize = 100;
 	private String selectedRobots;
 	private String initialPositions;
@@ -202,11 +204,16 @@ public class BattleProperties implements Serializable {
 		props.setProperty(BATTLE_HIDE_ENEMY_NAMES, "" + hideEnemyNames);
 	}
 
-	public void setInfintyShot(boolean infinityShot){
+	public void setInfinityShot(boolean infinityShot){
 		this.infinityShot = infinityShot;
 		props.setProperty(BATTLE_INFINITY_SHOT, "" + infinityShot);
 	}
 
+
+	public void setInfinityShotLaps(int infinityShotLaps){
+		this.infinityShotLaps = infinityShotLaps;
+		props.setProperty(BATTLE_INFINITY_SHOT_LAPS, "" + infinityShotLaps);
+	}
 	/**
 	 * Returns true if the enemy names are hidden for robots during a battle; false otherwise.
 	 *
@@ -219,6 +226,8 @@ public class BattleProperties implements Serializable {
 	public boolean getInfinityShot() {
 		return infinityShot;
 	}
+
+	public int getInfinityShotLaps() { return infinityShotLaps; }
 
 	/**
 	 * Gets the selectedRobots.
@@ -339,6 +348,14 @@ public class BattleProperties implements Serializable {
 		props.setProperty(BATTLE_SENTRY_BORDER_SIZE, "" + sentryBorderSize);
 	}
 
+//	Getter y Setter para numero de vueltas que puede dar la bala
+
+
+
+	public boolean isInfinityShot() {
+		return infinityShot;
+	}
+
 	public void store(FileOutputStream out, String desc) throws IOException {
 		props.store(out, desc);
 	}
@@ -351,6 +368,7 @@ public class BattleProperties implements Serializable {
 		inactivityTime = Long.parseLong(props.getProperty(BATTLE_RULES_INACTIVITYTIME, "450"));
 		hideEnemyNames = Boolean.parseBoolean(props.getProperty(BATTLE_HIDE_ENEMY_NAMES, "false"));
 		infinityShot = Boolean.parseBoolean(props.getProperty(BATTLE_INFINITY_SHOT, "false"));
+		infinityShotLaps = Integer.parseInt(props.getProperty(BATTLE_INFINITY_SHOT_LAPS, "3"));
 		numRounds = Integer.parseInt(props.getProperty(BATTLE_NUMROUNDS, "10"));
 		selectedRobots = props.getProperty(BATTLE_SELECTEDROBOTS, "");
 		initialPositions = props.getProperty(BATTLE_INITIAL_POSITIONS, "");

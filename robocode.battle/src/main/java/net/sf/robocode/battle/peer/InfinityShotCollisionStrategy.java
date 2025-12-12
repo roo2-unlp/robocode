@@ -7,26 +7,26 @@ import robocode.control.snapshot.BulletState;
 public class InfinityShotCollisionStrategy implements IWallCollisionStrategy {
 
 	private int count = 0;
-	private static final int MAX_BOUNCES = 2;
 
 	@Override
 	public void checkCollision(BulletPeer bullet, BattleRules battleRules) {
 		double width = battleRules.getBattlefieldWidth();
 		double height = battleRules.getBattlefieldHeight();
+		int MAX_BOUNCES = battleRules.getInfinityShotLaps();
 		boolean isAlive = count < MAX_BOUNCES;
 
-		boolean hitX = updateHorizontalPosition(bullet, width, isAlive);
-		boolean hitY = updateVerticalPosition(bullet, height, isAlive);
+		boolean hitX = updateHorizontalPosition(bullet, height, width, isAlive);
+		boolean hitY = updateVerticalPosition(bullet, height, width, isAlive);
 
 		if (hitX || hitY) {
 			handleImpact(bullet, isAlive);
 		}
 	}
 
-	private boolean updateHorizontalPosition(BulletPeer bullet, double width, boolean isAlive) {
+	private boolean updateHorizontalPosition(BulletPeer bullet, double height, double width, boolean isAlive) {
 		double x = bullet.getX();
 		if (x <= 0) {
-			bullet.setX(isAlive ? width : 0); // corrige la posicion para que explote en el muro y no mas alla
+			bullet.setX(isAlive ? width : 0);
 			return true;
 		} else if (x >= width) {
 			bullet.setX(isAlive ? 0 : width);
@@ -35,7 +35,7 @@ public class InfinityShotCollisionStrategy implements IWallCollisionStrategy {
 		return false;
 	}
 
-	private boolean updateVerticalPosition(BulletPeer bullet, double height, boolean isAlive) {
+	private boolean updateVerticalPosition(BulletPeer bullet, double height, double width, boolean isAlive) {
 		double y = bullet.getY();
 		if (y <= 0) {
 			bullet.setY(isAlive ? height : 0);
@@ -50,7 +50,7 @@ public class InfinityShotCollisionStrategy implements IWallCollisionStrategy {
 	private void handleImpact(BulletPeer bullet, boolean isAlive) {
 		count++;
 		if (isAlive) {
-			teleportBullet(bullet); // si la bala sigue viva se teletransporta
+			teleportBullet(bullet);
 		} else {
 			killBullet(bullet);
 		}

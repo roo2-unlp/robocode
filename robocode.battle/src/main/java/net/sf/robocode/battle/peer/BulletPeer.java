@@ -229,12 +229,6 @@ public class BulletPeer{
 	}
 
 	private void checkWallCollision() {
-//		if ((x - RADIUS <= 0) || (y - RADIUS <= 0) || (x + RADIUS >= battleRules.getBattlefieldWidth())
-//				|| (y + RADIUS >= battleRules.getBattlefieldHeight())) {
-//			state = BulletState.HIT_WALL;
-//			frame = 0;
-//			owner.addEvent(new BulletMissedEvent(createBullet(false))); // Bugfix #366
-//		}
 		collisionStrategy.checkCollision(this, battleRules);
 	}
 

@@ -52,6 +52,7 @@ public class NewBattleRulesTab extends JPanel {
 	private final JLabel sentryBorderSizeLabel = new JLabel("Sentry Border Size");
 	private final JLabel hideEnemyNamesLabel = new JLabel("Hide Enemy Names:");
 	private final JLabel toggleInfinityShot = new JLabel("Activate Infinity Shot:");
+	private final JLabel infinityShotLapsLabel = new JLabel("Infinity Shot Laps:");
 
 	private final JButton restoreDefaultsButton = new JButton("Restore Defaults");
 	
@@ -59,6 +60,7 @@ public class NewBattleRulesTab extends JPanel {
 	private JTextField gunCoolingRateTextField;
 	private JTextField inactivityTimeTextField;
 	private JTextField sentryBorderSizeTextField;
+	private JTextField infinityShotLapsTextField;
 	private final JCheckBox hideEnemyNamesCheckBox = new JCheckBox();
 	private final JCheckBox toggleInfinityShotCheckBox = new JCheckBox();
 
@@ -97,6 +99,14 @@ public class NewBattleRulesTab extends JPanel {
 		restoreDefaultsButton.addActionListener(eventHandler);
 
 		setLayout(new BorderLayout());
+
+		toggleInfinityShotCheckBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				boolean selected = toggleInfinityShotCheckBox.isSelected();
+				getInfinityShotLapsTextField().setEnabled(selected);
+			}
+		});
 		
 		add(rulesPanel, BorderLayout.WEST);
 		add(restoreDefaultsButton, BorderLayout.SOUTH);
@@ -192,6 +202,7 @@ public class NewBattleRulesTab extends JPanel {
 		left.addComponent(sentryBorderSizeLabel);
 		left.addComponent(hideEnemyNamesLabel);
 		left.addComponent(toggleInfinityShot);
+		left.addComponent(infinityShotLapsLabel);
 		leftToRight.addGroup(left);
 		
 		GroupLayout.ParallelGroup right = layout.createParallelGroup();
@@ -201,6 +212,7 @@ public class NewBattleRulesTab extends JPanel {
 		right.addComponent(getSentryBorderSizeTextField());
 		right.addComponent(hideEnemyNamesCheckBox);
 		right.addComponent(toggleInfinityShotCheckBox);
+		right.addComponent(getInfinityShotLapsTextField());
 		leftToRight.addGroup(right);
 		
 		GroupLayout.SequentialGroup topToBottom = layout.createSequentialGroup();
@@ -234,6 +246,11 @@ public class NewBattleRulesTab extends JPanel {
 		row5.addComponent(toggleInfinityShot);
 		row5.addComponent(toggleInfinityShotCheckBox);
 		topToBottom.addGroup(row5);
+
+		GroupLayout.ParallelGroup row6 = layout.createParallelGroup(Alignment.BASELINE);
+		row6.addComponent(infinityShotLapsLabel);
+		row6.addComponent(getInfinityShotLapsTextField());
+		topToBottom.addGroup(row6);
 
 		layout.setHorizontalGroup(leftToRight);
 		layout.setVerticalGroup(topToBottom);
@@ -294,6 +311,34 @@ public class NewBattleRulesTab extends JPanel {
 			});
 		}
 		return gunCoolingRateTextField;
+	}
+
+	private JTextField getInfinityShotLapsTextField() {
+		if (infinityShotLapsTextField == null) {
+			infinityShotLapsTextField = new JTextField(5);
+			// Asumimos que agregaste el getter en BattleProperties
+			infinityShotLapsTextField.setText("" + battleProperties.getInfinityShotLaps());
+			infinityShotLapsTextField.setEnabled(false); // Deshabilitado por defecto hasta que se chequee el box
+
+			infinityShotLapsTextField.setInputVerifier(new InputVerifier() {
+				@Override
+				public boolean verify(JComponent input) {
+					boolean isValid = false;
+					String text = ((JTextField) input).getText();
+					if (text != null && text.matches("\\d+")) {
+						int bounces = Integer.parseInt(text);
+						isValid = (bounces >= 1); // Mínimo 1 vuelta
+					}
+					if (!isValid) {
+						WindowUtil.messageError(
+								"'Infinity Shot Bounces' must be an integer value >= 1.\nDefault value is 3.");
+						infinityShotLapsTextField.setText("" + battleProperties.getInfinityShotLaps());
+					}
+					return isValid;
+				}
+			});
+		}
+		return infinityShotLapsTextField;
 	}
 
 	private JTextField getInactivityTimeTextField() {
@@ -427,13 +472,23 @@ public class NewBattleRulesTab extends JPanel {
 				settingsManager.setBattleDefaultSentryBorderSize(sentryBorderSize);
 				battleProperties.setSentryBorderSize(sentryBorderSize);
 			}
+			Integer laps;
+			try {
+				laps = Integer.parseInt(getInfinityShotLapsTextField().getText());
+			} catch (NumberFormatException e) {
+				laps = 3; // Valor default seguro
+			}
+			if (laps != null) {
+				// Asumiendo que creaste este setter en BattleProperties
+				battleProperties.setInfinityShotLaps(laps);
+			}
 			boolean hideEnemyNames = hideEnemyNamesCheckBox.isSelected();
 			boolean infinityShot = toggleInfinityShotCheckBox.isSelected();
 
 			settingsManager.setBattleDefaultHideEnemyNames(hideEnemyNames);
 			battleProperties.setHideEnemyNames(hideEnemyNames);
 
-			battleProperties.setInfintyShot(infinityShot);
+			battleProperties.setInfinityShot(infinityShot);
 
 			int weight = battlefieldWidthSlider.getValue();
 			int height = battlefieldHeightSlider.getValue();
@@ -463,7 +518,8 @@ public class NewBattleRulesTab extends JPanel {
 				battleProperties.setGunCoolingRate(0.1);
 				battleProperties.setInactivityTime(450);
 				battleProperties.setHideEnemyNames(false);
-				battleProperties.setInfintyShot(false);
+				battleProperties.setInfinityShot(false);
+				battleProperties.setInfinityShotLaps(3);
 				battleProperties.setSentryBorderSize(100);
 
 				pushBattlePropertiesToUIComponents();
@@ -487,6 +543,12 @@ public class NewBattleRulesTab extends JPanel {
 			getInactivityTimeTextField().setText("" + battleProperties.getInactivityTime());
 			getSentryBorderSizeTextField().setText("" + battleProperties.getSentryBorderSize());
 			hideEnemyNamesCheckBox.setSelected(battleProperties.getHideEnemyNames());
+
+			boolean isInfinity = battleProperties.isInfinityShot();
+			toggleInfinityShotCheckBox.setSelected(isInfinity);
+
+			getInfinityShotLapsTextField().setText("" + battleProperties.getInfinityShotLaps());
+			getInfinityShotLapsTextField().setEnabled(isInfinity);
 		}
 	}
 
