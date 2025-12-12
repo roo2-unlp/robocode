@@ -313,10 +313,10 @@ public class NewBattleRulesTab extends JPanel {
 					if (text != null && text.matches("\\d*(\\.\\d+)?")) {
 						double val = Double.parseDouble(text);
 						// Validar que sea mayor a 0
-						isValid = (val >= 0.1);
+						isValid = (val >= 0.1 && val <= 1000.0);
 					}
 					if (!isValid) {
-						WindowUtil.messageError("Min Damage must be > 0.1");
+						WindowUtil.messageError("Min Damage must be between 0.1 and 1000.0");
 						randomDamageMinTextField.setText("" + battleProperties.getRandomDamageMin());
 					}
 					return isValid;
@@ -330,18 +330,35 @@ public class NewBattleRulesTab extends JPanel {
 		if (randomDamageMaxTextField == null) {
 			randomDamageMaxTextField = new JTextField(5);
 			randomDamageMaxTextField.setText("" + battleProperties.getRandomDamageMax());
+
 			randomDamageMaxTextField.setInputVerifier(new InputVerifier() {
 				@Override
 				public boolean verify(JComponent input) {
 					boolean isValid = false;
-					String text = ((JTextField) input).getText();
-					if (text != null && text.matches("\\d*(\\.\\d+)?")) {
-						double val = Double.parseDouble(text);
-						// Podrías validar aquí que Max > Min, o dejar que el Modelo lo corrija
-						isValid = (val >= 0.1);
+					String maxText = ((JTextField) input).getText();
+
+					// usado para validar la consistencia Max >= Min
+					String minText = getRandomDamageMinTextField().getText();
+
+					if (maxText != null && maxText.matches("\\d*(\\.\\d+)?")) {
+						double maxVal = Double.parseDouble(maxText);
+						double minVal = 0.1;
+
+						try {
+							minVal = Double.parseDouble(minText);
+						} catch (NumberFormatException e) {
+							minVal = battleProperties.getRandomDamageMin();
+						}
+
+						if (maxVal >= 0.1 && maxVal <= 1000.0 && maxVal >= minVal) {
+							isValid = true;
+						}
 					}
+
 					if (!isValid) {
-						WindowUtil.messageError("Max Damage must be > 0.1");
+						WindowUtil.messageError(
+								"Max Damage must be between 0.1 and 1000.0,\n" +
+										"and greater than or equal to Min Damage.");
 						randomDamageMaxTextField.setText("" + battleProperties.getRandomDamageMax());
 					}
 					return isValid;
