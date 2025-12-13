@@ -303,7 +303,7 @@ public class NewBattleRulesTab extends JPanel {
 		layout.setHorizontalGroup(leftToRight);
 		layout.setVerticalGroup(topToBottom);
 
-		verMinMax(false);
+		verMinMax(randomWallHitDamageCheckBox.isSelected());
 		listenerRandomWallHitDamage();
 
 		return panel;
