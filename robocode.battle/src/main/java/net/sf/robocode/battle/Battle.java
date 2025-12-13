@@ -83,17 +83,9 @@ public final class Battle extends BaseBattle {
 	// Initial robot setups (if any)
 	private RobotSetup[] initialRobotSetups;
 
-	/*
-	intervaloDado, tiempoTranscurrido y dadoRandom son logica del concrete strategy
-	 */
-	// Intervalo de tiempo entre tiro de dados
-	private int intervaloDado = 0;
-	private int tiempoTranscurrido = 0;
-	private final Random dadoRandom = new Random();
 	private int extraWallDamage;
 	private WallHitDamageStrategy hitWallStrategy;
-	private int minRandom;
-	private int maxRandom;
+
 
 
 	public Battle(ISettingsManager properties, IBattleManager battleManager, IHostManager hostManager, ICpuManager cpuManager, BattleEventDispatcher eventDispatcher) { // NO_UCD (unused code)
@@ -111,6 +103,9 @@ public final class Battle extends BaseBattle {
 		computeInitialPositions(battleProps.getInitialPositions());
 		createPeers(battlingRobotsList);
 		this.hitWallStrategy = new NullWallHitDamageStrategy(); //no corresponde al constructor, crear metodo setStrategy para setear desde BattleManager
+	}
+	public void setStrategy(WallHitDamageStrategy strategy){
+		this.hitWallStrategy = strategy;
 	}
 
 	private void createPeers(RobotSpecification[] battlingRobotsList) {
@@ -167,7 +162,7 @@ public final class Battle extends BaseBattle {
 					String teamNameIndexed = teamName.substring(0, teamName.length() - 6) + " (" + (teamIndex + 1) + ')';
 
 					team = new TeamPeer(teamNameIndexed, teamMembers.get(teamName), teamIndex);
-	
+
 					teamPeers.put(teamName, team);
 					contestants.add(team);
 				} else {
@@ -325,16 +320,7 @@ public final class Battle extends BaseBattle {
 	@Override
 	protected void initializeRound() {
 		super.initializeRound();
-		// aca si es true randomwalldamage inicializo extraWallDamage
-		if (battleRules.getRandomWallHitDamage()){
-			extraWallDamage = getDiceExtraWallDamage();
-		}else {
-			extraWallDamage = hitWallStrategy.getDiceExtraWallDamage();
-		}
-		tiempoTranscurrido = 0;
-		minRandom = battleRules.getMinRandom();
-		maxRandom = battleRules.getMaxRandom();
-		intervaloDado = rangoRandom(dadoRandom, minRandom, maxRandom);
+		hitWallStrategy.initializeRound();
 
 		inactiveTurnCount = 0;
 
@@ -390,37 +376,11 @@ public final class Battle extends BaseBattle {
 		eventDispatcher.onTurnStarted(new TurnStartedEvent());
 	}
 
-	private int rangoRandom(Random random, int min, int max){
-		return (min == max) ? min : min + random.nextInt((max - min) + 1);
-	}
-	private int getDiceExtraWallDamage(){
-		return  dadoRandom.nextInt(6) + 1;
-	}
-	private int getExtraWallDamage(){
-		tiempoTranscurrido++;
-		if (tiempoTranscurrido >= intervaloDado){
-			//aca tiro los dados
-			tiempoTranscurrido = 0;
-			intervaloDado = rangoRandom(dadoRandom, minRandom, maxRandom);
-			extraWallDamage = getDiceExtraWallDamage();
-			//if (!RobocodeProperties.isTestingOn()){
-			Logger.logMessage("este es el intervalo de tiempo " + intervaloDado);
-			Logger.logMessage("este es el valor del dado " + extraWallDamage);
-			//}
-			}
-		return extraWallDamage;
-	}
+
 	@Override
 	protected void runTurn() {
 		super.runTurn();
-		//aca se reemplaza por el strategy, si es nulo multiplica por 1(nulo en multiplicacion), sino calcula
-
-		//toda esta logica pasarla al strategy
-		if (battleRules.getRandomWallHitDamage()){
-			extraWallDamage = getExtraWallDamage();
-		}else {
-			extraWallDamage = hitWallStrategy.getExtraWallDamage();
-		}
+		extraWallDamage = hitWallStrategy.getExtraWallDamage();
 
 		loadCommands();
 
@@ -458,7 +418,7 @@ public final class Battle extends BaseBattle {
 				TeamPeer winningTeam = null;
 
 				robocode.RoundEndedEvent roundEndedEvent = new robocode.RoundEndedEvent(getRoundNum(), currentTime,
-						totalTurns); 
+						totalTurns);
 
 				for (RobotPeer robotPeer : getRobotsAtRandom()) {
 					robotPeer.addEvent(roundEndedEvent);

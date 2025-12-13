@@ -4,4 +4,6 @@ public interface WallHitDamageStrategy {
 	int getExtraWallDamage();
 
 	int getDiceExtraWallDamage();
+
+	void initializeRound();
 }

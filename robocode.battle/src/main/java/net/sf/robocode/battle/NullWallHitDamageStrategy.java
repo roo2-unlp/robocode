@@ -6,4 +6,5 @@ public class NullWallHitDamageStrategy implements WallHitDamageStrategy{
 		return 1;
 	}
 	public int getDiceExtraWallDamage(){return 1;}
+	public void initializeRound(){ return; }
 }

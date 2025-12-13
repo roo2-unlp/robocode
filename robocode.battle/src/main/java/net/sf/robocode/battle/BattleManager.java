@@ -129,7 +129,7 @@ public class BattleManager implements IBattleManager {
 
 		final boolean recording = (properties.getOptionsCommonEnableReplayRecording()
 				&& System.getProperty("TESTING", "none").equals("none"))
-						|| enableRecording;
+				|| enableRecording;
 
 		if (recording) {
 			recordManager.attachRecorder(battleEventDispatcher);
@@ -153,6 +153,12 @@ public class BattleManager implements IBattleManager {
 		aca definir la estrategia, asi battle solo hace el setStrategy
 		realBattle.setStrategy (elegir estrategia si es null o si es concreta
 		 */
+		if (battleProperties.getRandomWallHitDamage()) {
+			realBattle.setStrategy(new RandomWallHitDamageStrategy(battleProperties.getRandomMin(), battleProperties.getRandomMax()));
+		} else {
+			realBattle.setStrategy(new NullWallHitDamageStrategy());
+		}
+
 
 		battle = realBattle;
 
