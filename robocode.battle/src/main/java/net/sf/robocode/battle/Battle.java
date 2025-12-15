@@ -102,7 +102,6 @@ public final class Battle extends BaseBattle {
 		robotsCount = battlingRobotsList.length;
 		computeInitialPositions(battleProps.getInitialPositions());
 		createPeers(battlingRobotsList);
-		this.hitWallStrategy = new NullWallHitDamageStrategy(); //no corresponde al constructor, crear metodo setStrategy para setear desde BattleManager
 	}
 	public void setStrategy(WallHitDamageStrategy strategy){
 		this.hitWallStrategy = strategy;
