@@ -4,7 +4,9 @@
 
 ## Implementación de trampas en el mapa
 - se activan desde la pestaña de "rules"
-- se pueden seleccionar la cantidad de trampas que se activan
+- se pueden seleccionar la cantidad de trampas que se activan, su tamaño, efecto e intensidad de este.
+- ACLARACIÓN: Si el campo de batalla es pequeño, es posible que se generen menos cantidad de trampas que las solicitadas, con el fin de que los robots no queden atrapados entre estas.
+
 ## Para crear un efecto de trampa personalizado:
 - implementar la interfaz ITrapEffect en "robocode.battle/src/main/java/net/sf/robocode/battle/effect"
 - agregar nuevo tipo de efecto al input en NewBattleRulesTab.java, también en Battle.java
@@ -47,3 +49,5 @@ public class DamageEffect implements ITrapEffect{
 ### efectos aplicables al robot (se ampliara en el futuro)
 - `applyEnergyEffect` afecta a la energia del robot
 - `setMovementMultiplier` afecta a la velocidad del robot
+
+## Se verificó su correcto funcionamiento con Java 8 (OpenJDK / Eclipse Temurin) versión 1.8.0_472, JDK 64-bit.
