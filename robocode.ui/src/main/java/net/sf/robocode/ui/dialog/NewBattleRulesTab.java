@@ -73,9 +73,9 @@ public class NewBattleRulesTab extends JPanel {
 	private JTextField gunCoolingRateTextField;
 	private JTextField inactivityTimeTextField;
 	private JTextField sentryBorderSizeTextField;
-	private JTextField radioactiveBulletProximityRadiusTextField;
 	private final JCheckBox hideEnemyNamesCheckBox = new JCheckBox();
-
+  
+	private JSlider radioactiveBulletProximityRadiusSlider;
 	private JSlider battlefieldWidthSlider;
 	private JSlider battlefieldHeightSlider;
 	private JLabel battlefieldSizeLabel;
@@ -214,7 +214,7 @@ public class NewBattleRulesTab extends JPanel {
 		right.addComponent(getInactivityTimeTextField());
 		right.addComponent(getSentryBorderSizeTextField());
 		right.addComponent(hideEnemyNamesCheckBox);
-		right.addComponent(getRadioactiveBulletProximityRadiusTextField());
+		right.addComponent(getRadioactiveBulletProximityRadiusSlider());
 		leftToRight.addGroup(right);
 		
 		GroupLayout.SequentialGroup topToBottom = layout.createSequentialGroup();
@@ -244,9 +244,9 @@ public class NewBattleRulesTab extends JPanel {
 		row4.addComponent(hideEnemyNamesCheckBox);
 		topToBottom.addGroup(row4);
 
-		GroupLayout.ParallelGroup row5 = layout.createParallelGroup(Alignment.BASELINE);
+		GroupLayout.ParallelGroup row5 = layout.createParallelGroup(Alignment.CENTER);
 		row5.addComponent(radioactiveBulletProximityRadiusLabel);
-		row5.addComponent(getRadioactiveBulletProximityRadiusTextField());
+		row5.addComponent(getRadioactiveBulletProximityRadiusSlider());
 		topToBottom.addGroup(row5);
 
 		layout.setHorizontalGroup(leftToRight);
@@ -364,33 +364,17 @@ public class NewBattleRulesTab extends JPanel {
 		return sentryBorderSizeTextField;
 	}
 
-	private JTextField getRadioactiveBulletProximityRadiusTextField() {
-		if (radioactiveBulletProximityRadiusTextField == null) {
-			radioactiveBulletProximityRadiusTextField = new JTextField(5);
-			radioactiveBulletProximityRadiusTextField.setText("" + battleProperties.getRadioactiveBulletProximityRadius());
-			radioactiveBulletProximityRadiusTextField.setInputVerifier(
-					new InputVerifier() {
-				@Override
-				public boolean verify(JComponent input) {
-					boolean isValid = false;
-
-					String text = ((JTextField) input).getText();
-				if (text != null && text.matches("\\d*(\\.\\d+)?")) {
-						double radius = Double.parseDouble(text);
-						isValid = (radius >= robocode.Rules.MIN_PROXIMITY_RADIUS && radius <= robocode.Rules.MAX_PROXIMITY_RADIUS);
-					}
-					if (!isValid) {
-						WindowUtil.messageError(
-								"'Radioactive Bullet Proximity Radius' must be a floating point number between "
-								+ robocode.Rules.MIN_PROXIMITY_RADIUS + " and " + robocode.Rules.MAX_PROXIMITY_RADIUS
-								+ ".\nDefault value is " + robocode.Rules.DEFAULT_PROXIMITY_RADIUS + ".");
-						radioactiveBulletProximityRadiusTextField.setText("" + battleProperties.getRadioactiveBulletProximityRadius());
-					}
-					return isValid;
-				}
-			});
+	private JSlider getRadioactiveBulletProximityRadiusSlider() {
+		if (radioactiveBulletProximityRadiusSlider == null) {
+			radioactiveBulletProximityRadiusSlider = new JSlider();
+			radioactiveBulletProximityRadiusSlider.setMinimum(10);
+			radioactiveBulletProximityRadiusSlider.setMaximum(120);
+			radioactiveBulletProximityRadiusSlider.setValue((int) battleProperties.getRadioactiveBulletProximityRadius());
+			radioactiveBulletProximityRadiusSlider.setMajorTickSpacing(10);
+			radioactiveBulletProximityRadiusSlider.setMinorTickSpacing(5);
+			radioactiveBulletProximityRadiusSlider.setPaintTicks(true);
 		}
-		return radioactiveBulletProximityRadiusTextField;
+		return radioactiveBulletProximityRadiusSlider;
   }
 
 	private JSlider createBattlefieldSizeSlider() {
@@ -473,15 +457,9 @@ public class NewBattleRulesTab extends JPanel {
 			boolean hideEnemyNames = hideEnemyNamesCheckBox.isSelected();
 			settingsManager.setBattleDefaultHideEnemyNames(hideEnemyNames);
 			battleProperties.setHideEnemyNames(hideEnemyNames);
-			Double radioactiveProximityRadius;
-			try {
-				radioactiveProximityRadius = Double.parseDouble(getRadioactiveBulletProximityRadiusTextField().getText());
-			} catch (NumberFormatException e) {
-				radioactiveProximityRadius = null;
-			}
-			if (radioactiveProximityRadius != null) {
-				battleProperties.setRadioactiveBulletProximityRadius(radioactiveProximityRadius);
-			}
+			double proximityRadius = getRadioactiveBulletProximityRadiusSlider().getValue();
+      settingsManager.setBattleDefaultProximityRadius(proximityRadius);
+      battleProperties.setRadioactiveBulletProximityRadius(proximityRadius);
 			int weight = battlefieldWidthSlider.getValue();
 			int height = battlefieldHeightSlider.getValue();
 
@@ -533,7 +511,7 @@ public class NewBattleRulesTab extends JPanel {
 			getGunCoolingRateTextField().setText("" + battleProperties.getGunCoolingRate());
 			getInactivityTimeTextField().setText("" + battleProperties.getInactivityTime());
 			getSentryBorderSizeTextField().setText("" + battleProperties.getSentryBorderSize());
-			getRadioactiveBulletProximityRadiusTextField().setText("" + battleProperties.getRadioactiveBulletProximityRadius());
+			getRadioactiveBulletProximityRadiusSlider().setValue((int) battleProperties.getRadioactiveBulletProximityRadius());
 			hideEnemyNamesCheckBox.setSelected(battleProperties.getHideEnemyNames());
 		}
 	}

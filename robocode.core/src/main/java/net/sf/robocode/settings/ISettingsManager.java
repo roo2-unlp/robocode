@@ -232,6 +232,10 @@ public interface ISettingsManager {
 
 	void setBattleDefaultHideEnemyNames(boolean hideEnemyNames);
 
+  double getBattleDefaultProximityRadius();
+
+  void setBattleDefaultProximityRadius(double proximityRadius);
+
 	int getBattleDefaultNumberOfRounds();
 
 	void setBattleDefaultNumberOfRounds(int numberOfRounds);
@@ -318,5 +322,6 @@ public interface ISettingsManager {
 			BATTLE_DEFAULT_GUN_COOLING_RATE = "robocode.battle.default.gunCoolingRate",
 			BATTLE_DEFAULT_INACTIVITY_TIME = "robocode.battle.default.inactivityTime",
 			BATTLE_DEFAULT_SENTRY_BORDER_SIZE = "robocode.battle.default.sentryBorderSize",
-			BATTLE_DEFAULT_HIDE_ENEMY_NAMES = "robocode.battle.default.hideEnemyNames";
+			BATTLE_DEFAULT_HIDE_ENEMY_NAMES = "robocode.battle.default.hideEnemyNames",
+      BATTLE_DEFAULT_PROXIMITY_RADIUS = "robocode.battle.default.proximityRadius";
 }

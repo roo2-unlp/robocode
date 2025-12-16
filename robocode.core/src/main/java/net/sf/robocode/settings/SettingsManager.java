@@ -133,6 +133,7 @@ public class SettingsManager implements ISettingsManager {
 	private long battleDefaultInactivityTime = 450;
 	private int battleDefaultSentryBorderSize = 100;
 	private boolean battleDefaultHideEnemyNames = false;
+  private double battleDefaultProximityRadius = 50.0;
 	private int battleDefaultNumberOfRounds = 10;
 
 	private final Properties props = new SortedProperties();
@@ -701,6 +702,15 @@ public class SettingsManager implements ISettingsManager {
 		this.battleDefaultHideEnemyNames = hideEnemyNames;
 		props.setProperty(BATTLE_DEFAULT_HIDE_ENEMY_NAMES, "" + this.battleDefaultHideEnemyNames);
 	}
+
+  public double getBattleDefaultProximityRadius() {
+    return battleDefaultProximityRadius;
+  }
+
+  public void setBattleDefaultProximityRadius(double proximityRadius) {
+    this.battleDefaultProximityRadius = proximityRadius;
+    props.setProperty(BATTLE_DEFAULT_PROXIMITY_RADIUS, "" + this.battleDefaultProximityRadius);
+  }
 
 	public int getBattleDefaultNumberOfRounds() {
 		return battleDefaultNumberOfRounds;
