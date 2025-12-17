@@ -619,7 +619,9 @@ public class NewBattleRulesTab extends JPanel {
 			getInactivityTimeTextField().setText("" + battleProperties.getInactivityTime());
 			getSentryBorderSizeTextField().setText("" + battleProperties.getSentryBorderSize());
 			hideEnemyNamesCheckBox.setSelected(battleProperties.getHideEnemyNames());
+			boolean randomEnable = battleProperties.getRandomWallHitDamage();
 			randomWallHitDamageCheckBox.setSelected(battleProperties.getRandomWallHitDamage());
+			verMinMax(randomEnable);
 			getRandomMinTextField().setText("" + battleProperties.getRandomMin());
 			getRandomMaxTextField().setText("" + battleProperties.getRandomMax());
 		}
