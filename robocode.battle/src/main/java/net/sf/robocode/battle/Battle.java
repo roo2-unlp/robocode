@@ -809,7 +809,17 @@ public final class Battle extends BaseBattle {
 
 		while (placedTraps < count && totalAttempts < count * MAX_ATTEMPTS_PER_TRAP) {
 			int attempts = 0;
-			Optional<Point2D> position = findValidTrapPosition(random, configuredRadius, safeMargin, attempts);
+			Optional<Point2D> position = Optional.empty();
+			while (attempts < MAX_ATTEMPTS_PER_TRAP) {
+				double x = randomDouble(random, safeMargin, battleRules.getBattlefieldWidth() - safeMargin);
+				double y = randomDouble(random, safeMargin, battleRules.getBattlefieldHeight() - safeMargin);
+
+				if (isPositionValid(x, y, configuredRadius)) {
+					position = Optional.of(new Point2D.Double(x, y));
+					break;
+				}
+				attempts++;
+			}
 			totalAttempts += attempts;
 
 			if (position.isPresent()) {
@@ -818,8 +828,7 @@ public final class Battle extends BaseBattle {
 				addTrap(new Trap(p.getX(), p.getY(), configuredRadius, effect));
 				placedTraps++;
 			} else {
-				System.out.println("No se pudo colocar trampa " + (placedTraps + 1) +
-						" sin superposicion despues de " + MAX_ATTEMPTS_PER_TRAP + " intentos.");
+				System.out.println("No se pudo colocar trampa sin superposicion despues de " + MAX_ATTEMPTS_PER_TRAP + " intentos.");
 			}
 			if (totalAttempts >= count * MAX_ATTEMPTS_PER_TRAP) {
 				System.out.println("ADVERTENCIA: Se excedio el limite total de intentos. Terminando generacion de trampas.");
@@ -833,7 +842,7 @@ public final class Battle extends BaseBattle {
 	 * Calcula el margen seguro desde el borde del campo de batalla.
 	 */
 	private double calculateSafeMargin(double configuredRadius) {
-		double safeMarginFromEdge = configuredRadius + RobotPeer.WIDTH + 120;
+		double safeMarginFromEdge = configuredRadius + RobotPeer.WIDTH;
 		double fieldWidth = battleRules.getBattlefieldWidth();
 		double fieldHeight = battleRules.getBattlefieldHeight();
 
@@ -843,26 +852,6 @@ public final class Battle extends BaseBattle {
 			safeMarginFromEdge = Math.min(fieldWidth, fieldHeight) * 0.25;
 		}
 		return safeMarginFromEdge;
-	}
-
-	/**
-	 * Intenta encontrar una posicion valida para una nueva trampa.
-	 * Retorna un Optional con las coordenadas si se encuentra una posicion valida.
-	 */
-	private Optional<Point2D> findValidTrapPosition(Random random, double newTrapRadius, double safeMargin, int attempts) {
-		double fieldWidth = battleRules.getBattlefieldWidth();
-		double fieldHeight = battleRules.getBattlefieldHeight();
-
-		while (attempts++ < MAX_ATTEMPTS_PER_TRAP) {
-			// Genera coordenadas dentro del margen seguro
-			double x = randomDouble(random, safeMargin, fieldWidth - safeMargin);
-			double y = randomDouble(random, safeMargin, fieldHeight - safeMargin);
-
-			if (isPositionValid(x, y, newTrapRadius)) {
-				return Optional.of(new Point2D.Double(x, y));
-			}
-		}
-		return Optional.empty(); // No se encontro una posicion valida
 	}
 
 	/**
