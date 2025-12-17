@@ -593,7 +593,7 @@ public class NewBattleRulesTab extends JPanel {
 				battleProperties.setInactivityTime(450);
 				battleProperties.setHideEnemyNames(false);
 				battleProperties.setSentryBorderSize(100);
-				battleProperties.setRandomWallHitDamage(false); //cuando se restaura a default vuelve a falso
+				battleProperties.setRandomWallHitDamage(false);
 				verMinMax(false);
 				battleProperties.setRandomMin(50);
 				battleProperties.setRandomMax(150);

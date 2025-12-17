@@ -32,6 +32,7 @@ import robocode.control.events.BattleResumedEvent;
 import robocode.control.events.IBattleListener;
 
 import java.io.*;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -150,14 +151,10 @@ public class BattleManager implements IBattleManager {
 		Battle realBattle = Container.createComponent(Battle.class);
 		realBattle.setup(battlingRobotsList, battleProperties, isPaused());
 		/*
-		aca definir la estrategia, asi battle solo hace el setStrategy
-		realBattle.setStrategy (elegir estrategia si es null o si es concreta
+		realBattle.setStrategy (elegir estrategia si es concreta o si es null)
 		 */
-		if (battleProperties.getRandomWallHitDamage()) {
-			realBattle.setStrategy(new RandomWallHitDamageStrategy(battleProperties.getRandomMin(), battleProperties.getRandomMax()));
-		} else {
-			realBattle.setStrategy(new NullWallHitDamageStrategy());
-		}
+		realBattle.setStrategy(battleProperties.getRandomWallHitDamage() ? new RandomWallHitDamageStrategy(battleProperties.getRandomMin(), battleProperties.getRandomMax()) : new NullWallHitDamageStrategy());
+
 
 
 		battle = realBattle;
