@@ -1139,7 +1139,7 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 			}
 
 			if(!RobocodeProperties.isTestingOn())
-				prin tln("Daño extra: " + extraWallDamage);
+				println("Daño extra: " + extraWallDamage);
 			// Update energy, but do not reset inactiveTurnCount
 			if (statics.isAdvancedRobot()) {
 				setEnergy(energy - Rules.getWallHitDamage(velocity, extraWallDamage), false); // enviar parametro distinto
