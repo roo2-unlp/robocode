@@ -35,6 +35,7 @@ import robocode.control.snapshot.BulletState;
 import robocode.control.snapshot.ITurnSnapshot;
 import robocode.robotinterfaces.IBasicRobot;
 
+import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
@@ -368,7 +369,7 @@ public final class Battle extends BaseBattle {
 				robotObjects.add(robotPeer.getRobotObject());
 			}
 		}
-		// 1. Convertir la lista de Trap a TrapSnapshot
+
 		List<TrapSnapshot> trapSnapshots = buildTrapSnapshots();
 		ITurnSnapshot snapshot =
 				new TurnSnapshot(this, robots, bullets, trapSnapshots, false, battleRules.getBattlefieldHeight());
@@ -782,88 +783,133 @@ public final class Battle extends BaseBattle {
 			initialRobotSetups[i] = new RobotSetup(x, y, heading);
 		}
 	}
-	//para que ande el random de la trampa
+
 	private double randomDouble(Random random, double min, double max) {
 		return min + random.nextDouble() * (max - min);
 	}
-
-	//trampas
 	public ArrayList<Trap> getTraps() {
 		return (ArrayList<Trap>) traps;
 	}
 	private void addTrap(Trap trap) {
 		traps.add(trap);
 	}
-	private void generateTraps() {
-		Random random = RandomFactory.getRandom();
+	private static final int MAX_ATTEMPTS_PER_TRAP = 100;
+	/**
+	 * Genera y coloca las trampas en el campo de batalla de acuerdo a las reglas.
+	 */
+	public void generateTraps() {
 
+		Random random = RandomFactory.getRandom();
 		int count = battleRules.getTrapCount();
 		double configuredRadius = battleRules.getTrapRadius();
-		double configuredDamage = battleRules.getTrapDamage();
+		double safeMargin = calculateSafeMargin(configuredRadius);
 
+		int placedTraps = 0;
+		int totalAttempts = 0;
+
+		while (placedTraps < count && totalAttempts < count * MAX_ATTEMPTS_PER_TRAP) {
+			int attempts = 0;
+			Optional<Point2D> position = findValidTrapPosition(random, configuredRadius, safeMargin, attempts);
+			totalAttempts += attempts;
+
+			if (position.isPresent()) {
+				Point2D p = position.get();
+				ITrapEffect effect = createTrapEffect();
+				addTrap(new Trap(p.getX(), p.getY(), configuredRadius, effect));
+				placedTraps++;
+			} else {
+				System.out.println("No se pudo colocar trampa " + (placedTraps + 1) +
+						" sin superposicion despues de " + MAX_ATTEMPTS_PER_TRAP + " intentos.");
+			}
+			if (totalAttempts >= count * MAX_ATTEMPTS_PER_TRAP) {
+				System.out.println("ADVERTENCIA: Se excedio el limite total de intentos. Terminando generacion de trampas.");
+				break;
+			}
+		}
+		logGeneratedTraps();
+	}
+
+	/**
+	 * Calcula el margen seguro desde el borde del campo de batalla.
+	 */
+	private double calculateSafeMargin(double configuredRadius) {
 		double safeMarginFromEdge = configuredRadius + RobotPeer.WIDTH + 120;
-		
 		double fieldWidth = battleRules.getBattlefieldWidth();
 		double fieldHeight = battleRules.getBattlefieldHeight();
-		
+
 		if (fieldWidth < safeMarginFromEdge * 2 || fieldHeight < safeMarginFromEdge * 2) {
-			System.out.println("ADVERTENCIA: Campo muy pequeno para trampas seguras, reduciendo margen");
+			System.out.println("ADVERTENCIA: Campo muy pequeno para trampas seguras, reduciendo margen.");
+			// Ajusta el margen al 25% del lado más pequeño del campo.
 			safeMarginFromEdge = Math.min(fieldWidth, fieldHeight) * 0.25;
 		}
+		return safeMarginFromEdge;
+	}
 
-		int intentos = 0;
-		int maxIntentosPorTrampa = 100;
-		
-		for (int i = 0; i < count && intentos < count * maxIntentosPorTrampa; i++) {
-			boolean posicionValida = false;
-			double x = 0, y = 0;
-			
-			for (int intento = 0; intento < maxIntentosPorTrampa && !posicionValida; intento++) {
-				intentos++;
-				
-				double radius = configuredRadius;
-				double damage = configuredDamage;
+	/**
+	 * Intenta encontrar una posicion valida para una nueva trampa.
+	 * Retorna un Optional con las coordenadas si se encuentra una posicion valida.
+	 */
+	private Optional<Point2D> findValidTrapPosition(Random random, double newTrapRadius, double safeMargin, int attempts) {
+		double fieldWidth = battleRules.getBattlefieldWidth();
+		double fieldHeight = battleRules.getBattlefieldHeight();
 
-				x = randomDouble(random, safeMarginFromEdge, fieldWidth - safeMarginFromEdge);
-				y = randomDouble(random, safeMarginFromEdge, fieldHeight - safeMarginFromEdge);
+		while (attempts++ < MAX_ATTEMPTS_PER_TRAP) {
+			// Genera coordenadas dentro del margen seguro
+			double x = randomDouble(random, safeMargin, fieldWidth - safeMargin);
+			double y = randomDouble(random, safeMargin, fieldHeight - safeMargin);
 
-				posicionValida = true;
-				for (Trap trampaExistente : traps) {
-					double distancia = Math.sqrt(
-						Math.pow(x - trampaExistente.getX(), 2) + 
-						Math.pow(y - trampaExistente.getY(), 2)
-					);
-					
-					double distanciaMinima = radius + trampaExistente.getRadius() + 80;
-					
-					if (distancia < distanciaMinima) {
-						posicionValida = false;
-						break;
-					}
-				}
-			}
-			
-			if (posicionValida) {
-				String trapEffect = battleRules.getTrapEffect();
-				ITrapEffect effect;
-				//revisar como mejorar esto
-				//nuevo tipo de efecto, agregar  aca
-				if ("Sticky".equals(trapEffect)) {
-					double slow = battleRules.getTrapSlowFactor();
-					slow = Math.max(0.1, Math.min(0.9, slow));
-					System.out.println("=======================Slow factor: " + slow);
-					effect = new StickyEffect(slow, 50);
-				} else {
-					effect = new DamageEffect(configuredDamage, 10);
-				}
-				
-				addTrap(new Trap(x, y, configuredRadius, effect));
-			} else {
-				System.out.println("No se pudo colocar trampa " + (i + 1) + " sin superposicion despues de " + maxIntentosPorTrampa + " intentos");
-				i--;
+			if (isPositionValid(x, y, newTrapRadius)) {
+				return Optional.of(new Point2D.Double(x, y));
 			}
 		}
+		return Optional.empty(); // No se encontro una posicion valida
+	}
 
+	/**
+	 * Verifica si la posicion (x, y) es valida (no se superpone con trampas existentes).
+	 */
+	private boolean isPositionValid(double x, double y, double newTrapRadius) {
+		final int MIN_SEPARATION_MARGIN = 80;
+		for (Trap existingTrap : traps) {
+			double requiredMinDistance = newTrapRadius + existingTrap.getRadius() + MIN_SEPARATION_MARGIN;
+			double actualDistance = calculateDistance(x, y, existingTrap.getX(), existingTrap.getY());
+
+			if (actualDistance < requiredMinDistance) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Calcula la distancia euclidiana entre dos puntos.
+	 */
+	private double calculateDistance(double x1, double y1, double x2, double y2) {
+		return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+	}
+	/**
+	 * Factory Method: Crea el efecto de trampa basado en la configuracion.
+ 	*/
+	private ITrapEffect createTrapEffect() {
+		String trapEffect = battleRules.getTrapEffect();
+
+		switch (trapEffect) {
+			case "Sticky":
+				double slow = battleRules.getTrapSlowFactor();
+				slow = Math.max(0.1, Math.min(0.9, slow));
+
+				return new StickyEffect(slow, 50);
+
+			case "Damage":
+			default:
+				double configuredDamage = battleRules.getTrapDamage();
+				return new DamageEffect(configuredDamage, 10);
+		}
+	}
+	/**
+	 * Imprime el log de las trampas generadas.
+	 */
+	private void logGeneratedTraps() {
 		System.out.println("=== TRAMPAS GENERADAS: " + this.getTraps().size() + " ===");
 		for (Trap t : this.getTraps()) {
 			System.out.println("TRAMPA -> x=" + String.format("%.1f", t.getX()) +
