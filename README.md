@@ -16,7 +16,7 @@
 
 ---
 
-## Actividades realizadas
+## Configuración
 
 Para poder ejecutar el programa si se utiliza **Intellij**, se debe configurar **JDK 1.8**
 El programa se ejecuta mediante una configuración **Run** de Gradle con la tarea **build**
@@ -26,17 +26,18 @@ Tener en cuenta que si se realiza cualquier modificación y se quiere compilar, 
 
 ---
 
-Funcionalidades:
+## Funcionalidades
 * Para que el proyecto funcione se agregaron a nivel interfaz un checkbox de la nueva opcion que puede tener valores true(en el caso de que este seleccionada) y false(cuando no se quiere ejecutar esta opcion)
 Cuando la opcion esta en true se pueden establecer los valores minimos y maximos de los turnos en los que la opcion random va a volver a tirar el dado.
 * En la clase robotPeer se agrego...
-* Existen 2 estrategias relacionadas a las opciones: si es false la estrategia es nula, es decir que multiplicara por 1(el nulo en multiplicación) y en el momento de inicializar no hara nada.
-Con respecto a la opción cuando esta en true, se aplicara la RandomWallHitDamageStrategy(es decir la estrategia que establece: un tiempo random en el que se tirará el dado, y un dado que tiene valores de 1 a 6, tambien random)
-NullHitDamageStrategy:
---Agregar la imagen de la interfaz sin clickear, mostrar en el menu de la consola y consola del robot que aparece que esta en false y que no altera el comportamiento
-RandomHitDamageStrategy:
---Agregar la imagen de la interfaz en la que esta seleccionada y aparecen el min y max, mostrar los mensajes cuando esta vacio, cuando el max es menor al min y ver si falta alguno mas.
-Mostrar consola del robot velocity o interactive y comparar con la consola del menu en donde se ve el valor que tira el dado y que el valor coincide con la multiplicacion del golpe del robot
-Test:
---Se genera TestRandomHitDamageStrategy para validar el uso de las implementaciones de la interfaz: NullHitDamageStrategy y RandomHitDamageStrategy
 * 
+
+## Patrones
+Se implemento el Patrón Strategy y el Null Object
+- **WallHitDamageStrategy (Strategy)**: define los metodos que deben implementar las distintas estrategias
+- **NullHitDamageStrategy (Null Object)**: representa una estrategia nula, no aplica modificaciones al daño.
+- **RandomHitDamageStrategy (Concrete Strategy)**: se utiliza cuando la opción está habilitada. Define intervalo de tiempo aleatorio en el que se lanzan los dados(los dados tienen valores de 1 al 6).
+---
+
+## Test
+* Se genera TestRandomHitDamageStrategy para validar el uso de las implementaciones de la interfaz: NullHitDamageStrategy y RandomHitDamageStrategy
