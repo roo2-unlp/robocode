@@ -20,14 +20,9 @@ public class RandomWallHitDamageStrategy implements WallHitDamageStrategy {
 	public int getExtraWallDamage() {
 		tiempoTranscurrido++;
 		if (tiempoTranscurrido >= intervaloDado){
-			//aca tiro los dados
 			tiempoTranscurrido = 0;
 			intervaloDado = rangoRandom(dadoRandom, minRandom, maxRandom);
 			extraWallDamage = getDiceExtraWallDamage();
-			//if (!RobocodeProperties.isTestingOn()){
-			Logger.logMessage("este es el intervalo de tiempo " + intervaloDado);
-			Logger.logMessage("este es el valor del dado " + extraWallDamage);
-			//}
 		}
 		return extraWallDamage;
 	}
