@@ -556,6 +556,21 @@ public class BattleView extends Canvas {
 		return robotGraphics[robotIndex];
 	}
 
+	private void drawProximityCircle(Graphics2D g, double centerX, double centerY, double radius, Color color, float alpha) {
+
+		Shape circle = new Ellipse2D.Double(centerX - radius, centerY - radius, radius * 2, radius * 2);
+
+		Composite savedComposite = g.getComposite();
+		Color savedColor = g.getColor();
+
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+		g.setColor(color);
+		g.fill(circle);
+
+		g.setComposite(savedComposite);
+		g.setColor(savedColor);
+	}
+
 	private void drawBullets(Graphics2D g, ITurnSnapshot snapShot) {
 		final Shape savedClip = g.getClip();
 
@@ -569,6 +584,13 @@ public class BattleView extends Canvas {
 
 			AffineTransform at = AffineTransform.getTranslateInstance(x, y);
 
+			Color bulletColor;
+			if (properties.getOptionsRenderingForceBulletColor()) {
+				bulletColor = Color.WHITE;
+			} else {
+				bulletColor = new Color(bulletSnapshot.getColor());
+			}
+
 			if (bulletSnapshot.getState().isActive()) {
 
 				// radius = sqrt(x^2 / 0.1 * power), where x is the width of 1 pixel for a minimum 0.1 bullet
@@ -577,13 +599,7 @@ public class BattleView extends Canvas {
 				at.scale(scale, scale);
 				Area bulletArea = BULLET_AREA.createTransformedArea(at);
 
-				Color bulletColor;
 
-				if (properties.getOptionsRenderingForceBulletColor()) {
-					bulletColor = Color.WHITE;
-				} else {
-					bulletColor = new Color(bulletSnapshot.getColor());
-				}
 				g.setColor(bulletColor);
 				g.fill(bulletArea);
 
@@ -591,31 +607,29 @@ public class BattleView extends Canvas {
 				int explosionIndex = bulletSnapshot.getExplosionImageIndex();
 				int frame = bulletSnapshot.getFrame();
 
-				// Sanity check to avoid bug-354 - Replaying an XML record can cause an ArrayIndexOutOfBoundsException
 				if (explosionIndex >= 0 && frame >= 0) {
+
+					double maxRadius = bulletSnapshot.getProximityRadius();
+
+					int maxFrames = 16;
+					double progress = Math.min(1.0, frame / (double) maxFrames);
+
+					double currentRadius = maxRadius * progress;
+					float alpha = (float) (0.4 * Math.pow((1.0 - progress),1.2));
+
+					drawProximityCircle(g, x, y, currentRadius, bulletColor, alpha);
+
 					if (!bulletSnapshot.isExplosion()) {
-						double scale;
-						double prox = 0.0;
-						try {
-							prox = bulletSnapshot.getProximityRadius();
-						} catch (Throwable t) {
-							prox = 0.0;
-						}
-						if (prox > 0.0) {
-							// Scale explosion so that its radius equals proximityRadius.
-							// Base explosion sprite radius is 128 units.
-							scale = prox / 128.0;
-						} else {
-							// Default: scale based on bullet power
-							scale = sqrt(1000 * bulletSnapshot.getPower()) / 128;
-						}
+						double scale = Math.sqrt(1000 * bulletSnapshot.getPower()) / 128;
 						at.scale(scale, scale);
 					}
+
 					RenderImage explosionRenderImage = imageManager.getExplosionRenderImage(explosionIndex, frame);
 					explosionRenderImage.setTransform(at);
 					explosionRenderImage.paint(g);
 				}
 			}
+
 		}
 		g.setClip(savedClip);
 	}
@@ -682,22 +696,7 @@ public class BattleView extends Canvas {
 		double x = bulletSnapshot.getPaintX();
 		double y = battleField.getHeight() - bulletSnapshot.getPaintY();
 
-		double radius = bulletSnapshot.getProximityRadius();
-
-		Shape circle = new Ellipse2D.Double(
-				x - radius,
-				y - radius,
-				radius * 2,
-				radius * 2
-		);
-
-		final Composite saved = g.getComposite();
-
-		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
-		g.setColor(new Color(bulletSnapshot.getColor(), true));
-		g.fill(circle);
-
-		g.setComposite(saved);
+		drawProximityCircle(g, x, y, bulletSnapshot.getProximityRadius(), new Color(bulletSnapshot.getColor(), true), 0.2f);
 	}
 
 	private void paintRobocodeLogo(Graphics2D g) {
