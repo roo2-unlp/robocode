@@ -12,19 +12,19 @@ import java.util.List;
 import java.util.Set;
 
 import robocode.BattleRules;
-import robocode.RadioactiveBullet;
+import robocode.ProximityBullet;
 
 /**
  * @author Facu
  */
-public class RadioactiveBulletPeer extends BulletPeer {
+public class ProximityBulletPeer extends BulletPeer {
   private double currentRadius;
   // Track robots that were inside the proximity radius in the previous frame
   private final Set<RobotPeer> robotsInsideRadius = new HashSet<RobotPeer>();
 
-  public RadioactiveBulletPeer(RobotPeer owner, BattleRules battleRules, int bulletId) {
+  public ProximityBulletPeer(RobotPeer owner, BattleRules battleRules, int bulletId) {
     super(owner, battleRules, bulletId);
-    // Use a larger radius to match the RadioactiveBullet creation in
+    // Use a larger radius to match the ProximityBullet creation in
     // BasicRobotProxy
     // and ensure better detection
     this.currentRadius = 0; // Default proximity radius
@@ -37,15 +37,15 @@ public class RadioactiveBulletPeer extends BulletPeer {
 
   @Override
   protected void checkRobotCollision(List<RobotPeer> robots) {
-    // For radioactive bullets, we use proximity detection instead of normal
+    // For Proximity bullets, we use proximity detection instead of normal
     // collision
     // This method is called from super.update(), so we only check proximity
     triggerProximityHits(robots);
   }
 
   @Override
-  protected RadioactiveBullet instantiateBullet(String ownerName, String victimName, boolean isActive) {
-    return new RadioactiveBullet(
+  protected ProximityBullet instantiateBullet(String ownerName, String victimName, boolean isActive) {
+    return new ProximityBullet(
         getHeading(),
         getX(),
         getY(),

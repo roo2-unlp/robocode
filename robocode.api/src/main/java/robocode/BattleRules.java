@@ -28,9 +28,9 @@ import net.sf.robocode.security.IHiddenRulesHelper;
 public final class BattleRules implements java.io.Serializable {
 	private static class HiddenHelper implements IHiddenRulesHelper {
 
-		public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, double radioactiveBulletProximityRadius) {
+		public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, double proximityBulletProximityRadius) {
 			return new BattleRules(battlefieldWidth, battlefieldHeight, numRounds, gunCoolingRate, inactivityTime,
-					hideEnemyNames, sentryBorderSize, radioactiveBulletProximityRadius);
+					hideEnemyNames, sentryBorderSize, proximityBulletProximityRadius);
 		}
 	}
 
@@ -47,10 +47,10 @@ public final class BattleRules implements java.io.Serializable {
 
 	private final int sentryBorderSize;
 
-	private final double radioactiveBulletProximityRadius;
+	private final double proximityBulletProximityRadius;
 
 	private BattleRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate,
-			long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, double radioactiveBulletProximityRadius) {
+			long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, double proximityBulletProximityRadius) {
 		this.battlefieldWidth = battlefieldWidth;
 		this.battlefieldHeight = battlefieldHeight;
 		this.numRounds = numRounds;
@@ -58,7 +58,7 @@ public final class BattleRules implements java.io.Serializable {
 		this.inactivityTime = inactivityTime;
 		this.hideEnemyNames = hideEnemyNames;
 		this.sentryBorderSize = sentryBorderSize;
-		this.radioactiveBulletProximityRadius = radioactiveBulletProximityRadius;
+		this.proximityBulletProximityRadius = proximityBulletProximityRadius;
 	}
 
 	/**
@@ -151,13 +151,13 @@ public final class BattleRules implements java.io.Serializable {
 	}
 
 	/**
-	 * Returns the proximity radius for radioactive bullets that defines the distance
-	 * within which robots can be affected by radioactive bullet effects.
+	 * Returns the proximity radius for proximity bullets that defines the distance
+	 * within which robots can be affected by proximity bullet effects.
 	 * The proximity radius is measured in units/pixels from the bullet's position.
 	 * 
-	 * @return the radioactive bullet proximity radius in units/pixels.
+	 * @return the proximity bullet proximity radius in units/pixels.
 	 */
-	public double getRadioactiveBulletProximityRadius() {
-		return radioactiveBulletProximityRadius;
+	public double getProximityBulletProximityRadius() {
+		return proximityBulletProximityRadius;
 	}
 }

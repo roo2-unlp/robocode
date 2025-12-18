@@ -65,7 +65,7 @@ public class NewBattleRulesTab extends JPanel {
 	private final JLabel inactivityTimeLabel = new JLabel("Inactivity Time:");
 	private final JLabel sentryBorderSizeLabel = new JLabel("Sentry Border Size");
 	private final JLabel hideEnemyNamesLabel = new JLabel("Hide Enemy Names:");
-	private final JLabel radioactiveBulletProximityRadiusLabel = new JLabel("Proximity Radius:");
+	private final JLabel proximityBulletProximityRadiusLabel = new JLabel("Proximity Radius:");
 
 	private final JButton restoreDefaultsButton = new JButton("Restore Defaults");
 	
@@ -75,7 +75,7 @@ public class NewBattleRulesTab extends JPanel {
 	private JTextField sentryBorderSizeTextField;
 	private final JCheckBox hideEnemyNamesCheckBox = new JCheckBox();
   
-	private JSlider radioactiveBulletProximityRadiusSlider;
+	private JSlider proximityBulletProximityRadiusSlider;
 	private JSlider battlefieldWidthSlider;
 	private JSlider battlefieldHeightSlider;
 	private JLabel battlefieldSizeLabel;
@@ -205,7 +205,7 @@ public class NewBattleRulesTab extends JPanel {
 		left.addComponent(inactivityTimeLabel);
 		left.addComponent(sentryBorderSizeLabel);
 		left.addComponent(hideEnemyNamesLabel);
-		left.addComponent(radioactiveBulletProximityRadiusLabel);
+		left.addComponent(proximityBulletProximityRadiusLabel);
 		leftToRight.addGroup(left);
 		
 		GroupLayout.ParallelGroup right = layout.createParallelGroup();
@@ -214,7 +214,7 @@ public class NewBattleRulesTab extends JPanel {
 		right.addComponent(getInactivityTimeTextField());
 		right.addComponent(getSentryBorderSizeTextField());
 		right.addComponent(hideEnemyNamesCheckBox);
-		right.addComponent(getRadioactiveBulletProximityRadiusSlider());
+		right.addComponent(getProximityBulletProximityRadiusSlider());
 		leftToRight.addGroup(right);
 		
 		GroupLayout.SequentialGroup topToBottom = layout.createSequentialGroup();
@@ -245,8 +245,8 @@ public class NewBattleRulesTab extends JPanel {
 		topToBottom.addGroup(row4);
 
 		GroupLayout.ParallelGroup row5 = layout.createParallelGroup(Alignment.CENTER);
-		row5.addComponent(radioactiveBulletProximityRadiusLabel);
-		row5.addComponent(getRadioactiveBulletProximityRadiusSlider());
+		row5.addComponent(proximityBulletProximityRadiusLabel);
+		row5.addComponent(getProximityBulletProximityRadiusSlider());
 		topToBottom.addGroup(row5);
 
 		layout.setHorizontalGroup(leftToRight);
@@ -364,17 +364,17 @@ public class NewBattleRulesTab extends JPanel {
 		return sentryBorderSizeTextField;
 	}
 
-	private JSlider getRadioactiveBulletProximityRadiusSlider() {
-		if (radioactiveBulletProximityRadiusSlider == null) {
-			radioactiveBulletProximityRadiusSlider = new JSlider();
-			radioactiveBulletProximityRadiusSlider.setMinimum(10);
-			radioactiveBulletProximityRadiusSlider.setMaximum(120);
-			radioactiveBulletProximityRadiusSlider.setValue((int) battleProperties.getRadioactiveBulletProximityRadius());
-			radioactiveBulletProximityRadiusSlider.setMajorTickSpacing(10);
-			radioactiveBulletProximityRadiusSlider.setMinorTickSpacing(5);
-			radioactiveBulletProximityRadiusSlider.setPaintTicks(true);
+	private JSlider getProximityBulletProximityRadiusSlider() {
+		if (proximityBulletProximityRadiusSlider == null) {
+			proximityBulletProximityRadiusSlider = new JSlider();
+			proximityBulletProximityRadiusSlider.setMinimum(10);
+			proximityBulletProximityRadiusSlider.setMaximum(120);
+			proximityBulletProximityRadiusSlider.setValue((int) battleProperties.getProximityBulletProximityRadius());
+			proximityBulletProximityRadiusSlider.setMajorTickSpacing(10);
+			proximityBulletProximityRadiusSlider.setMinorTickSpacing(5);
+			proximityBulletProximityRadiusSlider.setPaintTicks(true);
 		}
-		return radioactiveBulletProximityRadiusSlider;
+		return proximityBulletProximityRadiusSlider;
   }
 
 	private JSlider createBattlefieldSizeSlider() {
@@ -457,9 +457,9 @@ public class NewBattleRulesTab extends JPanel {
 			boolean hideEnemyNames = hideEnemyNamesCheckBox.isSelected();
 			settingsManager.setBattleDefaultHideEnemyNames(hideEnemyNames);
 			battleProperties.setHideEnemyNames(hideEnemyNames);
-			double proximityRadius = getRadioactiveBulletProximityRadiusSlider().getValue();
+			double proximityRadius = getProximityBulletProximityRadiusSlider().getValue();
       settingsManager.setBattleDefaultProximityRadius(proximityRadius);
-      battleProperties.setRadioactiveBulletProximityRadius(proximityRadius);
+      battleProperties.setProximityBulletProximityRadius(proximityRadius);
 			int weight = battlefieldWidthSlider.getValue();
 			int height = battlefieldHeightSlider.getValue();
 
@@ -489,7 +489,7 @@ public class NewBattleRulesTab extends JPanel {
 				battleProperties.setInactivityTime(450);
 				battleProperties.setHideEnemyNames(false);
 				battleProperties.setSentryBorderSize(100);
-				battleProperties.setRadioactiveBulletProximityRadius(robocode.Rules.DEFAULT_PROXIMITY_RADIUS);
+				battleProperties.setProximityBulletProximityRadius(robocode.Rules.DEFAULT_PROXIMITY_RADIUS);
 
 				pushBattlePropertiesToUIComponents();
 			}
@@ -511,7 +511,7 @@ public class NewBattleRulesTab extends JPanel {
 			getGunCoolingRateTextField().setText("" + battleProperties.getGunCoolingRate());
 			getInactivityTimeTextField().setText("" + battleProperties.getInactivityTime());
 			getSentryBorderSizeTextField().setText("" + battleProperties.getSentryBorderSize());
-			getRadioactiveBulletProximityRadiusSlider().setValue((int) battleProperties.getRadioactiveBulletProximityRadius());
+			getProximityBulletProximityRadiusSlider().setValue((int) battleProperties.getProximityBulletProximityRadius());
 			hideEnemyNamesCheckBox.setSelected(battleProperties.getHideEnemyNames());
 		}
 	}

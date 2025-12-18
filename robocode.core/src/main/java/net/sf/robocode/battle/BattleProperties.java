@@ -39,7 +39,7 @@ public class BattleProperties implements Serializable {
 			BATTLE_SELECTEDROBOTS = "robocode.battle.selectedRobots",
 			BATTLE_INITIAL_POSITIONS = "robocode.battle.initialPositions",
 			BATTLE_SENTRY_BORDER_SIZE = "robocode.battle.sentryBorderSize",
-			BATTLE_RADIOACTIVE_PROXIMITY_RADIUS = "robocode.battle.radioactiveProximityRadius";
+			BATTLE_PROXIMITY_RADIUS = "robocode.battle.ProximityRadius";
 
 	private int battlefieldWidth = 800;
 	private int battlefieldHeight = 600;
@@ -48,7 +48,7 @@ public class BattleProperties implements Serializable {
 	private long inactivityTime = 450;
 	private boolean hideEnemyNames = false;
 	private int sentryBorderSize = 100;
-	private double radioactiveBulletProximityRadius = robocode.Rules.DEFAULT_PROXIMITY_RADIUS;
+	private double proximityBulletProximityRadius = robocode.Rules.DEFAULT_PROXIMITY_RADIUS;
 	private String selectedRobots;
 	private String initialPositions;
 
@@ -65,7 +65,7 @@ public class BattleProperties implements Serializable {
 		inactivityTime = properties.getBattleDefaultInactivityTime();
 		hideEnemyNames = properties.getBattleDefaultHideEnemyNames();
 		sentryBorderSize = properties.getBattleDefaultSentryBorderSize();
-		radioactiveBulletProximityRadius = robocode.Rules.DEFAULT_PROXIMITY_RADIUS;
+		proximityBulletProximityRadius = robocode.Rules.DEFAULT_PROXIMITY_RADIUS;
 	}
 
 	/**
@@ -331,13 +331,13 @@ public class BattleProperties implements Serializable {
 		props.setProperty(BATTLE_SENTRY_BORDER_SIZE, "" + sentryBorderSize);
 	}
 
-	public double getRadioactiveBulletProximityRadius() {
-		return radioactiveBulletProximityRadius;
+	public double getProximityBulletProximityRadius() {
+		return proximityBulletProximityRadius;
 	}
 
-	public void setRadioactiveBulletProximityRadius(double radius) {
-		this.radioactiveBulletProximityRadius = radius;
-		props.setProperty(BATTLE_RADIOACTIVE_PROXIMITY_RADIUS, "" + radius);
+	public void setProximityBulletProximityRadius(double radius) {
+		this.proximityBulletProximityRadius = radius;
+		props.setProperty(BATTLE_PROXIMITY_RADIUS, "" + radius);
 	}
 
 	public void store(FileOutputStream out, String desc) throws IOException {
@@ -355,6 +355,6 @@ public class BattleProperties implements Serializable {
 		selectedRobots = props.getProperty(BATTLE_SELECTEDROBOTS, "");
 		initialPositions = props.getProperty(BATTLE_INITIAL_POSITIONS, "");
 		sentryBorderSize = Integer.parseInt(props.getProperty(BATTLE_SENTRY_BORDER_SIZE, "100"));
-		radioactiveBulletProximityRadius = Double.parseDouble(props.getProperty(BATTLE_RADIOACTIVE_PROXIMITY_RADIUS, "" + robocode.Rules.DEFAULT_PROXIMITY_RADIUS));
+		proximityBulletProximityRadius = Double.parseDouble(props.getProperty(BATTLE_PROXIMITY_RADIUS, "" + robocode.Rules.DEFAULT_PROXIMITY_RADIUS));
 	}
 }

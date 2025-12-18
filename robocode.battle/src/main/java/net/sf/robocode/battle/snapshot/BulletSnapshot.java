@@ -71,7 +71,7 @@ public final class BulletSnapshot implements java.io.Serializable, IXmlSerializa
 
 	private double heading;
 
-	/** Proximity radius for special bullets (e.g., RadioactiveBullet); 0 if not applicable */
+	/** Proximity radius for special bullets (e.g., ProximityBullet); 0 if not applicable */
 	private double proximityRadius;
 
 	/**

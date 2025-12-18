@@ -35,7 +35,7 @@ import robocode.Bullet;
 import robocode.Condition;
 import robocode.Event;
 import robocode.PaintEvent;
-import robocode.RadioactiveBullet;
+import robocode.ProximityBullet;
 import robocode.RobotStatus;
 import robocode.Rules;
 import robocode.ScannedRobotEvent;
@@ -45,7 +45,7 @@ import robocode.exception.DeathException;
 import robocode.exception.DisabledException;
 import robocode.exception.RobotException;
 import robocode.exception.WinException;
-import robocode.robotinterfaces.peer.IRadioactiveRobotPeer;
+import robocode.robotinterfaces.peer.IProximityRobotPeer;
 import robocode.util.Utils;
 
 
@@ -53,7 +53,7 @@ import robocode.util.Utils;
  * @author Pavel Savara (original)
  * @author Flemming N. Larsen (contributor)
  */
-public class BasicRobotProxy extends HostingRobotProxy implements IRadioactiveRobotPeer {
+public class BasicRobotProxy extends HostingRobotProxy implements IProximityRobotPeer {
 	private static final long
 			MAX_SET_CALL_COUNT = 10000,
 			MAX_GET_CALL_COUNT = 10000;
@@ -119,9 +119,9 @@ public class BasicRobotProxy extends HostingRobotProxy implements IRadioactiveRo
 		return fireImpl(power, false);
 	}
 
-	public RadioactiveBullet setFireRadioactive(double power) {
+	public ProximityBullet setFireProximity(double power) {
 		setCall();
-		return (RadioactiveBullet) fireImpl(power, true);
+		return (ProximityBullet) fireImpl(power, true);
 	}
 
 	// blocking actions
@@ -157,8 +157,8 @@ public class BasicRobotProxy extends HostingRobotProxy implements IRadioactiveRo
 		return bullet;
 	}
 
-	public RadioactiveBullet fireRadioactiveBullet(double power) {
-		RadioactiveBullet bullet = setFireRadioactive(power);
+	public ProximityBullet fireProximityBullet(double power) {
+		ProximityBullet bullet = setFireProximity(power);
 
 		execute();
 		return bullet;
@@ -532,9 +532,9 @@ public class BasicRobotProxy extends HostingRobotProxy implements IRadioactiveRo
 		return status.getGunHeat() + firedHeat;
 	}
 
-	private final Bullet fireImpl(double power, boolean isRadioactive) {
+	private final Bullet fireImpl(double power, boolean isProximity) {
 		if (Double.isNaN(power)) {
-			println("SYSTEM: You cannot call " + (isRadioactive ? "fireRadioactive" : "fire") + "(NaN)");
+			println("SYSTEM: You cannot call " + (isProximity ? "fireProximity" : "fire") + "(NaN)");
 			return null;
 		}
 		if (getGunHeatImpl() > 0 || getEnergyImpl() == 0) {
@@ -546,7 +546,7 @@ public class BasicRobotProxy extends HostingRobotProxy implements IRadioactiveRo
 
 		power = min(getEnergyImpl(), min(max(power, minPower), maxPower));
 
-    double battleRuleRadius = statics.getBattleRules().getRadioactiveBulletProximityRadius();
+    double battleRuleRadius = statics.getBattleRules().getProximityBulletProximityRadius();
     double minPR = Rules.MIN_PROXIMITY_RADIUS;
 		double maxPR = Rules.MAX_PROXIMITY_RADIUS;
 		
@@ -566,22 +566,22 @@ public class BasicRobotProxy extends HostingRobotProxy implements IRadioactiveRo
 			ScannedRobotEvent e = (ScannedRobotEvent) currentTopEvent;
 			double fireAssistAngle = Utils.normalAbsoluteAngle(status.getHeadingRadians() + e.getBearingRadians());
 
-			if (isRadioactive) {
-				bullet = new RadioactiveBullet(fireAssistAngle, getX(), getY(), power, statics.getName(), null, true, nextBulletId, proximityRadius);
+			if (isProximity) {
+				bullet = new ProximityBullet(fireAssistAngle, getX(), getY(), power, statics.getName(), null, true, nextBulletId, proximityRadius);
 			} else {
 				bullet = new Bullet(fireAssistAngle, getX(), getY(), power, statics.getName(), null, true, nextBulletId);
 			}
-			wrapper = new BulletCommand(power, true, fireAssistAngle, nextBulletId, proximityRadius, isRadioactive);
+			wrapper = new BulletCommand(power, true, fireAssistAngle, nextBulletId, proximityRadius, isProximity);
 		} else {
 			// this is normal bullet
-			if (isRadioactive) {
-				bullet = new RadioactiveBullet(status.getGunHeadingRadians(), getX(), getY(), power, statics.getName(), null, true,
+			if (isProximity) {
+				bullet = new ProximityBullet(status.getGunHeadingRadians(), getX(), getY(), power, statics.getName(), null, true,
 						nextBulletId, proximityRadius);
 			} else {
 				bullet = new Bullet(status.getGunHeadingRadians(), getX(), getY(), power, statics.getName(), null, true,
 						nextBulletId);
 			}
-			wrapper = new BulletCommand(power, false, 0, nextBulletId, proximityRadius, isRadioactive);
+			wrapper = new BulletCommand(power, false, 0, nextBulletId, proximityRadius, isProximity);
 		}
 
 		firedEnergy += power;

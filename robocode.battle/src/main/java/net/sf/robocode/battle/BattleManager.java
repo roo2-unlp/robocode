@@ -104,7 +104,7 @@ public class BattleManager implements IBattleManager {
 		battleProperties.setNumRounds(spec.getNumRounds());
 		battleProperties.setHideEnemyNames(spec.getHideEnemyNames());
 		battleProperties.setSentryBorderSize(spec.getSentryBorderSize());
-		battleProperties.setRadioactiveBulletProximityRadius(spec.getRadioactiveBulletProximityRadius());
+		battleProperties.setProximityBulletProximityRadius(spec.getProximityBulletProximityRadius());
 		battleProperties.setSelectedRobots(spec.getRobots());
 
 		final RobotSetup[] initialSetups = spec.getInitialSetups();

@@ -34,7 +34,7 @@ public class BulletCommand implements Serializable {
 			serializer.serialize(buffer, obj.fireAssistAngle);
 			serializer.serialize(buffer, obj.bulletId);
 			serializer.serialize(buffer, obj.proximityRadius);
-      		serializer.serialize(buffer, obj.isRadioactive);
+      		serializer.serialize(buffer, obj.isProximity);
 		}
 
 		public Object deserialize(RbSerializer serializer, ByteBuffer buffer) {
@@ -43,9 +43,9 @@ public class BulletCommand implements Serializable {
 			double fireAssistAngle = buffer.getDouble();
 			int bulletId = buffer.getInt();
 			double proximityRadius = buffer.getDouble();
-      		boolean isRadioactive = serializer.deserializeBoolean(buffer);
+      		boolean isProximity = serializer.deserializeBoolean(buffer);
 
-			return new BulletCommand(power, fireAssistValid, fireAssistAngle, bulletId, proximityRadius, isRadioactive);
+			return new BulletCommand(power, fireAssistValid, fireAssistAngle, bulletId, proximityRadius, isProximity);
 		}
 	}
 
@@ -60,19 +60,19 @@ public class BulletCommand implements Serializable {
 	private final int bulletId;
 
 	private final double proximityRadius;
-	private final boolean isRadioactive;
+	private final boolean isProximity;
 
-	public BulletCommand(double power, boolean fireAssistValid, double fireAssistAngle, int bulletId,double proximityRadius, boolean isRadioactive) {
+	public BulletCommand(double power, boolean fireAssistValid, double fireAssistAngle, int bulletId,double proximityRadius, boolean isProximity) {
 		this.fireAssistValid = fireAssistValid;
 		this.fireAssistAngle = fireAssistAngle;
 		this.bulletId = bulletId;
 		this.power = power;
 		this.proximityRadius = proximityRadius;
-		this.isRadioactive = isRadioactive;
+		this.isProximity = isProximity;
 	}
 
-	public boolean isRadioactive() {
-		return isRadioactive;
+	public boolean isProximity() {
+		return isProximity;
 	}
 
 	public boolean isFireAssistValid() {

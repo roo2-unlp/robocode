@@ -60,22 +60,12 @@ public final class Rules {
 	 */
 	public static final double MAX_BULLET_POWER = 3;
 
-	/**
-	 * The minimum radioactive bullet power.
-	 */
-	public static final double MIN_RADIOACTIVE_BULLET_POWER = 0.1;
-
-	/**
-	 * The maximum radioactive bullet power.
-	 */
-	public static final double MAX_RADIOACTIVE_BULLET_POWER = 3;
-
 	public static final double MIN_PROXIMITY_RADIUS = 10;
 
 	public static final double MAX_PROXIMITY_RADIUS = 120;
 
 	/**
-	 * The default proximity radius used for radioactive bullets when no radius is specified.
+	 * The default proximity radius used for Proximity bullets when no radius is specified.
 	 */
 	public static final double DEFAULT_PROXIMITY_RADIUS = 50;
 

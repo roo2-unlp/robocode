@@ -7,26 +7,26 @@
  */
 package robocode;
 
-import robocode.robotinterfaces.peer.IRadioactiveRobotPeer;
+import robocode.robotinterfaces.peer.IProximityRobotPeer;
 
 /**
- * A robot that can fire radioactive bullets.
+ * A robot that can fire proximity bullets.
  */
-public class RadioactiveRobot extends Robot {
+public class ProximityRobot extends Robot {
 
 	/**
-	 * Immediately fires a radioactive bullet. The bullet will travel in the direction the
+	 * Immediately fires a proximity bullet. The bullet will travel in the direction the
 	 * gun is pointing, using the proximity radius defined by the current battle rules.
 	 *
 	 * @param power the amount of energy given to the bullet, and subtracted
 	 *              from the robot's energy.
-	 * @return a {@link RadioactiveBullet} that contains information about the bullet if it
+	 * @return a {@link ProximityBullet} that contains information about the bullet if it
 	 *         was actually fired, which can be used for tracking the bullet after it
 	 *         has been fired. If the bullet was not fired, {@code null} is returned.
 	 */
-	public RadioactiveBullet fireRadioactiveBullet(double power) {
+	public ProximityBullet fireProximityBullet(double power) {
 		if (peer != null) {
-			return ((IRadioactiveRobotPeer) peer).fireRadioactiveBullet(power);
+			return ((IProximityRobotPeer) peer).fireProximityBullet(power);
 		}
 		uninitializedException();
 		return null;

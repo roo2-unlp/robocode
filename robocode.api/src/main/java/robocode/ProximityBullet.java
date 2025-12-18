@@ -11,16 +11,16 @@ package robocode;
  * A specialized Bullet that carries a fixed proximity radius.
  * This class is not currently integrated with the battle engine; it is
  * provided as an example extension of {@link Bullet} that could be used
- * for custom game modes like radioactive bullets.
+ * for custom game modes like Proximity bullets.
  */
-public class RadioactiveBullet extends Bullet {
+public class ProximityBullet extends Bullet {
 	private static final long serialVersionUID = 1L;
 
 	// Fixed proximity radius within which the bullet will trigger an explosion
 	private final double proximityRadius;
 
 	/**
-	 * Constructs a new {@code RadioactiveBullet} with a fixed proximity radius.
+	 * Constructs a new {@code ProximityBullet} with a fixed proximity radius.
 	 *
 	 * @param heading        heading in radians
 	 * @param x              starting X position
@@ -32,15 +32,15 @@ public class RadioactiveBullet extends Bullet {
 	 * @param bulletId       unique id for owner robot
 	 * @param proximityRadius explosion trigger radius (non-negative)
 	 */
-	public RadioactiveBullet(double heading,
-				        double x,
-				        double y,
-				        double power,
-				        String ownerName,
-				        String victimName,
-				        boolean isActive,
-				        int bulletId,
-				        double proximityRadius) {
+	public ProximityBullet(double heading,
+						   double x,
+						   double y,
+						   double power,
+						   String ownerName,
+						   String victimName,
+						   boolean isActive,
+						   int bulletId,
+						   double proximityRadius) {
 		super(heading, x, y, power, ownerName, victimName, isActive, bulletId);
 		this.proximityRadius = proximityRadius;
 	}

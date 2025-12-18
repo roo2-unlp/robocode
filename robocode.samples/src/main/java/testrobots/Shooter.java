@@ -2,20 +2,20 @@ package testrobots;
 
 import java.awt.Color;
 
+import robocode.ProximityRobot;
 import robocode.Rules;
 import robocode.ScannedRobotEvent;
 
 /**
- * Shooter - un robot que usaremos para implementar las balas radioactivas.
+ * Shooter - un robot que usaremos para implementar las balas de proximidad.
  * <p>
- * Su proposito es disparar balas normales y radiactivas alternando.
+ * Su proposito es disparar balas normales y de proximidad alternando.
  *
  * @author Leo Delmas
  */
 
-public class Shooter extends robocode.RadioactiveRobot {
+public class Shooter extends ProximityRobot {
 	boolean shootNormalBullet = true;
-	double radius = Rules.DEFAULT_PROXIMITY_RADIUS;
 
 	public void run() {
 
@@ -33,11 +33,11 @@ public class Shooter extends robocode.RadioactiveRobot {
 	public void onScannedRobot(ScannedRobotEvent e) {
 		if (getGunHeat() == 0) {
 			if (shootNormalBullet) {
-				fire(0.1);
-				out.println("shot Normal Bullet: Power: 0.1");
+				fire(3);
+				out.println("shot Normal Bullet");
 			} else {
-				fireRadioactiveBullet(3);
-				out.println("shot Radioactive Bullet: Power: 3 ; Radius (rule): " + radius);
+				fireProximityBullet(3);
+				out.println("shot Proximity Bullet");
 			}
 			shootNormalBullet = !shootNormalBullet;
 			scan();
