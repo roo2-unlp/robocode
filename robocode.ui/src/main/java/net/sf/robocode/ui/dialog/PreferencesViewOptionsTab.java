@@ -107,7 +107,7 @@ public class PreferencesViewOptionsTab extends WizardPanel {
 	private void defaultViewOptionsButtonActionPerformed() {
 		setAllViewOptionsButtonsEnabled(true);
 		getVisibleScanArcsCheckBox().setSelected(false);
-		getVisibleScanBulletsCheckBox().setSelected(false);
+		getVisibleScanBulletsCheckBox().setSelected(true);
 	}
 
 	private void setAllViewOptionsButtonsEnabled(boolean enabled) {

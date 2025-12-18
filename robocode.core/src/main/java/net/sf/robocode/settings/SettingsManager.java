@@ -730,7 +730,7 @@ public class SettingsManager implements ISettingsManager {
 
 		optionsViewRobotNames = Boolean.valueOf(props.getProperty(OPTIONS_VIEW_ROBOTNAMES, "true"));
 		optionsViewScanArcs = Boolean.valueOf(props.getProperty(OPTIONS_VIEW_SCANARCS, "false"));
-		optionsViewScanBullets = Boolean.valueOf(props.getProperty(OPTIONS_VIEW_SCANBULLETS, "false"));
+		optionsViewScanBullets = Boolean.valueOf(props.getProperty(OPTIONS_VIEW_SCANBULLETS, "true"));
 		optionsViewRobotEnergy = Boolean.valueOf(props.getProperty(OPTIONS_VIEW_ROBOTENERGY, "true"));
 		optionsViewGround = Boolean.valueOf(props.getProperty(OPTIONS_VIEW_GROUND, "true"));
 		optionsViewTPS = Boolean.valueOf(props.getProperty(OPTIONS_VIEW_TPS, "true"));
