@@ -12,6 +12,7 @@ import net.sf.robocode.peer.BulletStatus;
 import robocode.*;
 import robocode.control.snapshot.BulletState;
 import robocode.util.Utils;
+import net.sf.robocode.battle.effects.BulletEffect;
 
 import java.awt.geom.Line2D;
 import static java.lang.Math.cos;
@@ -37,6 +38,7 @@ public class BulletPeer {
 
 	private final BattleRules battleRules;
 	private final int bulletId;
+	private final BulletEffect bulletEffect;
 
 	protected RobotPeer victim;
 
@@ -68,6 +70,7 @@ public class BulletPeer {
 		this.owner = owner;
 		this.battleRules = battleRules;
 		this.bulletId = bulletId;
+		this.bulletEffect = owner.getBulletEffect();
 		state = BulletState.FIRED;
 		color = owner.getBulletColor(); // Store current bullet color set on robot
 	}
@@ -197,7 +200,7 @@ public class BulletPeer {
 						new BulletHitEvent(owner.getNameForEvent(otherRobot), otherRobot.getEnergy(), createBullet(false))); // Bugfix #366
 
 				//Apply the bullet effect
-				this.owner.getBulletEffect().applyEffect(this, otherRobot);
+				bulletEffect.applyEffect(this, otherRobot);
 
 				double newX, newY;
 
