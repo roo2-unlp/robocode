@@ -37,6 +37,7 @@ class BulletEffectCreator {
 }
 RobotPeer *-- BulletPeer
 RobotPeer --* BulletEffect
+BulletPeer --* BulletEffect
 RobotPeer --> BulletEffectCreator
 BulletEffect <|-- NoEffect
 BulletEffect <|-- StunningEffect
@@ -44,7 +45,7 @@ RobotPeer --* BattleRules
 
 note right of BulletPeer::checkRobotCollision
 //Apply the bullet effect
-this.owner.getBulletEffect()
+this.bulletEffect
     .applyEffect(this, otherRobot);
 end note
 @enduml
