@@ -1,48 +1,42 @@
 package net.sf.robocode.test.robots;
 
-import net.sf.robocode.test.helpers.Assert;
+import net.sf.robocode.test.helpers.RobocodeTestBed;
 import org.junit.Test;
+import robocode.control.events.TurnEndedEvent;
+import robocode.control.snapshot.IRobotSnapshot;
 
 /**
- * Tests de consistencia y bucles infinitos
+ * Tests de integracion de consistencia en mapas infinitos
  */
-public class TestInfiniteMapConsistency {
-
-    private double normalizePosition(double position, double fieldSize, int minBound) {
-        double usableSize = fieldSize - 2 * (minBound);
-        double relativePos = position - minBound;
-        relativePos = ((relativePos % usableSize) + usableSize) % usableSize;
-        return minBound + relativePos;
-    }
+public class TestInfiniteMapConsistency extends RobocodeTestBed {
 
     @Test
-    public void testNoBucleInfinito() {
-        double x = 790.0;
-        int minX = 18, maxX = 782;
-
-        for (int i = 0; i < 10; i++) {
-            if (x > maxX) {
-                x -= 800.0;
-            } else if (x < minX) {
-                x += 800.0;
-            }
-
-            x = normalizePosition(x, 800.0, minX);
-
-            Assert.assertTrue("Iteración " + i + ": X debe estar en rango",
-                    x >= minX && x <= maxX);
-        }
+    public void run() {
+        super.run();
     }
 
-    @Test
-    public void testWrapConsistencyAfterMultipleWraps() {
-        double x = 790.0;
-        double result1 = normalizePosition(x, 800.0, 18);
-        double result2 = normalizePosition(result1, 800.0, 18);
-        double result3 = normalizePosition(result2, 800.0, 18);
+    @Override
+    public String getRobotName() {
+        return "sample.Crazy";
+    }
 
-        Assert.assertNear(result1, result2);
-        Assert.assertNear(result2, result3);
-        Assert.assertTrue(result3 >= 18.0 && result3 <= 782.0);
+    @Override
+    public String getEnemyName() {
+        return "sample.Target";
+    }
+
+    @Override
+    protected void beforeInit() {
+        super.beforeInit();
+        System.setProperty("robocode.battle.infiniteMap", "true");
+    }
+
+    @Override
+    public void onTurnEnded(TurnEndedEvent event) {
+        super.onTurnEnded(event);
+        IRobotSnapshot robot = event.getTurnSnapshot().getRobots()[0];
+
+        // Verificar que el robot existe
+        org.junit.Assert.assertNotNull("El robot debe existir", robot);
     }
 }

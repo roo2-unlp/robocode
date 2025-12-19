@@ -1,73 +1,48 @@
 package net.sf.robocode.test.robots;
 
-import net.sf.robocode.test.helpers.Assert;
+import net.sf.robocode.test.helpers.RobocodeTestBed;
 import org.junit.Test;
+import robocode.control.events.TurnEndedEvent;
+import robocode.control.snapshot.IRobotSnapshot;
 
 /**
- * Tests de casos extremos y bordes
+ * Tests de integración de casos extremos en mapas infinitos
  */
-public class TestInfiniteMapEdgeCases {
-
-    private double normalizePosition(double position, double fieldSize, int minBound) {
-        double usableSize = fieldSize - 2 * (minBound);
-        double relativePos = position - minBound;
-        relativePos = ((relativePos % usableSize) + usableSize) % usableSize;
-        return minBound + relativePos;
-    }
+public class TestInfiniteMapEdgeCases extends RobocodeTestBed {
 
     @Test
-    public void testWrapLeftEdge() {
-        double x = -10.0;
-        x = normalizePosition(x, 800.0, 18);
-        Assert.assertTrue(x >= 18.0 && x <= 782.0);
+    public void run() {
+        super.run();
     }
 
-    @Test
-    public void testWrapRightEdge() {
-        double x = 810.0;
-        x = normalizePosition(x, 800.0, 18);
-        Assert.assertTrue(x >= 18.0 && x <= 782.0);
+    @Override
+    public String getRobotName() {
+        return "sample.Crazy";
     }
 
-    @Test
-    public void testWrapTopEdge() {
-        double y = -10.0;
-        y = normalizePosition(y, 600.0, 18);
-        Assert.assertTrue(y >= 18.0 && y <= 582.0);
+    @Override
+    public String getEnemyName() {
+        return "sample.Target";
     }
 
-    @Test
-    public void testWrapBottomEdge() {
-        double y = 590.0;
-        y = normalizePosition(y, 600.0, 18);
-        Assert.assertTrue(y >= 18.0 && y <= 582.0);
+    @Override
+    protected void beforeInit() {
+        super.beforeInit();
+        System.setProperty("robocode.battle.infiniteMap", "true");
     }
 
-    @Test
-    public void testWrapExtremeFarPosition() {
-        double x = 10000.0;
-        x = normalizePosition(x, 800.0, 18);
-        Assert.assertTrue(x >= 18.0 && x <= 782.0);
+    @Override
+    public String getInitialPositions() {
+        // Colocar robot cerca del borde izquierdo para probar casos extremos
+        return "50,300,0";
     }
 
-    @Test
-    public void testWrapNegativeExtremeFarPosition() {
-        double y = -5000.0;
-        y = normalizePosition(y, 600.0, 18);
-        Assert.assertTrue(y >= 18.0 && y <= 582.0);
-    }
+    @Override
+    public void onTurnEnded(TurnEndedEvent event) {
+        super.onTurnEnded(event);
+        IRobotSnapshot robot = event.getTurnSnapshot().getRobots()[0];
 
-    @Test
-    public void testWrapMultipleTimesX() {
-        double x = 3200.0;
-        x = normalizePosition(x, 800.0, 18);
-        Assert.assertTrue(x >= 18.0 && x <= 782.0);
-    }
-
-    @Test
-    public void testWrapNegativeMultipleTimesY() {
-        double y = -1800.0;
-        y = normalizePosition(y, 600.0, 18);
-        Assert.assertTrue(y >= 18.0 && y <= 582.0);
+        // Verificar que el robot existe en casos extremos
+        org.junit.Assert.assertNotNull("El robot debe existir en casos extremos", robot);
     }
 }

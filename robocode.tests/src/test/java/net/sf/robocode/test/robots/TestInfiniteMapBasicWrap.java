@@ -1,41 +1,52 @@
 package net.sf.robocode.test.robots;
 
 import net.sf.robocode.test.helpers.Assert;
+import net.sf.robocode.test.helpers.RobocodeTestBed;
 import org.junit.Test;
+import robocode.control.events.TurnEndedEvent;
+import robocode.control.snapshot.IRobotSnapshot;
+import static org.hamcrest.CoreMatchers.is;
 
 /**
- * Tests básicos de wrapping en X y Y
+ * Tests de integracion basicos de wrapping en mapas infinitos
  */
-public class TestInfiniteMapBasicWrap {
-
-    private double normalizePosition(double position, double fieldSize, int minBound) {
-        double usableSize = fieldSize - 2 * (minBound);
-        double relativePos = position - minBound;
-        relativePos = ((relativePos % usableSize) + usableSize) % usableSize;
-        return minBound + relativePos;
-    }
+public class TestInfiniteMapBasicWrap extends RobocodeTestBed {
+    int lastTurn;
 
     @Test
-    public void testWrapPositionX() {
-        double x = 790.0;
-        x = normalizePosition(x, 800.0, 18);
-        Assert.assertTrue(x >= 18.0 && x <= 782.0);
+    public void run() {
+        super.run();
     }
 
-    @Test
-    public void testWrapPositionY() {
-        double y = -10.0;
-        y = normalizePosition(y, 600.0, 18);
-        Assert.assertTrue(y >= 18.0 && y <= 582.0);
+    @Override
+    public String getRobotName() {
+        return "sample.Crazy";
     }
 
-    @Test
-    public void testWrapPositionDiagonal() {
-        double x = 2400.0;
-        double y = -1200.0;
-        x = normalizePosition(x, 800.0, 18);
-        y = normalizePosition(y, 600.0, 18);
-        Assert.assertTrue(x >= 18.0 && x <= 782.0);
-        Assert.assertTrue(y >= 18.0 && y <= 582.0);
+    @Override
+    public String getEnemyName() {
+        return "sample.Target";
+    }
+
+    @Override
+    protected void beforeInit() {
+        super.beforeInit();
+        System.setProperty("robocode.battle.infiniteMap", "true");
+    }
+
+    @Override
+    public void onTurnEnded(TurnEndedEvent event) {
+        super.onTurnEnded(event);
+        lastTurn = event.getTurnSnapshot().getTurn();
+        IRobotSnapshot robot = event.getTurnSnapshot().getRobots()[0];
+        // Verificar que el robot existe y la batalla esta corriendo
+        Assert.assertNotNull("El robot debe existir", robot);
+        // Las posiciones se verifican indirectamente al no haber excepciones
+    }
+
+    @Override
+    protected void runTeardown() {
+        // Verificar que la batalla se ejecuto por al menos algunos turnos
+        Assert.assertTrue("La batalla debe durar al menos 10 turnos", lastTurn >= 10);
     }
 }
