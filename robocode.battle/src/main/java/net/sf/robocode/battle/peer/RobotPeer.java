@@ -138,6 +138,8 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 	private final BoundingRectangle boundingBox;
 	private final RbSerializer rbSerializer;
 
+	private WallCollisionStrategy wallCollisionStrategy;
+
 	public RobotPeer(Battle battle, IHostManager hostManager, RobotSpecification robotSpecification, String name,
 			String suffix, TeamPeer team, int robotIndex) {
 		super();
@@ -182,6 +184,10 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 		this.isPaintEnabled = this.statics.isPaintRobot() && RobocodeProperties.isPaintingOn();
 
 		this.robotProxy = (IHostingRobotProxy) hostManager.createRobotProxy(robotSpecification, statics, this);
+
+		this.wallCollisionStrategy = battleRules.getInfiniteMap()
+				? new InfiniteMapWallCollisionStrategy()
+				: new ClassicWallCollisionStrategy();
 	}
 
 	public void println(String s) {
@@ -397,6 +403,34 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 
 	public int getScanColor() {
 		return commands.get().getScanColor();
+	}
+
+	public void setX(double x) {
+		this.x = x;
+	}
+
+	public void setY(double y) {
+		this.y = y;
+	}
+
+	public void setVelocity(double velocity) {
+		this.velocity = velocity;
+	}
+
+	public void setEnergy(double energy) {
+		this.energy = energy;
+	}
+
+	public void setDistanceRemaining(double distance) {
+		currentCommands.setDistanceRemaining(distance);
+	}
+
+	public RobotStatics getStatics() {
+		return statics;
+	}
+
+	public void setRobotEnergy(double energy) {
+		this.energy = energy;
 	}
 
 	// ------------
@@ -1106,93 +1140,8 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 		}
 
 		if (hitWall) {
-			if (battleRules.getInfiniteMap()) {
-				handleInfiniteMapWrapping(minX, minY, maxX, maxY);
-				return;
-			}
-			handleClassicWallCollision(adjustX, adjustY, angle, minX, minY, maxX, maxY);
-
+			wallCollisionStrategy.handleWallCollision(this, adjustX, adjustY, angle, minX, minY, maxX, maxY);
 		}
-	}
-
-	private void handleClassicWallCollision(double adjustX, double adjustY, double angle, Integer minX, Integer minY,
-			Integer maxX, Integer maxY) {
-		addEvent(new HitWallEvent(angle));
-
-		// only fix both x and y values if hitting wall at an angle
-		if ((bodyHeading % (Math.PI / 2)) != 0) {
-			double tanHeading = tan(bodyHeading);
-
-			// if it hits bottom or top wall
-			if (adjustX == 0) {
-				adjustX = adjustY * tanHeading;
-			} // if it hits a side wall
-			else if (adjustY == 0) {
-				adjustY = adjustX / tanHeading;
-			} // if the robot hits 2 walls at the same time (rare, but just in case)
-			else if (abs(adjustX / tanHeading) > abs(adjustY)) {
-				adjustY = adjustX / tanHeading;
-			} else if (abs(adjustY * tanHeading) > abs(adjustX)) {
-				adjustX = adjustY * tanHeading;
-			}
-		}
-		x += adjustX;
-		y += adjustY;
-
-		if (x < minX) {
-			x = minX;
-		} else if (x > maxX) {
-			x = maxX;
-		}
-		if (y < minY) {
-			y = minY;
-		} else if (y > maxY) {
-			y = maxY;
-		}
-
-		applyWallCollisionDamage();
-
-		updateBoundingBox();
-
-		currentCommands.setDistanceRemaining(0);
-		velocity = 0;
-
-		setState(RobotState.HIT_WALL);
-	}
-
-	private void applyWallCollisionDamage() {
-		if (statics.isAdvancedRobot()) {
-			setEnergy(energy - Rules.getWallHitDamage(velocity), false);
-		}
-	}
-
-	private void handleInfiniteMapWrapping(Integer minX, Integer minY, Integer maxX, Integer maxY) {
-		double fieldWidth = getBattleFieldWidth();
-		double fieldHeight = getBattleFieldHeight();
-
-		if (x < minX) {
-			x += fieldWidth;
-		} else if (x > maxX) {
-			x -= fieldWidth;
-		}
-
-		if (y < minY) {
-			y += fieldHeight;
-		} else if (y > maxY) {
-			y -= fieldHeight;
-		}
-
-		if (fieldWidth > 0) {
-			x = minX + ((x - minX) % fieldWidth + fieldWidth) % fieldWidth;
-		}
-
-		if (fieldHeight > 0) {
-			y = minY + ((y - minY) % fieldHeight + fieldHeight) % fieldHeight;
-		}
-
-		updateBoundingBox();
-
-		return;
 	}
 
 	private void checkSentryOutsideBorder() {
@@ -1283,15 +1232,15 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 		}
 	}
 
-	private double getBattleFieldHeight() {
+	public double getBattleFieldHeight() {
 		return battleRules.getBattlefieldHeight();
 	}
 
-	private double getBattleFieldWidth() {
+	public double getBattleFieldWidth() {
 		return battleRules.getBattlefieldWidth();
 	}
 
-	private void updateBoundingBox() {
+	public void updateBoundingBox() {
 		boundingBox.setRect(x - HALF_WIDTH_OFFSET, y - HALF_HEIGHT_OFFSET, WIDTH, HEIGHT);
 	}
 
