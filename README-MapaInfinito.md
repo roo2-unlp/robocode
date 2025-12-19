@@ -12,7 +12,6 @@ Cuando el robot intenta desplazarse y llego a uno de los límites del mapa:
 3. Si cruza el borde superior, debe reaparecer en el borde inferior.
 4. Si cruza el borde inferior, debe reaparecer en el borde superior.
 5. En ninguno de estos casos el robot pierde energía ni recibe daño.
-6. Si el robot va en diagonal, aparece en los opuestos. Es decir, si va arriba a la derecha, aparece 
 
 Para lograr esto, se modificó la clase RobotPeer.java, dentro de esa clase hay un método checkWallCollision() que es donde se implemntaron los cambios, teniendo en cuenta que Y es la altura y X es el ancho del mapa: 
 1. Si un robot llega al borde superior del limite Y, a su posición actual se le resta el valor Y y se mantiene el eje X, de está manera se logra el efecto de mapa infinito. Con esto logramos que el robot pase de estar arriba a estar en la parte de abajo del mapa manteniendo la orientación en la que estaba.
