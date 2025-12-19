@@ -7,7 +7,6 @@
  */
 package net.sf.robocode.battle;
 
-
 import net.sf.robocode.battle.events.BattleEventDispatcher;
 import net.sf.robocode.battle.peer.BulletPeer;
 import net.sf.robocode.battle.peer.ContestantPeer;
@@ -36,7 +35,6 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 
 /**
  * The {@code Battle} class is used for controlling a battle.
@@ -83,7 +81,8 @@ public final class Battle extends BaseBattle {
 	// Initial robot setups (if any)
 	private RobotSetup[] initialRobotSetups;
 
-	public Battle(ISettingsManager properties, IBattleManager battleManager, IHostManager hostManager, ICpuManager cpuManager, BattleEventDispatcher eventDispatcher) { // NO_UCD (unused code)
+	public Battle(ISettingsManager properties, IBattleManager battleManager, IHostManager hostManager,
+			ICpuManager cpuManager, BattleEventDispatcher eventDispatcher) { // NO_UCD (unused code)
 		super(properties, battleManager, eventDispatcher);
 		this.hostManager = hostManager;
 		this.cpuConstant = cpuManager.getCpuConstant();
@@ -109,10 +108,12 @@ public final class Battle extends BaseBattle {
 		String[] robotNames = new String[battlingRobotsList.length];
 		Map<String, TeamPeer> teamPeers = new HashMap<String, TeamPeer>();
 
-		// Populate raw names and suffix numbers (to be included when name duplicates exist)
+		// Populate raw names and suffix numbers (to be included when name duplicates
+		// exist)
 		for (int robotIndex = 0; robotIndex < battlingRobotsList.length; robotIndex++) {
 			final RobotSpecification specification = battlingRobotsList[robotIndex];
-			final String name = ((IRobotItem) HiddenAccess.getFileSpecification(specification)).getUniqueFullClassNameWithVersion();
+			final String name = ((IRobotItem) HiddenAccess.getFileSpecification(specification))
+					.getUniqueFullClassNameWithVersion();
 
 			robotNames[robotIndex] = name;
 
@@ -124,8 +125,7 @@ public final class Battle extends BaseBattle {
 		// Append name suffixes and populate team lists
 		for (int robotIndex = 0; robotIndex < battlingRobotsList.length; robotIndex++) {
 			String suffix = "";
-			if (robotNameCount.get(robotNames[robotIndex]) > 1)
-			{
+			if (robotNameCount.get(robotNames[robotIndex]) > 1) {
 				suffix = " (" + robotSuffixNumbers[robotIndex] + ")";
 			}
 			robotSuffixes[robotIndex] = suffix;
@@ -150,10 +150,11 @@ public final class Battle extends BaseBattle {
 			if (teamName != null) {
 				if (!teamPeers.containsKey(teamName)) {
 					int teamIndex = teamNames.indexOf(teamName);
-					String teamNameIndexed = teamName.substring(0, teamName.length() - 6) + " (" + (teamIndex + 1) + ')';
+					String teamNameIndexed = teamName.substring(0, teamName.length() - 6) + " (" + (teamIndex + 1)
+							+ ')';
 
 					team = new TeamPeer(teamNameIndexed, teamMembers.get(teamName), teamIndex);
-	
+
 					teamPeers.put(teamName, team);
 					contestants.add(team);
 				} else {
@@ -161,7 +162,11 @@ public final class Battle extends BaseBattle {
 				}
 			}
 
-			RobotPeer robotPeer = new RobotPeer(this, hostManager, specification, robotNames[robotIndex], robotSuffixes[robotIndex], team, robotIndex);
+			RobotPeer robotPeer = new RobotPeer(this, hostManager, specification, robotNames[robotIndex],
+					robotSuffixes[robotIndex], team, robotIndex);
+			robotPeer.setWallCollisionStrategy(battleRules.getInfiniteMap()
+					? new net.sf.robocode.battle.peer.InfiniteMapWallCollisionStrategy()
+					: new net.sf.robocode.battle.peer.ClassicWallCollisionStrategy());
 			robots.add(robotPeer);
 			if (team == null) {
 				contestants.add(robotPeer);
@@ -289,7 +294,8 @@ public final class Battle extends BaseBattle {
 
 		computeActiveRobots(); // Used for robotPeer.initializeRound()
 
-		// At this point the unsafe loader thread will now set itself to wait for a notify
+		// At this point the unsafe loader thread will now set itself to wait for a
+		// notify
 
 		for (RobotPeer robotPeer : robots) {
 			robotPeer.initializeRound(robots, initialRobotSetups);
@@ -299,13 +305,14 @@ public final class Battle extends BaseBattle {
 		}
 
 		if (getRoundNum() == 0) {
-			eventDispatcher.onBattleStarted(new BattleStartedEvent(battleRules, robots.size(), false, UUID.randomUUID()));
+			eventDispatcher
+					.onBattleStarted(new BattleStartedEvent(battleRules, robots.size(), false, UUID.randomUUID()));
 			if (isPaused) {
 				eventDispatcher.onBattlePaused(new BattlePausedEvent());
 			}
 		}
 
-		computeActiveRobots(); // Used for RoundEnded check		hostManager.resetThreadManager();
+		computeActiveRobots(); // Used for RoundEnded check hostManager.resetThreadManager();
 	}
 
 	@Override
@@ -406,7 +413,7 @@ public final class Battle extends BaseBattle {
 				TeamPeer winningTeam = null;
 
 				robocode.RoundEndedEvent roundEndedEvent = new robocode.RoundEndedEvent(getRoundNum(), currentTime,
-						totalTurns); 
+						totalTurns);
 
 				for (RobotPeer robotPeer : getRobotsAtRandom()) {
 					robotPeer.addEvent(roundEndedEvent);
@@ -423,7 +430,8 @@ public final class Battle extends BaseBattle {
 							}
 						}
 					}
-					// Generate totals as round has ended, but first when the last scores has been calculated
+					// Generate totals as round has ended, but first when the last scores has been
+					// calculated
 					robotPeer.getRobotStatistics().generateTotals();
 				}
 				if (!leaderFirsts && winningTeam != null) {
@@ -482,10 +490,13 @@ public final class Battle extends BaseBattle {
 	}
 
 	/**
-	 * Returns a list of all robots in random order. This method is used to gain fair play in Robocode,
-	 * so that a robot placed before another robot in the list will not gain any benefit when the game
+	 * Returns a list of all robots in random order. This method is used to gain
+	 * fair play in Robocode,
+	 * so that a robot placed before another robot in the list will not gain any
+	 * benefit when the game
 	 * checks if a robot has won, is dead, etc.
-	 * This method was introduced as two equal robots like sample.RamFire got different scores even
+	 * This method was introduced as two equal robots like sample.RamFire got
+	 * different scores even
 	 * though the code was exactly the same.
 	 *
 	 * @return a list of robot peers.
@@ -498,7 +509,8 @@ public final class Battle extends BaseBattle {
 	}
 
 	/**
-	 * Returns a list of all bullets in random order. This method is used to gain fair play in Robocode.
+	 * Returns a list of all bullets in random order. This method is used to gain
+	 * fair play in Robocode.
 	 *
 	 * @return a list of bullet peers.
 	 */
@@ -510,7 +522,8 @@ public final class Battle extends BaseBattle {
 	}
 
 	/**
-	 * Returns a list of all death robots in random order. This method is used to gain fair play in Robocode.
+	 * Returns a list of all death robots in random order. This method is used to
+	 * gain fair play in Robocode.
 	 *
 	 * @return a list of robot peers.
 	 */
@@ -522,7 +535,7 @@ public final class Battle extends BaseBattle {
 	}
 
 	private void loadCommands() {
-		// this will load commands, including bullets from last turn 
+		// this will load commands, including bullets from last turn
 		for (RobotPeer robotPeer : robots) {
 			robotPeer.performLoadCommands();
 		}
@@ -676,7 +689,7 @@ public final class Battle extends BaseBattle {
 					count++;
 				}
 			} else if (c instanceof TeamPeer && c != peer.getTeamPeer()) {
-				for (RobotPeer robot: (TeamPeer) c) {
+				for (RobotPeer robot : (TeamPeer) c) {
 					if (!robot.isSentryRobot() && robot.isAlive()) {
 						count++;
 						break;
@@ -803,7 +816,6 @@ public final class Battle extends BaseBattle {
 		}
 	}
 
-
 	private class EnableRobotPaintCommand extends RobotCommand {
 		final boolean enablePaint;
 
@@ -817,7 +829,6 @@ public final class Battle extends BaseBattle {
 		}
 	}
 
-
 	private class EnableRobotSGPaintCommand extends RobotCommand {
 		final boolean enableSGPaint;
 
@@ -830,7 +841,6 @@ public final class Battle extends BaseBattle {
 			robots.get(robotIndex).setSGPaintEnabled(enableSGPaint);
 		}
 	}
-
 
 	private class SendInteractiveEventCommand extends Command {
 		public final Event event;

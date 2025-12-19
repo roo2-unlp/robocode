@@ -185,9 +185,6 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 
 		this.robotProxy = (IHostingRobotProxy) hostManager.createRobotProxy(robotSpecification, statics, this);
 
-		this.wallCollisionStrategy = battleRules.getInfiniteMap()
-				? new InfiniteMapWallCollisionStrategy()
-				: new ClassicWallCollisionStrategy();
 	}
 
 	public void println(String s) {
@@ -431,6 +428,10 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 
 	public void setRobotEnergy(double energy) {
 		this.energy = energy;
+	}
+
+	public void setWallCollisionStrategy(WallCollisionStrategy strategy) {
+		this.wallCollisionStrategy = strategy;
 	}
 
 	// ------------
