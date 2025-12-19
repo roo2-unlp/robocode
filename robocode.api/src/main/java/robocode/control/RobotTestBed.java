@@ -34,7 +34,13 @@ import static robocode.util.Utils.assertNotNull;
  * @author Flemming N. Larsen (contributor)
  */
 public abstract class RobotTestBed<R extends IBasicRobot> extends BattleAdaptor {
-    /**
+
+	/**
+	 * Variables que necesito
+	 */
+	protected boolean isInfinityShotEnabled = false;
+	protected int infinityShotLaps = 1;
+	/**
      * The Robocode game engine instance used for this test.
      */
     protected static volatile IRobocodeEngine engine;
@@ -242,6 +248,14 @@ public abstract class RobotTestBed<R extends IBasicRobot> extends BattleAdaptor 
         }
     }
 
+
+	public void setInfinityShot(boolean enable) {
+		this.isInfinityShotEnabled = enable;
+	}
+
+	public void setInfinityShotLaps(int laps) {
+		this.infinityShotLaps = laps;
+	}
 
     /**
      * Instance of tested robot
@@ -482,20 +496,31 @@ public abstract class RobotTestBed<R extends IBasicRobot> extends BattleAdaptor 
     protected void runTeardown() {
     }
 
-    protected void runBattle(String robotList, int numRounds, String initialPositions) {
-        if (robotList == null || robotList.isEmpty()) {
-            throw new IllegalArgumentException("Robot list cannot be null or empty");
-        }
+	protected void runBattle(String robotList, int numRounds, String initialPositions) {
+		if (robotList == null || robotList.isEmpty()) {
+			throw new IllegalArgumentException("Robot list cannot be null or empty");
+		}
 
-        final RobotSpecification[] robotSpecifications = engine.getLocalRepository(robotList);
+		final RobotSpecification[] robotSpecifications = engine.getLocalRepository(robotList);
 
-        if (getExpectedRobotCount(robotList) > 0) {
-            assertNotNull("Robot were not loaded", robotSpecifications);
-            assertEquals("Robot were not loaded", getExpectedRobotCount(robotList), robotSpecifications.length);
-            engine.runBattle(new BattleSpecification(numRounds, battleFieldSpec, robotSpecifications), initialPositions,
-                    true, isEnableRecording());
-        }
-    }
+		if (getExpectedRobotCount(robotList) > 0) {
+			assertNotNull("Robot were not loaded", robotSpecifications);
+			assertEquals("Robot were not loaded", getExpectedRobotCount(robotList), robotSpecifications.length);
+
+			engine.runBattle(new BattleSpecification(
+					battleFieldSpec,
+					numRounds,
+					450,
+					0.1,
+					100,
+					false,
+					this.isInfinityShotEnabled,
+					this.infinityShotLaps,
+					robotSpecifications,
+					null
+			), initialPositions, true, isEnableRecording());
+		}
+	}
 
     class EngineErrorsListener extends BattleAdaptor {
         public void onBattleMessage(BattleMessageEvent event) {

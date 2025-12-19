@@ -16,7 +16,7 @@ package robocode.control;
  */
 public class BattleSpecification implements java.io.Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final int battlefieldWidth;
 	private final int battlefieldHeight;
@@ -25,6 +25,8 @@ public class BattleSpecification implements java.io.Serializable {
 	private final long inactivityTime;
 	private final boolean hideEnemyNames;
 	private final int sentryBorderSize;
+	private final boolean infinityShot;
+	private final int infinityShotLaps;
 	private final RobotSpecification[] robots;
 	private final RobotSetup[] initialSetups;
 
@@ -88,19 +90,38 @@ public class BattleSpecification implements java.io.Serializable {
 
 	/**
 	 * Creates a new BattleSpecification with the given settings.
+	 * This constructor maintains backward compatibility by defaulting infinityShot to false.
 	 *
 	 * @param battlefieldSize is the battlefield size.
-	 * @param numRounds	is the number of rounds in this battle.
+	 * @param numRounds    is the number of rounds in this battle.
 	 * @param inactivityTime is the inactivity time allowed for the robots before they will loose energy.
 	 * @param gunCoolingRate is the gun cooling rate for the robots.
 	 * @param sentryBorderSize is the sentry border size for a {@link robocode.BorderSentry BorderSentry}.
 	 * @param hideEnemyNames  flag specifying if enemy names are hidden from robots.
 	 * @param robots is the robots participating in this battle.
 	 * @param initialSetups is the initial position and heading of the robots, where the indices matches the indices from the {@code robots} parameter.
-	 * 
-	 * @since 1.9.2.0
+	 * * @since 1.9.2.0
 	 */
 	public BattleSpecification(BattlefieldSpecification battlefieldSize, int numRounds, long inactivityTime, double gunCoolingRate, int sentryBorderSize, boolean hideEnemyNames, RobotSpecification[] robots, RobotSetup[] initialSetups) {
+		this(battlefieldSize, numRounds, inactivityTime, gunCoolingRate, sentryBorderSize, hideEnemyNames, false, 0, robots, initialSetups);
+	}
+
+	/**
+	 * Constructor MAESTRO con Infinity Shot.
+	 * Creates a new BattleSpecification with the given settings including Infinity Shot options.
+	 *
+	 * @param battlefieldSize is the battlefield size.
+	 * @param numRounds    is the number of rounds in this battle.
+	 * @param inactivityTime is the inactivity time allowed for the robots before they will loose energy.
+	 * @param gunCoolingRate is the gun cooling rate for the robots.
+	 * @param sentryBorderSize is the sentry border size for a {@link robocode.BorderSentry BorderSentry}.
+	 * @param hideEnemyNames  flag specifying if enemy names are hidden from robots.
+	 * @param infinityShot flag specifying if bullets wrap around walls.
+	 * @param infinityShotLaps number of times a bullet can wrap around.
+	 * @param robots is the robots participating in this battle.
+	 * @param initialSetups is the initial position and heading of the robots.
+	 */
+	public BattleSpecification(BattlefieldSpecification battlefieldSize, int numRounds, long inactivityTime, double gunCoolingRate, int sentryBorderSize, boolean hideEnemyNames, boolean infinityShot, int infinityShotLaps, RobotSpecification[] robots, RobotSetup[] initialSetups) {
 		if (battlefieldSize == null) {
 			throw new IllegalArgumentException("battlefieldSize cannot be null");
 		}
@@ -120,11 +141,15 @@ public class BattleSpecification implements java.io.Serializable {
 			throw new IllegalArgumentException("inactivityTime must be >= 1");
 		}
 		if (gunCoolingRate < 0.1) {
-			throw new IllegalArgumentException("inactivityTime must be >= 0.1");
+			throw new IllegalArgumentException("gunCoolingRate must be >= 0.1");
 		}
 		if (sentryBorderSize < 50) {
 			throw new IllegalArgumentException("sentryBorderSize must be >= 50");
 		}
+		if (infinityShot && infinityShotLaps < 1) {
+			throw new IllegalArgumentException("infinityShotLaps must be >= 1 when infinityShot is enabled");
+		}
+
 		this.battlefieldWidth = battlefieldSize.getWidth();
 		this.battlefieldHeight = battlefieldSize.getHeight();
 		this.numRounds = numRounds;
@@ -132,6 +157,8 @@ public class BattleSpecification implements java.io.Serializable {
 		this.gunCoolingRate = gunCoolingRate;
 		this.sentryBorderSize = sentryBorderSize;
 		this.hideEnemyNames = hideEnemyNames;
+		this.infinityShot = infinityShot;
+		this.infinityShotLaps = infinityShotLaps;
 		this.robots = robots;
 		this.initialSetups = initialSetups;
 	}
@@ -182,7 +209,23 @@ public class BattleSpecification implements java.io.Serializable {
 	public boolean getHideEnemyNames() {
 		return hideEnemyNames;
 	}
+	/**
+	 * Returns the flag specifying if infinity shot (wall wrapping) is enabled.
+	 *
+	 * @return {@code true} if infinity shot is enabled; {@code false} otherwise.
+	 */
+	public boolean getInfinityShot() {
+		return infinityShot;
+	}
 
+	/**
+	 * Returns the number of times a bullet can wrap around walls if infinity shot is enabled.
+	 *
+	 * @return the max number of bounces/wraps.
+	 */
+	public int getInfinityShotLaps() {
+		return infinityShotLaps;
+	}
 	/**
 	 * Returns the sentry border size for a {@link robocode.BorderSentry BorderSentry} that defines the how
 	 * far a BorderSentry is allowed to move from the border edges measured in units.<br>
