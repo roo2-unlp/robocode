@@ -6,7 +6,12 @@ public class RandomDamageModel implements IDamageModel {
     private final double maxDamage;
 
     public RandomDamageModel(double minDamage, double maxDamage) {
-        if (minDamage < 0.1 || maxDamage < 0.1) minDamage = 0.1;           
+        if (minDamage < 0.1) {
+            minDamage = 0.1;
+        }      
+        if (maxDamage < 0.1) {
+            maxDamage = 0.1;
+        }   
 
         if (maxDamage < minDamage) maxDamage = minDamage;
                 
