@@ -316,7 +316,7 @@ public class BattleRecordInfo implements Serializable, IXmlSerializable {
 						}
 					});
 
-					reader.expect("randomDamage", new XmlReader.Attribute() {//nuevo!!!!!!!!
+					reader.expect("randomDamage", new XmlReader.Attribute() {
 						public void read(String value) {
 							props.setRandomDamage(Boolean.parseBoolean(value));
 						}
