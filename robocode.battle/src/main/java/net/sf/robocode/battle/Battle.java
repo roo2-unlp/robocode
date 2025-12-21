@@ -8,7 +8,7 @@
 package net.sf.robocode.battle;
 
 
-import net.sf.robocode.battle.damage.IDamageModel;// [NUEVO] se importa  el tipo de daño
+import net.sf.robocode.battle.damage.IDamageModel;
 import net.sf.robocode.battle.damage.StandardDamageModel;
 import net.sf.robocode.battle.damage.RandomDamageModel;
 
@@ -87,7 +87,7 @@ public final class Battle extends BaseBattle {
 	// Initial robot setups (if any)
 	private RobotSetup[] initialRobotSetups;
 
-	private IDamageModel damageModel;//nueva, es el tipo de daño
+	private IDamageModel damageModel;
 
 	public Battle(ISettingsManager properties, IBattleManager battleManager, IHostManager hostManager, ICpuManager cpuManager, BattleEventDispatcher eventDispatcher) { // NO_UCD (unused code)
 		super(properties, battleManager, eventDispatcher);
@@ -102,7 +102,7 @@ public final class Battle extends BaseBattle {
 				battleProps.getHideEnemyNames(), battleProps.getSentryBorderSize(), battleProps.getRandomDamage());
 		robotsCount = battlingRobotsList.length;
 		computeInitialPositions(battleProps.getInitialPositions());
-		instanciarTipoDaño(battleProps);// [NUEVO] se instancia el tipo de daño
+		instanciarTipoDaño(battleProps);
 		createPeers(battlingRobotsList);
 		
 	}
@@ -115,7 +115,6 @@ public final class Battle extends BaseBattle {
             double max = battleProps.getRandomDamageMax();
             this.damageModel = new RandomDamageModel(min, max);
         } else {
-            // Por defecto, estrategia estándar.
             this.damageModel = new StandardDamageModel();
         }
     }

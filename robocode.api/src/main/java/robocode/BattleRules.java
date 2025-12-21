@@ -36,14 +36,14 @@ public final class BattleRules implements java.io.Serializable {
 	private final boolean hideEnemyNames;
 	private final int sentryBorderSize;
 
-	private final boolean randomDamage; //nuevo!!!!!!!!!!1
+	private final boolean randomDamage; 
 
 	/**
      * Returns true if random damage is enabled for this battle.
      * @return true if random damage is enabled; false otherwise.
      */
-	//nuevo!!
-	public boolean getRandomDamage() { // [NUEVO] El Getter que necesita Battle.java
+
+	public boolean getRandomDamage() { 
         return randomDamage;
     }
 	
@@ -135,7 +135,7 @@ public final class BattleRules implements java.io.Serializable {
 		return sentryBorderSize;
 	}
 	
-	// [MODIFICADO] constructor privado actualizado
+
     private BattleRules(int battlefieldWidth, int battlefieldHeight, int numRounds, double gunCoolingRate,
             long inactivityTime, boolean hideEnemyNames, int sentryBorderSize, boolean randomDamage) {
         this.battlefieldWidth = battlefieldWidth;
@@ -145,7 +145,7 @@ public final class BattleRules implements java.io.Serializable {
         this.inactivityTime = inactivityTime;
         this.hideEnemyNames = hideEnemyNames;
         this.sentryBorderSize = sentryBorderSize;
-        this.randomDamage = randomDamage; // Asignación
+        this.randomDamage = randomDamage; 
     }
 
 	static IHiddenRulesHelper createHiddenHelper() {
@@ -153,7 +153,6 @@ public final class BattleRules implements java.io.Serializable {
 	}
 
 	private static class HiddenHelper implements IHiddenRulesHelper {
-        // [MODIFICADO] Implementación del método  actualizado
         public BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, 
                                        double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, 
                                        int sentryBorderSize, boolean randomDamage) {
