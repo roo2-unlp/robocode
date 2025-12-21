@@ -66,10 +66,9 @@ Se han añadido controles específicos en el menú de configuración de la batal
 ./gradlew build
 cd .sandbox
 ./robocode.sh
-Setup (Windows):
-
--------------------------------------------------
-
+```
+### Setup (Windows):
+```bash
 --WINDOWS--
 .\gradlew.bat build
 cd .sandbox
@@ -83,13 +82,14 @@ Si la compilación falla por procesos bloqueados o conflictos de caché:
 
 .\gradlew.bat --stop
 Get-ChildItem -Path . -Recurse -Directory -Filter "build" | Remove-Item -Recurse -Force
+
 Reintentar el proceso de Setup normal.  (los paso mencinados anteriormente)
 ```
 
 ## 🧪 Pruebas Realizadas
-**Tests de unidad:** Validación de las fórmulas matemáticas en RandomDamageModel.
+**Tests de unidad:** Validación de la logica en RandomDamageModel.
 
-**Tests de integración:** Verificación de la persistencia de los valores desde la UI hacia el objeto BattleProperties.
+**Tests de integración:** Verificación de la persistencia de los valores desde la UI hacia el objeto BattleProperties y de la lógica de selección del tipo de modelo de daño.
 
 **Testeo manual:** Ejecución de batallas de prueba observando la variabilidad de la energía de los robots tras recibir impactos.
 
