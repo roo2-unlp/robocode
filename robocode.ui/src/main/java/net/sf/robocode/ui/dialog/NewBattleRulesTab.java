@@ -8,8 +8,25 @@
 package net.sf.robocode.ui.dialog;
 
 
-import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.GroupLayout;
+import javax.swing.InputVerifier;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
@@ -18,10 +35,6 @@ import javax.swing.event.ChangeListener;
 
 import net.sf.robocode.battle.BattleProperties;
 import net.sf.robocode.settings.ISettingsManager;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 
 /**
@@ -51,7 +64,7 @@ public class NewBattleRulesTab extends JPanel {
 	private final JLabel inactivityTimeLabel = new JLabel("Inactivity Time:");
 	private final JLabel sentryBorderSizeLabel = new JLabel("Sentry Border Size");
 	private final JLabel hideEnemyNamesLabel = new JLabel("Hide Enemy Names:");
-	private final JLabel randomCollisionDamageLabel = new JLabel("Random Collision Damage:"); //NUEVO, columna etiqueta
+	private final JLabel randomCollisionDamageLabel = new JLabel("Random Collision Damage:"); 
 	private final JLabel randomDamageMinLabel = new JLabel("Min Damage:");
 	private final JLabel randomDamageMaxLabel = new JLabel("Max Damage:");
 
@@ -62,9 +75,9 @@ public class NewBattleRulesTab extends JPanel {
 	private JTextField inactivityTimeTextField;
 	private JTextField sentryBorderSizeTextField;
 	private JTextField randomDamageMinTextField;
-	private JTextField randomDamageMaxTextField; //nuevo requerimiento ultima reunion
+	private JTextField randomDamageMaxTextField;
 	private final JCheckBox hideEnemyNamesCheckBox = new JCheckBox();
-	private final JCheckBox randomCollisionDamageCheckBox = new JCheckBox();//NUEVO CHECKBOX RandomDAMAGE
+	private final JCheckBox randomCollisionDamageCheckBox = new JCheckBox();
 
 	private JSlider battlefieldWidthSlider;
 	private JSlider battlefieldHeightSlider;
@@ -192,8 +205,7 @@ public class NewBattleRulesTab extends JPanel {
     GroupLayout.SequentialGroup leftToRight = layout.createSequentialGroup();
     GroupLayout.SequentialGroup topToBottom = layout.createSequentialGroup();
 
-    // --- COLUMNA IZQUIERDA (Etiquetas) ---
-    // variables directas porque son final y están inicializadas arriba
+
     GroupLayout.ParallelGroup left = layout.createParallelGroup();
     left.addComponent(numberOfRoundsLabel);
     left.addComponent(gunCoolingRateLabel);
@@ -201,13 +213,11 @@ public class NewBattleRulesTab extends JPanel {
     left.addComponent(sentryBorderSizeLabel);
     left.addComponent(hideEnemyNamesLabel);
     left.addComponent(randomCollisionDamageLabel);
-	left.addComponent(randomDamageMinLabel); // nuevo req min y max
+	left.addComponent(randomDamageMinLabel); 
 	left.addComponent(randomDamageMaxLabel);
     leftToRight.addGroup(left);
 
-    // --- COLUMNA DERECHA (Inputs y Checkboxes) ---
-    //  getters para los TextField (patrón original de Robocode)
-    //  variables directas para los CheckBox (inicializados arriba)
+
     GroupLayout.ParallelGroup right = layout.createParallelGroup();
     right.addComponent(getNumberOfRoundsTextField());
     right.addComponent(getGunCoolingRateTextField());
@@ -215,43 +225,42 @@ public class NewBattleRulesTab extends JPanel {
     right.addComponent(getSentryBorderSizeTextField());
     right.addComponent(hideEnemyNamesCheckBox);
     right.addComponent(randomCollisionDamageCheckBox);
-	right.addComponent(getRandomDamageMinTextField()); // NUEVO req min y max
+	right.addComponent(getRandomDamageMinTextField()); 
 	right.addComponent(getRandomDamageMaxTextField());
     leftToRight.addGroup(right);
 
-    // --- FILAS (Alineación Vertical) ---
+
     
-    // Fila 0
+
     GroupLayout.ParallelGroup row0 = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
     row0.addComponent(numberOfRoundsLabel);
     row0.addComponent(getNumberOfRoundsTextField());
     topToBottom.addGroup(row0);
 
-    // Fila 1
+
     GroupLayout.ParallelGroup row1 = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
     row1.addComponent(gunCoolingRateLabel);
     row1.addComponent(getGunCoolingRateTextField());
     topToBottom.addGroup(row1);
 
-    // Fila 2
+
     GroupLayout.ParallelGroup row2 = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
     row2.addComponent(inactivityTimeLabel);
     row2.addComponent(getInactivityTimeTextField());
     topToBottom.addGroup(row2);
 
-    // Fila 3
+
     GroupLayout.ParallelGroup row3 = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
     row3.addComponent(sentryBorderSizeLabel);
     row3.addComponent(getSentryBorderSizeTextField());
     topToBottom.addGroup(row3);
 
-    // Fila 4
+
     GroupLayout.ParallelGroup row4 = layout.createParallelGroup(GroupLayout.Alignment.CENTER);
     row4.addComponent(hideEnemyNamesLabel);
     row4.addComponent(hideEnemyNamesCheckBox);
     topToBottom.addGroup(row4);
 
-    // Fila 5 Random checkbox
     GroupLayout.ParallelGroup row5 = layout.createParallelGroup(GroupLayout.Alignment.CENTER);
     row5.addComponent(randomCollisionDamageLabel);
     row5.addComponent(randomCollisionDamageCheckBox);
@@ -260,13 +269,12 @@ public class NewBattleRulesTab extends JPanel {
     layout.setHorizontalGroup(leftToRight);
     layout.setVerticalGroup(topToBottom);
 
-	// Fila 6 (Min Damage)
+
 	GroupLayout.ParallelGroup row6 = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
 	row6.addComponent(randomDamageMinLabel);
 	row6.addComponent(getRandomDamageMinTextField());
 	topToBottom.addGroup(row6);
 
-	// Fila 7 (Max Damage)
 	GroupLayout.ParallelGroup row7 = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
 	row7.addComponent(randomDamageMaxLabel);
 	row7.addComponent(getRandomDamageMaxTextField());
@@ -302,10 +310,10 @@ public class NewBattleRulesTab extends JPanel {
 		return numberOfRoundsTextField;
 	}
 
-	private JTextField getRandomDamageMinTextField() {  //NUEVO, logica parecia roundsNumber
+	private JTextField getRandomDamageMinTextField() {  
 		if (randomDamageMinTextField == null) {
 			randomDamageMinTextField = new JTextField(5);
-			// Cargar valor actual de las propiedades
+
 			randomDamageMinTextField.setText("" + battleProperties.getRandomDamageMin());
 			randomDamageMinTextField.setInputVerifier(new InputVerifier() {
 				@Override
@@ -314,7 +322,6 @@ public class NewBattleRulesTab extends JPanel {
 					String text = ((JTextField) input).getText();
 					if (text != null && text.matches("\\d*(\\.\\d+)?")) {
 						double val = Double.parseDouble(text);
-						// Validar que sea mayor a 0
 						isValid = (val >= 0.1 && val <= 1000.0);
 					}
 					if (!isValid) {
@@ -328,7 +335,7 @@ public class NewBattleRulesTab extends JPanel {
 		return randomDamageMinTextField;
 	}
 
-	private JTextField getRandomDamageMaxTextField() {  //idem anterior pero para max value
+	private JTextField getRandomDamageMaxTextField() {  
 		if (randomDamageMaxTextField == null) {
 			randomDamageMaxTextField = new JTextField(5);
 			randomDamageMaxTextField.setText("" + battleProperties.getRandomDamageMax());
@@ -339,7 +346,7 @@ public class NewBattleRulesTab extends JPanel {
 					boolean isValid = false;
 					String maxText = ((JTextField) input).getText();
 
-					// usado para validar la consistencia Max >= Min
+
 					String minText = getRandomDamageMinTextField().getText();
 
 					if (maxText != null && maxText.matches("\\d*(\\.\\d+)?")) {
@@ -452,7 +459,6 @@ public class NewBattleRulesTab extends JPanel {
 		return sentryBorderSizeTextField;
 	}
 
-	// NUEVO: METODO getter para que el Dialog pueda leer el valor
 	public boolean isRandomCollisionDamageSelected() {
 		return randomCollisionDamageCheckBox.isSelected();
 	}
@@ -538,16 +544,13 @@ public class NewBattleRulesTab extends JPanel {
 			settingsManager.setBattleDefaultHideEnemyNames(hideEnemyNames);
 			battleProperties.setHideEnemyNames(hideEnemyNames);
 
-			// MODIFICADO: Guardar el estado del nuevo checkbox en las propiedades
-			// Nota: AVERIGUAR -? guardar en settingsManager requeriria modificar esa interfaz tambien.
 			boolean randomDamage = randomCollisionDamageCheckBox.isSelected();
 			battleProperties.setRandomDamage(randomDamage);
 
-			// --- NUEVO: Guardar Min y Max ---
 			Double minDmg = null;
 			try {
 				minDmg = Double.parseDouble(getRandomDamageMinTextField().getText());
-			} catch (NumberFormatException e) { } // Ignorar
+			} catch (NumberFormatException e) { } 
 
 			if (minDmg != null) {
 				settingsManager.setBattleDefaultRandomDamageMin(minDmg);
@@ -593,19 +596,17 @@ public class NewBattleRulesTab extends JPanel {
 				battleProperties.setInactivityTime(450);
 				battleProperties.setHideEnemyNames(false);
 				battleProperties.setSentryBorderSize(100);
-				battleProperties.setRandomDamage(false);//nuevo valor por defecto randomDamage false
+				battleProperties.setRandomDamage(false);
 				battleProperties.setRandomDamageMin(0.1);
-				battleProperties.setRandomDamageMax(1000.0); // valores por defecto min y max
+				battleProperties.setRandomDamageMax(1000.0); 
 
 				pushBattlePropertiesToUIComponents();
-			} else if (event.getSource() == randomCollisionDamageCheckBox) { //mostrar input min y max solo si checkbox on
+			} else if (event.getSource() == randomCollisionDamageCheckBox) { 
 				boolean isSelected = randomCollisionDamageCheckBox.isSelected();
 				getRandomDamageMinTextField().setEnabled(isSelected);
 				getRandomDamageMaxTextField().setEnabled(isSelected);
 
-				// UX Improvement: Si el usuario lo activa, nos aseguramos que se vean los valores correctos
        			 if (isSelected) {
-             // Forzar visualización de valores actuales de battleProperties si los campos estaban vacíos o incoherentes
              		if(getRandomDamageMinTextField().getText().isEmpty()) 
                  		getRandomDamageMinTextField().setText("" + battleProperties.getRandomDamageMin());
            			if(getRandomDamageMaxTextField().getText().isEmpty()) 
@@ -632,7 +633,7 @@ public class NewBattleRulesTab extends JPanel {
 			getInactivityTimeTextField().setText("" + battleProperties.getInactivityTime());
 			getSentryBorderSizeTextField().setText("" + battleProperties.getSentryBorderSize());
 			hideEnemyNamesCheckBox.setSelected(battleProperties.getHideEnemyNames());
-			randomCollisionDamageCheckBox.setSelected(battleProperties.getRandomDamage());//nuevo
+			randomCollisionDamageCheckBox.setSelected(battleProperties.getRandomDamage());
 
 			boolean isRandomEnabled = battleProperties.getRandomDamage();
 			getRandomDamageMinTextField().setEnabled(isRandomEnabled);

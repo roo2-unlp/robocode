@@ -105,7 +105,7 @@ public class BattleSpecification implements java.io.Serializable {
 		this(battlefieldSize, numRounds, inactivityTime, gunCoolingRate, sentryBorderSize, hideEnemyNames, false, robots, initialSetups);
 	}
 
-	// NUEVO: NUEVO CONSTRUCTOR MAESTRO, ULTIMO  PASO ESCALERA DE CONSTRUCTORES, AGREGA RANDOMCOLLISIONDAMAGE
+
 	/**
 	 * Creates a new BattleSpecification with the given settings.
 	 *
@@ -152,7 +152,7 @@ public class BattleSpecification implements java.io.Serializable {
 		this.gunCoolingRate = gunCoolingRate;
 		this.sentryBorderSize = sentryBorderSize;
 		this.hideEnemyNames = hideEnemyNames;
-		this.isRandomCollisionDamage = isRandomCollisionDamage; // NUEVO: Asignacion del nuevo campo
+		this.isRandomCollisionDamage = isRandomCollisionDamage; 
 		this.robots = robots;
 		this.initialSetups = initialSetups;
 	}

@@ -50,7 +50,7 @@ public class BattleRecordInfo implements Serializable, IXmlSerializable {
 				writer.writeAttribute("inactivityTime", battleRules.getInactivityTime());
 				writer.writeAttribute("ver", serialVersionUID);
 
-				writer.writeAttribute("randomDamage", battleRules.getRandomDamage());//nuevo!!!!!!!
+				writer.writeAttribute("randomDamage", battleRules.getRandomDamage());
 			}
 			writer.endElement();
 

@@ -13,7 +13,7 @@ Randomizar el daño que los robots reciben al chocar entre sí.
 Se debe poder asignar al inicio de la batalla, de manera opcional.
 
 
-Esta rama introduce la posibilidad de configurar un **rango de daño (mínimo y máximo)** para los proyectiles en Robocode, reemplazando o extendiendo el comportamiento estándar de daño fijo. 
+Esta rama introduce la posibilidad de configurar un daño aleatorio **calculado un valor de un rango de daño (mínimo y máximo)** para la colisión entre 2 robots en Robocode, reemplazando o extendiendo el comportamiento estándar de daño fijo. 
 
 
 

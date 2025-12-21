@@ -8,18 +8,18 @@
 package net.sf.robocode.battle;
 
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Properties;
+
 import net.sf.robocode.settings.ISettingsManager;
 import robocode.AdvancedRobot;
 import robocode.Robot;
 import robocode.Rules;
 import robocode.control.RobotSetup;
 import robocode.control.RobotSpecification;
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.Properties;
 
 
 /**
@@ -40,9 +40,9 @@ public class BattleProperties implements Serializable {
 			BATTLE_SELECTEDROBOTS = "robocode.battle.selectedRobots",
 			BATTLE_INITIAL_POSITIONS = "robocode.battle.initialPositions",
 			BATTLE_SENTRY_BORDER_SIZE = "robocode.battle.sentryBorderSize",
-			BATTLE_RANDOM_DAMAGE = "robocode.battle.randomDamage",//nuevo!!!!!!!
-			BATTLE_RANDOM_DAMAGE_MIN = "robocode.battle.randomDamageMin",//nuevo!!!!!!!
-            BATTLE_RANDOM_DAMAGE_MAX = "robocode.battle.randomDamageMax";//nuevo!!!!!!!
+			BATTLE_RANDOM_DAMAGE = "robocode.battle.randomDamage",
+			BATTLE_RANDOM_DAMAGE_MIN = "robocode.battle.randomDamageMin",
+            BATTLE_RANDOM_DAMAGE_MAX = "robocode.battle.randomDamageMax";
 
 	private int battlefieldWidth = 800;
 	private int battlefieldHeight = 600;
@@ -53,9 +53,9 @@ public class BattleProperties implements Serializable {
 	private int sentryBorderSize = 100;
 	private String selectedRobots;
 	private String initialPositions;
-	private boolean randomDamage = false;//nuevo!!!!!!!!!
-	private double randomDamageMin = 0.1;//nuevo!!!!!!!!!
-    private double randomDamageMax = Rules.ROBOT_HIT_DAMAGE;//nuevo!!!!!!!!!
+	private boolean randomDamage = false;
+	private double randomDamageMin = 0.1;
+    private double randomDamageMax = Rules.ROBOT_HIT_DAMAGE;
 
 	private final Properties props = new Properties();
 
@@ -81,7 +81,7 @@ public class BattleProperties implements Serializable {
         props.setProperty(BATTLE_RANDOM_DAMAGE, "" + randomDamage);
     }
 
-	// --- NUEVOS GETTERS Y SETTERS por requerimiento min-max ---
+	
     public double getRandomDamageMin() {
         return randomDamageMin;
     }
@@ -379,28 +379,26 @@ public class BattleProperties implements Serializable {
 		initialPositions = props.getProperty(BATTLE_INITIAL_POSITIONS, "");
 		sentryBorderSize = Integer.parseInt(props.getProperty(BATTLE_SENTRY_BORDER_SIZE, "100"));
 		
-        loadRandomDamageProperties();//nuevo!!!!!!!
+        loadRandomDamageProperties();
 	}
 		
 
-	//--- NUEVO!!!!!!!
-	// Método que Encapsula la lógica de carga y validación
+
     private void loadRandomDamageProperties() {
         this.randomDamage = Boolean.parseBoolean(props.getProperty(BATTLE_RANDOM_DAMAGE, "false"));
        
-        // Si falla la lectura (null o error), mantenemos el valor que ya tenía la variable (el default o el seteado).
         this.randomDamageMin = parseDoubleSafe(BATTLE_RANDOM_DAMAGE_MIN, this.randomDamageMin);
         this.randomDamageMax = parseDoubleSafe(BATTLE_RANDOM_DAMAGE_MAX, this.randomDamageMax);
     }
 
-    // parseo seguro
+
     private double parseDoubleSafe(String key, double defaultValue) {
-        String value = props.getProperty(key); // Puede devolver NULL si la clave no existe en el archivo
+        String value = props.getProperty(key); 
         if (value == null) {
             return defaultValue;
         }
         try {
-            return Double.parseDouble(value); // Puede fallar si el usuario editó el archivo con texto inválido
+            return Double.parseDouble(value);
         } catch (NumberFormatException e) {
             return defaultValue;
         }

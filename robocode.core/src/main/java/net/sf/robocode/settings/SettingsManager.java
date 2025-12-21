@@ -133,7 +133,7 @@ public class SettingsManager implements ISettingsManager {
 	private int battleDefaultSentryBorderSize = 100;
 	private boolean battleDefaultHideEnemyNames = false;
 	private int battleDefaultNumberOfRounds = 10;
-	private boolean battleDefaultRandomDamage = false;  //NUEVO PARA RANDOM DAMAGE buena practica para setear el defaultt
+	private boolean battleDefaultRandomDamage = false;  
 	private double battleDefaultRandomDamageMin = 0.1;
     private double battleDefaultRandomDamageMax = 1000.0;
 
@@ -704,7 +704,6 @@ public class SettingsManager implements ISettingsManager {
 		props.setProperty(BATTLE_DEFAULT_NUMBER_OF_ROUNDS, "" + this.battleDefaultNumberOfRounds);
 	}
 
-	// NUEVO GETTER Y SETTER PARA RANDOM DAMAGE SIGUIENDO LOGICA DE HIDE ENEMY NAMES
 	public boolean getBattleDefaultRandomDamage() { return battleDefaultRandomDamage; }
 
 	public void setBattleDefaultRandomDamage(boolean value) {
@@ -801,10 +800,10 @@ public class SettingsManager implements ISettingsManager {
 		battleDefaultInactivityTime = Long.parseLong(props.getProperty(BATTLE_DEFAULT_INACTIVITY_TIME, "450"));
 		battleDefaultHideEnemyNames = Boolean.parseBoolean(props.getProperty(BATTLE_DEFAULT_HIDE_ENEMY_NAMES, "false"));
 		battleDefaultNumberOfRounds = Integer.parseInt(props.getProperty(BATTLE_DEFAULT_NUMBER_OF_ROUNDS, "10"));
-		battleDefaultRandomDamage = Boolean.parseBoolean(props.getProperty(BATTLE_DEFAULT_RANDOM_DAMAGE, "false")); // Nuevo
+		battleDefaultRandomDamage = Boolean.parseBoolean(props.getProperty(BATTLE_DEFAULT_RANDOM_DAMAGE, "false")); 
 		
-        battleDefaultRandomDamageMin = Double.parseDouble(props.getProperty(BATTLE_DEFAULT_RANDOM_DAMAGE_MIN, "0.1"));// Nuevo
-        battleDefaultRandomDamageMax = Double.parseDouble(props.getProperty(BATTLE_DEFAULT_RANDOM_DAMAGE_MAX, "1000.0"));// Nuevo
+        battleDefaultRandomDamageMin = Double.parseDouble(props.getProperty(BATTLE_DEFAULT_RANDOM_DAMAGE_MIN, "0.1"));
+        battleDefaultRandomDamageMax = Double.parseDouble(props.getProperty(BATTLE_DEFAULT_RANDOM_DAMAGE_MAX, "1000.0"));
 
 		robotFilesystemQuota = Long.parseLong(props.getProperty(ROBOT_FILESYSTEM_QUOTA, "" + 200000));
 		consoleQuota = Long.parseLong(props.getProperty(CONSOLE_QUOTA, "8192"));

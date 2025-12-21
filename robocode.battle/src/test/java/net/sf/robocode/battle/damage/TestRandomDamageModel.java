@@ -5,7 +5,6 @@ import org.junit.Test;
 
 public class TestRandomDamageModel {
 
-    // --- PARTICIÓN EQUIVALENTE 1: Rango Máximo Permitido  en la UI ---
     @Test
     public void testDamageWithinConfiguredRange_LargeScale() {
         double min = 0.1;
@@ -18,8 +17,6 @@ public class TestRandomDamageModel {
         }
     }
 
-    // --- PARTICIÓN EQUIVALENTE 2: Rango Estándar (Default Gameplay) ---
-    //  Verifica que la aleatoriedad funcione bien en decimales pequeños
     @Test
     public void testDamageWithinConfiguredRange_SmallScale() {
         double min = 0.1;
@@ -32,17 +29,15 @@ public class TestRandomDamageModel {
         }
     }
 
-    // --- PARTICIÓN EQUIVALENTE: Valores Negativos ---
-    //  Verifica que capture números negativos, no solo el cero
+
     @Test
     public void testNegativeValuesCorrection() {
         RandomDamageModel model = new RandomDamageModel(-5.0, -10.0);
-        // Debería corregirse al mínimo seguro (0.1)
         Assert.assertEquals("Los negativos deben subir a 0.1", 
                 0.1, model.getRobotHitDamage(), 0.0001);
     }
 
-    // --- VALOR DE BORDE: Mínimo igual a Máximo ---
+
     @Test
     public void testMinEqualsMax() {
         double val = 5.0;
@@ -51,7 +46,7 @@ public class TestRandomDamageModel {
                 val, model.getRobotHitDamage(), 0.0001);
     }
 
-    // --- VALOR DE BORDE: Límite Inferior (Cero) ---
+
     @Test
     public void testZeroDamage() {
         RandomDamageModel model = new RandomDamageModel(0, 0);
@@ -59,7 +54,6 @@ public class TestRandomDamageModel {
                 0.1, model.getRobotHitDamage(), 0.0001);
     }
     
-    // --- PARTICION EQUIVALENTE: Límites Invertidos ---
     @Test
     public void testInvertedLimitsCorrection() {
         double min = 10.0;

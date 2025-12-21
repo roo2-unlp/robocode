@@ -224,8 +224,7 @@ public final class RobotStatics implements IRobotStatics, Serializable {
 			size += serializer.sizeOf(obj.teamName);
 			size += RbSerializer.SIZEOF_INT * 2;
 
-			size += RbSerializer.SIZEOF_BOOL; // [NUEVO] Espacio para randomDamage
-
+			size += RbSerializer.SIZEOF_BOOL; 
 			return size;
 		}
 
@@ -254,7 +253,7 @@ public final class RobotStatics implements IRobotStatics, Serializable {
 			serializer.serialize(buffer, obj.battleRules.getHideEnemyNames());
 			serializer.serialize(buffer, obj.battleRules.getSentryBorderSize());
 
-			serializer.serialize(buffer, obj.battleRules.getRandomDamage());// [NUEVO] se guarda el valor de randomDamage
+			serializer.serialize(buffer, obj.battleRules.getRandomDamage());
 
 			if (obj.teammates != null) {
 				for (String mate : obj.teammates) {
@@ -292,7 +291,7 @@ public final class RobotStatics implements IRobotStatics, Serializable {
 					serializer.deserializeBoolean(buffer), // hideEnemyNames
 					serializer.deserializeInt(buffer), // sentryBorderSize
 
-					serializer.deserializeBoolean(buffer)); // [NUEVO] Leemos randomDamage y lo pasamos (Argumento 8)
+					serializer.deserializeBoolean(buffer)); // randomDamage
 
 			List<String> teammates = new ArrayList<String>();
 			Object item = serializer.deserializeString(buffer);

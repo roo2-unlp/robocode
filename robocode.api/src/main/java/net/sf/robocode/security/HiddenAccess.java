@@ -238,7 +238,7 @@ public class HiddenAccess {
 
     public static BattleRules createRules(int battlefieldWidth, int battlefieldHeight, int numRounds, 
                                           double gunCoolingRate, long inactivityTime, boolean hideEnemyNames, 
-                                          int sentryBorderSize, boolean randomDamage) {
+                                          int sentryBorderSize, boolean randomDamage) {	
         return rulesHelper.createRules(battlefieldWidth, battlefieldHeight, numRounds, gunCoolingRate, inactivityTime,
                 hideEnemyNames, sentryBorderSize, randomDamage);
     }
