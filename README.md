@@ -40,7 +40,7 @@ El siguiente diagrama detalla cómo los parámetros ingresados en la interfaz de
 ### Componentes Principales:
 * **`IDamageModel` (Interface):** Define el contrato para el cálculo de daño.
 * **`StandardDamageModel`:** Implementación por defecto que mantiene la lógica original de Robocode.
-* **`RandomDamageModel`:** Nueva estrategia que utiliza la clase `java.util.Random` para determinar el daño final basado en los límites configurados.
+* **`RandomDamageModel`:** Nueva estrategia que implementa la interfaz `IDamageModel` para determinar el daño final basado en los límites configurados.
 * **`NewBattleRulesTab`:** Modificación de la UI para capturar los valores `minDamage` y `maxDamage`.
 
 ---
