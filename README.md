@@ -13,7 +13,7 @@ Randomizar el daño que los robots reciben al chocar entre sí.
 Se debe poder asignar al inicio de la batalla, de manera opcional.
 
 
-Esta rama introduce la posibilidad de configurar un daño aleatorio **calculado un valor de un rango de daño (mínimo y máximo)** para la colisión entre 2 robots en Robocode, reemplazando o extendiendo el comportamiento estándar de daño fijo. 
+Esta rama introduce la posibilidad de configurar un daño aleatorio **calculando un valor de un rango de daño (mínimo y máximo)** para la colisión entre 2 robots en Robocode, reemplazando o extendiendo el comportamiento estándar de daño fijo. 
 
 
 
@@ -29,7 +29,7 @@ El objetivo de esta funcionalidad es añadir un factor de variabilidad táctica 
 
 ## 🏗️ Arquitectura y Diseño
 
-Para mantener la extensibilidad y legibilidad del código (siguiendo las mejores prácticas de POO), se implementó el **Patrón Strategy** y se creó un punto de extensión que permite que además de elegir entre las 2 variables diposibles (daño default y aleatorio), ahora desarrolladores puedan extender la interfaz a añadir un comportamiento propio para el calculo de este daño, siendo esto completamente retrocompatible con el código, robots y reglas existentes.
+Para mantener la extensibilidad y legibilidad del código (siguiendo las mejores prácticas de POO), se implementó el **Patrón Strategy** y se creó un punto de extensión que permite que además de elegir entre las 2 variables diposibles (daño default y aleatorio), ahora desarrolladores puedan extender la interfaz añadiendo un comportamiento propio para el calculo de este daño, siendo esto completamente retrocompatible con el código, robots y reglas existentes.
 
 ### Diagrama de Flujo de Datos
 El siguiente diagrama detalla cómo los parámetros ingresados en la interfaz de usuario viajan a través del núcleo de Robocode hasta impactar en el cálculo de salud de los robots:
@@ -40,7 +40,7 @@ El siguiente diagrama detalla cómo los parámetros ingresados en la interfaz de
 ### Componentes Principales:
 * **`IDamageModel` (Interface):** Define el contrato para el cálculo de daño.
 * **`StandardDamageModel`:** Implementación por defecto que mantiene la lógica original de Robocode.
-* **`RandomDamageModel`:** Nueva estrategia que implementa la interfaz `IDamageModel` para determinar el daño final basado en los límites configurados.
+* **`RandomDamageModel`:** Nueva estrategia concreta que implementa la interfaz `IDamageModel` para determinar el daño final basado en los límites configurados.
 * **`NewBattleRulesTab`:** Modificación de la UI para capturar los valores `minDamage` y `maxDamage`.
 
 ---
@@ -54,6 +54,14 @@ Se han añadido controles específicos en el menú de configuración de la batal
 
 ---
 
+## 🧪 Pruebas Realizadas
+**Tests de unidad:** Validación de la logica en RandomDamageModel.
+
+**Tests de integración:** Verificación de la persistencia de los valores desde la UI hacia el objeto BattleProperties y de la lógica de selección del tipo de modelo de daño.
+
+**Testeo manual:** Ejecución de batallas de prueba observando la variabilidad de la energía de los robots tras recibir impactos.
+
+---
 ## 🛠️ Setup y Ejecución
 
 ### Requisitos previos
@@ -85,14 +93,17 @@ Get-ChildItem -Path . -Recurse -Directory -Filter "build" | Remove-Item -Recurse
 
 Reintentar el proceso de Setup normal.  (los paso mencinados anteriormente)
 ```
+### Ejecución de Tests por separado:
 
-## 🧪 Pruebas Realizadas
-**Tests de unidad:** Validación de la logica en RandomDamageModel.
+#### Test unitarios
+```bash
+  ./gradlew :robocode.battle:test --tests "net.sf.robocode.battle.damage.TestRandomDamageModel"
+```
 
-**Tests de integración:** Verificación de la persistencia de los valores desde la UI hacia el objeto BattleProperties y de la lógica de selección del tipo de modelo de daño.
-
-**Testeo manual:** Ejecución de batallas de prueba observando la variabilidad de la energía de los robots tras recibir impactos.
-
-
----
-
+#### Test de integración
+```bash
+  -Persistencia:
+    ./gradlew :robocode.core:test --tests "net.sf.robocode.battle.TestBattleProperties"
+  -Logica de selección de modelo de daño desde la UI
+    ./gradlew :robocode.battle:test --tests "net.sf.robocode.battle.TestBattleModeSelection"
+```
