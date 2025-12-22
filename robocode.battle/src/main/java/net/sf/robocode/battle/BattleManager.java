@@ -100,6 +100,8 @@ public class BattleManager implements IBattleManager {
 		battleProperties.setHideEnemyNames(spec.getHideEnemyNames());
 		battleProperties.setSentryBorderSize(spec.getSentryBorderSize());
 		battleProperties.setSelectedRobots(spec.getRobots());
+		battleProperties.setBulletEffect(spec.getBulletEffect());
+		battleProperties.setStunDuration(spec.getStunDuration());
 
 		final RobotSetup[] initialSetups = spec.getInitialSetups();
 		if (initialSetups != null) {

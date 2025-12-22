@@ -292,6 +292,26 @@ public abstract class RobotTestBed<R extends IBasicRobot> extends BattleAdaptor 
     }
 
     /**
+     * Provides the stun duration in this battle.  Defaults to 20.
+     * Override this to change the stun duration.
+     *
+     * @return The stun duration.
+     */
+    public int getStunDuration() {
+        return 0;
+    }
+
+    /**
+     * Provides the bullet effect in this battle.  Defaults to no effect.
+     * Override this to change the bullet effect.
+     *
+     * @return The bullet effect.
+     */
+    public String getBulletEffect() {
+        return "No Effect";
+    }
+
+    /**
      * Returns a comma or space separated list like: x1,y1,heading1, x2,y2,heading2, which are the
      * coordinates and heading of robot #1 and #2. So "0,0,180, 50,80,270" means that robot #1
      * has position (0,0) and heading 180, and robot #2 has position (50,80) and heading 270.
@@ -492,7 +512,7 @@ public abstract class RobotTestBed<R extends IBasicRobot> extends BattleAdaptor 
         if (getExpectedRobotCount(robotList) > 0) {
             assertNotNull("Robot were not loaded", robotSpecifications);
             assertEquals("Robot were not loaded", getExpectedRobotCount(robotList), robotSpecifications.length);
-            engine.runBattle(new BattleSpecification(numRounds, battleFieldSpec, robotSpecifications), initialPositions,
+            engine.runBattle(new BattleSpecification(numRounds, battleFieldSpec, robotSpecifications, getBulletEffect(), getStunDuration()), initialPositions,
                     true, isEnableRecording());
         }
     }

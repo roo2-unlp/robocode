@@ -24,6 +24,8 @@ public class BattleSpecification implements java.io.Serializable {
 	private final double gunCoolingRate;
 	private final long inactivityTime;
 	private final boolean hideEnemyNames;
+	private final String bulletEffect;
+	private final int stunDuration;
 	private final int sentryBorderSize;
 	private final RobotSpecification[] robots;
 	private final RobotSetup[] initialSetups;
@@ -37,6 +39,20 @@ public class BattleSpecification implements java.io.Serializable {
 	 * @param robots is the robots participating in this battle.
 	 */
 	public BattleSpecification(int numRounds, BattlefieldSpecification battlefieldSize, RobotSpecification[] robots) {
+		this(numRounds, 450, 0.1, battlefieldSize, robots);
+	}
+
+	/**
+	 * Creates a new BattleSpecification with the given number of rounds, battlefield size, robots, bullet effect and stun duration.
+	 * Inactivity time for the robots defaults to 450, and the gun cooling rate defaults to 0.1.
+	 *
+	 * @param numRounds	is the number of rounds in this battle.
+	 * @param battlefieldSize is the battlefield size.
+	 * @param robots is the robots participating in this battle.
+	 * @param bulletEffect is the effect of the bullets upon impact.
+	 * @param stunDuration is the relative duration of the stun if stunning bullets are used.
+	 */
+	public BattleSpecification(int numRounds, BattlefieldSpecification battlefieldSize, RobotSpecification[] robots, String bulletEffect, int stunDuration) {
 		this(numRounds, 450, 0.1, battlefieldSize, robots);
 	}
 
@@ -83,7 +99,7 @@ public class BattleSpecification implements java.io.Serializable {
 	 * @since 1.9.0.0
 	 */
 	public BattleSpecification(BattlefieldSpecification battlefieldSize, int numRounds, long inactivityTime, double gunCoolingRate, int sentryBorderSize, boolean hideEnemyNames, RobotSpecification[] robots) {
-		this(battlefieldSize, numRounds, inactivityTime, gunCoolingRate, 100, hideEnemyNames, robots, null);
+		this(battlefieldSize, numRounds, inactivityTime, gunCoolingRate, 100, hideEnemyNames, robots, null, "No Effect", 0);
 	}
 
 	/**
@@ -97,10 +113,12 @@ public class BattleSpecification implements java.io.Serializable {
 	 * @param hideEnemyNames  flag specifying if enemy names are hidden from robots.
 	 * @param robots is the robots participating in this battle.
 	 * @param initialSetups is the initial position and heading of the robots, where the indices matches the indices from the {@code robots} parameter.
+	 * @param bulletEffect is the effect of the bullets upon impact.
+	 * @param stunDuration is the relative duration of the stun if stunning bullets are used.
 	 * 
 	 * @since 1.9.2.0
 	 */
-	public BattleSpecification(BattlefieldSpecification battlefieldSize, int numRounds, long inactivityTime, double gunCoolingRate, int sentryBorderSize, boolean hideEnemyNames, RobotSpecification[] robots, RobotSetup[] initialSetups) {
+	public BattleSpecification(BattlefieldSpecification battlefieldSize, int numRounds, long inactivityTime, double gunCoolingRate, int sentryBorderSize, boolean hideEnemyNames, RobotSpecification[] robots, RobotSetup[] initialSetups, String bulletEffect, int stunDuration) {
 		if (battlefieldSize == null) {
 			throw new IllegalArgumentException("battlefieldSize cannot be null");
 		}
@@ -134,6 +152,8 @@ public class BattleSpecification implements java.io.Serializable {
 		this.hideEnemyNames = hideEnemyNames;
 		this.robots = robots;
 		this.initialSetups = initialSetups;
+		this.bulletEffect = bulletEffect;
+		this.stunDuration = stunDuration;
 	}
 
 	/**
@@ -170,6 +190,24 @@ public class BattleSpecification implements java.io.Serializable {
 	 */
 	public int getNumRounds() {
 		return numRounds;
+	}
+
+	/**
+	 * Returns the stun duration in this battle.
+	 *
+	 * @return the stun duration in this battle.
+	 */
+	public int getStunDuration() {
+		return stunDuration;
+	}
+
+	/**
+	 * Returns the bullet effect in this battle.
+	 *
+	 * @return the bullet effect in this battle.
+	 */
+	public String getBulletEffect() {
+		return bulletEffect;
 	}
 
 	/**
