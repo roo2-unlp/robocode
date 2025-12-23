@@ -1,6 +1,6 @@
 package net.sf.robocode.battle.effect;
 
-import net.sf.robocode.battle.peer.RobotPeer;
+import net.sf.robocode.peer.IRobotPeer;
 
 public class StickyEffect implements ITrapEffect{
 	private final double slowFactor;
@@ -11,12 +11,12 @@ public class StickyEffect implements ITrapEffect{
 		this.duration = duration;
 	}
 	@Override
-	public void apply(RobotPeer robot) {
+	public void apply(IRobotPeer robot) {
 		robot.setMovementMultiplier(slowFactor);
 	}
 
 	@Override
-	public void revert(RobotPeer robot) {
+	public void revert(IRobotPeer robot) {
 		robot.setMovementMultiplier(1.0);
 	}
 

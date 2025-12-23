@@ -7,11 +7,6 @@
  */
 package net.sf.robocode.peer;
 
-
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
-
 /**
  * @author Pavel Savara (original)
  */
@@ -28,4 +23,8 @@ public interface IRobotPeer {
 	ExecResults waitForBattleEndImpl(ExecCommands newCommands);
 
 	ExecResults executeImpl(ExecCommands newCommands);
+
+	void applyEnergyEffect(double v);
+
+	void setMovementMultiplier(double slowFactor);
 }

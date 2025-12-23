@@ -149,65 +149,38 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 		this.movementMultiplier = multiplier;
 	}
 	//para manejar los efectos de trampas
-	private final Map<ITrapEffect, Integer> activeEffects = new HashMap<>();
+	private ITrapEffect activeEffect = null;
+	private int effectDuration = 0;
 
-	/**
-	 * Indica si el robot está actualmente protegido contra la activación de una trampa.
-	 */
-	public boolean isInTrapCooldown() {
-		return !activeEffects.isEmpty();
+	public boolean hasActiveEffect() {
+		return (activeEffect != null);
 	}
 
 	public void applyEnergyEffect(double delta) {
-		final double MAX_ENERGY = 100.0;
-		// 1. Lógica de Regeneración (Delta Positivo)
-		if (delta > 0) {
-			setEnergy(Math.min(energy + delta, MAX_ENERGY), true);
-			return; // Aplicamos el cambio y salimos del método
-		}
-		// 2. Lógica de Daño/Pérdida (Delta Negativo o Cero)
 		if (!isExecFinishedAndDisabled && !isEnergyDrained) {
 			setEnergy(energy + delta, true);
 		}
 	}
-	/**
-	 * Verifica si el robot ha colisionado con alguna trampa en la lista proporcionada.
-	 * Si hay una colisión y el robot no está en cooldown, se aplica el efecto de la trampa.
-	 */
+
 	public void checkTrapCollision(List<Trap> traps) {
-		if (this.isDead() || this.isInTrapCooldown() || this.getEnergy() <= 0) {
-			return; // No verificar si el robot está muerto, en cooldown o sin energía
-		}
-
-		final double ROBOT_HALF_SIZE = RobotPeer.WIDTH / 2.0;
-		double rx = this.getX();
-		double ry = this.getY();
-
-		// Iterar sobre las trampas
 		for (Trap trampa : traps) {
-			if (trampa.intersects(rx, ry, ROBOT_HALF_SIZE)) {
+			if (trampa.intersects(this.getX(), this.getY(), HALF_WIDTH_OFFSET)) {
 				trampa.applyEffect(this);
 				Logger.logMessage(trampa.getTrapEffect().getMessage());
-				this.activeEffects.put(trampa.getTrapEffect(), trampa.getTrapEffect().getDuration());
+				this.activeEffect = trampa.getTrapEffect();
+				this.effectDuration = trampa.getTrapEffect().getDuration();
 			}
 		}
 	}
-	// metodo para actualizar la duracion de la trampa
-	private void updateTrapEffects() {
-		// 1. Manejo de Efectos Activos (copiado del diseño anterior)
-		Iterator<Map.Entry<ITrapEffect, Integer>> iterator = activeEffects.entrySet().iterator();
-		while (iterator.hasNext()) {
-			Map.Entry<ITrapEffect, Integer> entry = iterator.next();
-			ITrapEffect effect = entry.getKey();
-			int remainingTicks = entry.getValue();
 
-			if (remainingTicks <= 1) {
-				// Revertir el efecto y eliminarlo
-				effect.revert(this);
-				iterator.remove();
+	private void updateTrapEffects() {
+		if (hasActiveEffect()) {
+			if (effectDuration <= 1) {
+				activeEffect.revert(this);
+				activeEffect = null;
+				effectDuration = 0;
 			} else {
-				// Reducir la duración en 1 tick
-				entry.setValue(remainingTicks - 1);
+				effectDuration--;
 			}
 		}
 	}
@@ -982,7 +955,7 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 		updateRadarHeading();
 		updateMovement();
 
-		if (this.battleRules.getTrapsEnabled()) {
+		if (this.battleRules.getTrapsEnabled() && !this.hasActiveEffect()) {
 			this.checkTrapCollision(this.battle.getTraps());
 		}
 

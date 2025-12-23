@@ -22,7 +22,6 @@ public class BattleField implements Serializable {
 
 	private final BoundingRectangle boundingBox;
 
-
 	public BattleField(int width, int height) {
 		super();
 		this.boundingBox = new BoundingRectangle(0, 0, width, height);
@@ -47,6 +46,4 @@ public class BattleField implements Serializable {
 	public void setHeight(int newHeight) {
 		boundingBox.height = newHeight;
 	}
-
-
 }

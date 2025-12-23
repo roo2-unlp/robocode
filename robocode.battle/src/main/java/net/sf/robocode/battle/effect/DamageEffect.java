@@ -1,6 +1,6 @@
 package net.sf.robocode.battle.effect;
 
-import net.sf.robocode.battle.peer.RobotPeer;
+import net.sf.robocode.peer.IRobotPeer;
 
 public class DamageEffect implements ITrapEffect{
 	private final double damage;
@@ -12,19 +12,16 @@ public class DamageEffect implements ITrapEffect{
 		this.duration = duration;
 	}
 	@Override
-	public void apply(RobotPeer robot) {
+	public void apply(IRobotPeer robot) {
 		robot.applyEnergyEffect(-damage);
 	}
-
 	@Override
-	public void revert(RobotPeer robot) {
+	public void revert(IRobotPeer robot) {
 	}
-
 	@Override
 	public int getDuration() {
 		return duration;
 	}
-
 	@Override
 	public String getMessage() {
 		return "Damage: " + damage;

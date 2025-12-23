@@ -28,12 +28,6 @@ public final class HitTrapEvent extends Event {
 	public double getTrapX() {
 		return trapX;
 	}
-
-	/**
-	 * Retorna la coordenada Y de la trampa.
-	 *
-	 * @return coordenada Y de la trampa
-	 */
 	public double getTrapY() {
 		return trapY;
 	}
@@ -41,16 +35,12 @@ public final class HitTrapEvent extends Event {
 		return radius;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	int getDefaultPriority() {
 		return DEFAULT_PRIORITY;
 	}
 
 	/**
-	 * {@inheritDoc}
 	 * Aquí se conecta el evento con el método onHitTrap() en la interfaz del robot.
 	 */
 	@Override
@@ -62,23 +52,14 @@ public final class HitTrapEvent extends Event {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * Debes registrar este nuevo tipo de serialización en RbSerializer.
-	 */
 	@Override
 	byte getSerializationType() {
-		// Asumiendo que has definido una nueva constante: RbSerializer.HitTrapEvent_TYPE
 		return RbSerializer.HitTrapEvent_TYPE;
 	}
 
 	static ISerializableHelper createHiddenSerializer() {
 		return new SerializableHelper();
 	}
-
-	// ----------------------------------------------------------------------
-	// Lógica de Serialización (Crucial para Replays y Comunicación)
-	// ----------------------------------------------------------------------
 
 	private static class SerializableHelper implements ISerializableHelper {
 

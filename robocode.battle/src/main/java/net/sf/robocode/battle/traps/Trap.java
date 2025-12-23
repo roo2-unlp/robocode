@@ -1,9 +1,8 @@
 package net.sf.robocode.battle.traps;
 
-import net.sf.robocode.battle.effect.DamageEffect;
+
 import net.sf.robocode.battle.effect.ITrapEffect;
 import net.sf.robocode.battle.peer.RobotPeer;
-import net.sf.robocode.io.Logger;
 import robocode.HitTrapEvent;
 
 public class Trap {
@@ -19,19 +18,8 @@ public class Trap {
 		this.effect = effect;
 	}
 
-	public boolean contains(double rx, double ry) {
-		double dx = rx - x;
-		double dy = ry - y;
-		return dx * dx + dy * dy <= radius * radius;
-	}
 	public void applyEffect(RobotPeer robot) {
-		// Verificar si el robot ya esta muerto o si energia
-		if(robot.isDead() || robot.getEnergy() <= 0){
-			return;
-		}
-
 		this.getTrapEffect().apply(robot);
-
 		robot.addEvent(
 				new HitTrapEvent(this.getX(), this.getY(), this.getRadius())
 		);

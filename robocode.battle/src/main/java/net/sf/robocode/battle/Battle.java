@@ -7,9 +7,6 @@
  */
 package net.sf.robocode.battle;
 
-
-import net.sf.robocode.battle.effect.DamageEffect;
-import net.sf.robocode.battle.effect.StickyEffect;
 import net.sf.robocode.battle.events.BattleEventDispatcher;
 import net.sf.robocode.battle.peer.BulletPeer;
 import net.sf.robocode.battle.peer.ContestantPeer;
