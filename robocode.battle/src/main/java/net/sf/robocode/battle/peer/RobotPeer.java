@@ -219,6 +219,14 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 		return bulletEffect;
 	}
 
+	public String getBulletEffectString() {
+		return bulletEffect.toString();
+	}
+
+	public int getSkipTurns() {
+		return skipTurns;
+	}
+
 	public RobotStatistics getRobotStatistics() {
 		return statistics;
 	}

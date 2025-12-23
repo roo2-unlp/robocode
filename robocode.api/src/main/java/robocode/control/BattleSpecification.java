@@ -53,7 +53,7 @@ public class BattleSpecification implements java.io.Serializable {
 	 * @param stunDuration is the relative duration of the stun if stunning bullets are used.
 	 */
 	public BattleSpecification(int numRounds, BattlefieldSpecification battlefieldSize, RobotSpecification[] robots, String bulletEffect, int stunDuration) {
-		this(numRounds, 450, 0.1, battlefieldSize, robots);
+		this(battlefieldSize, numRounds, 450, 0.1, 100, false, robots, null, bulletEffect, stunDuration);
 	}
 
 	/**

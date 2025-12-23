@@ -36,6 +36,7 @@ cd .sandbox
 
 ## Usage
 To use stunning bullets simply start a new battle, and select `Stunning Effect` in the rules tab. Additionally you can change the default `Stun Duration`.
+
 ![rules tab](./assets/readme/rules.png)
 
 ## How It Works
@@ -48,6 +49,24 @@ To use stunning bullets simply start a new battle, and select `Stunning Effect` 
 - In the `BulletPeer` method `checkRobotCollision`, when a bullet hits a robot, the bullet notifies the corresponding `BulletEffect` (held by the shooting robot’s `RobotPeer`), which then applies the effect to the target robot.
 
 ![uml](./assets/uml/uml.png)
+
+## Testing
+To verify that the extension works as expected, a [test](./robocode.tests/src/test/java/net/sf/robocode/test/robots/TestStunningBullets.java) was added that checks the following:
+- The stun effect is applied
+- The amount of turns to skip is correct
+- The remaining stun duration is reduced each turn
+
+You can run it using:
+```bash
+cd robocode
+./gradlew :robocode.tests:test --tests "net.sf.robocode.test.robots.TestStunningBullets" 
+```
+Or you can run all tests:
+```bash
+cd robocode
+./gradlew test
+```
+
 ## Resources
 - [Robocode home page]
 - [Introduction] to Robocode

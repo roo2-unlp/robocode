@@ -40,6 +40,9 @@ public final class RobotSnapshot implements Serializable, IXmlSerializable, IRob
 	/** The name of the robot */
 	private String name;
 
+	/** The bullet effect of the robot */
+	private String bulletEffect;
+
 	/** The short name of the robot */
 	private String shortName;
 
@@ -66,6 +69,9 @@ public final class RobotSnapshot implements Serializable, IXmlSerializable, IRob
 
 	/** The gun heat level of the robot */
 	private double gunHeat;
+
+	/** The turns to skip of the robot */
+	private int skipTurns;
 
 	/** The body heading in radians */
 	private double bodyHeading;
@@ -140,6 +146,7 @@ public final class RobotSnapshot implements Serializable, IXmlSerializable, IRob
 	 */
 	RobotSnapshot(RobotPeer robot, boolean readoutText) {
 		name = robot.getName();
+		bulletEffect = robot.getBulletEffectString();
 		shortName = robot.getShortName();
 		veryShortName = robot.getVeryShortName();
 		teamName = robot.getTeamName();
@@ -152,6 +159,7 @@ public final class RobotSnapshot implements Serializable, IXmlSerializable, IRob
 		energy = robot.getEnergy();
 		velocity = robot.getVelocity();
 		gunHeat = robot.getGunHeat(); 
+		skipTurns = robot.getSkipTurns(); 
 
 		bodyHeading = robot.getBodyHeading();
 		gunHeading = robot.getGunHeading();
@@ -199,6 +207,13 @@ public final class RobotSnapshot implements Serializable, IXmlSerializable, IRob
 	// TODO: Fix this so that getRobotIndex() is used instead
 	public String getName() {
 		return name;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getBulletEffect() {
+		return bulletEffect;
 	}
 
 	/**
@@ -292,6 +307,13 @@ public final class RobotSnapshot implements Serializable, IXmlSerializable, IRob
 	 */
 	public double getGunHeat() {
 		return gunHeat;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getSkipTurns() {
+		return skipTurns;
 	}
 
 	/**

@@ -14,4 +14,9 @@ public class StunningEffect implements BulletEffect {
     public void applyEffect(BulletPeer bullet, RobotPeer target) {
         target.skipNextTurns((int) stunDuration * (int) bullet.getPower());
     }
+
+    @Override
+    public String toString() {
+        return "Stunning Effect";
+    }
 }

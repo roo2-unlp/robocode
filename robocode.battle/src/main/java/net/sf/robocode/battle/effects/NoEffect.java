@@ -9,4 +9,9 @@ public class NoEffect implements BulletEffect {
     public void applyEffect(BulletPeer bullet, RobotPeer target) {
         // No effect applied
     }
+
+    @Override
+    public String toString() {
+        return "No Effect";
+    }
 }

@@ -26,6 +26,13 @@ public interface IRobotSnapshot {
 	String getName();
 
 	/**
+	 * Returns the bullet effect of the robot.
+	 *
+	 * @return the bullet effect of the robot.
+	 */
+	String getBulletEffect();
+
+	/**
 	 * Returns the short name of the robot.
 	 *
 	 * @return the short name of the robot.
@@ -131,6 +138,13 @@ public interface IRobotSnapshot {
 	 * @return the gun heat of the robot.
 	 */
 	double getGunHeat();
+
+	/**
+	 * Returns the turns to skip of the robot.
+	 *
+	 * @return the turns to skip of the robot.
+	 */
+	int getSkipTurns();
 
 	/**
 	 * Returns the X position of the robot.

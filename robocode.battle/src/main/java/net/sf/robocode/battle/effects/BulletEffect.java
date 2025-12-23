@@ -6,4 +6,6 @@ import net.sf.robocode.battle.peer.BulletPeer;
 
 public interface BulletEffect {
     public void applyEffect(BulletPeer bullet, RobotPeer target);
+
+    public String toString();
 }
