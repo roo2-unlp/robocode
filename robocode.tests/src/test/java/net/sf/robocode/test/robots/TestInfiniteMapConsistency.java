@@ -35,8 +35,6 @@ public class TestInfiniteMapConsistency extends RobocodeTestBed {
     public void onTurnEnded(TurnEndedEvent event) {
         super.onTurnEnded(event);
         IRobotSnapshot robot = event.getTurnSnapshot().getRobots()[0];
-
-        // Verificar que el robot existe
         org.junit.Assert.assertNotNull("El robot debe existir", robot);
     }
 }

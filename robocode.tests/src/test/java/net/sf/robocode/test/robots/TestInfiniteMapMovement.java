@@ -36,8 +36,6 @@ public class TestInfiniteMapMovement extends RobocodeTestBed {
         super.onTurnEnded(event);
         IRobotSnapshot robot = event.getTurnSnapshot().getRobots()[0];
         double velocity = robot.getVelocity();
-
-        // Verificar que el robot existe y tiene velocidad razonable
         org.junit.Assert.assertNotNull("El robot debe existir", robot);
         org.junit.Assert.assertTrue("Velocidad absoluta debe ser <= 8", Math.abs(velocity) <= 8);
     }

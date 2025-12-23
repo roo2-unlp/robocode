@@ -39,14 +39,11 @@ public class TestInfiniteMapBasicWrap extends RobocodeTestBed {
         super.onTurnEnded(event);
         lastTurn = event.getTurnSnapshot().getTurn();
         IRobotSnapshot robot = event.getTurnSnapshot().getRobots()[0];
-        // Verificar que el robot existe y la batalla esta corriendo
         Assert.assertNotNull("El robot debe existir", robot);
-        // Las posiciones se verifican indirectamente al no haber excepciones
     }
 
     @Override
     protected void runTeardown() {
-        // Verificar que la batalla se ejecuto por al menos algunos turnos
         Assert.assertTrue("La batalla debe durar al menos 10 turnos", lastTurn >= 10);
     }
 }

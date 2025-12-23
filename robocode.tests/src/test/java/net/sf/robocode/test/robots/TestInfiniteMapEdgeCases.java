@@ -33,7 +33,7 @@ public class TestInfiniteMapEdgeCases extends RobocodeTestBed {
 
     @Override
     public String getInitialPositions() {
-        // Colocar robot cerca del borde izquierdo para probar casos extremos
+        // Se ubica el robot cerca del borde izquierdo para probar casos extremos
         return "50,300,0";
     }
 
@@ -41,8 +41,6 @@ public class TestInfiniteMapEdgeCases extends RobocodeTestBed {
     public void onTurnEnded(TurnEndedEvent event) {
         super.onTurnEnded(event);
         IRobotSnapshot robot = event.getTurnSnapshot().getRobots()[0];
-
-        // Verificar que el robot existe en casos extremos
         org.junit.Assert.assertNotNull("El robot debe existir en casos extremos", robot);
     }
 }
