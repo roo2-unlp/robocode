@@ -41,6 +41,12 @@ public class TestRandomHitDamageStrategy {
 	public void MinyMaxIgualTest(){
 		RandomWallHitDamageStrategy strategy = new RandomWallHitDamageStrategy(3,3, 1234);
 		strategy.initializeRound();
+		Assert.assertTrue(strategy.getExtraWallDamage() > 1);
+	}
+
+	public void DanioExtraRandomTest(){
+		RandomWallHitDamageStrategy strategy = new RandomWallHitDamageStrategy(3,3, 1234);
+		strategy.initializeRound();
 		Assert.assertEquals(3, strategy.getExtraWallDamage());
 	}
 
