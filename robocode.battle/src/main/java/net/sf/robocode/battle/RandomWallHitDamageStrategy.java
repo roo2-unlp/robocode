@@ -6,7 +6,7 @@ import java.util.Random;
 public class RandomWallHitDamageStrategy implements WallHitDamageStrategy {
 	private int intervaloDado;
 	private int tiempoTranscurrido;
-	private final Random dadoRandom = new Random();
+	private final Random dadoRandom;
 	private int minRandom;
 	private int maxRandom;
 	private int extraWallDamage;
@@ -14,6 +14,13 @@ public class RandomWallHitDamageStrategy implements WallHitDamageStrategy {
 	public RandomWallHitDamageStrategy(int minRandom, int maxRandom) {
 		this.minRandom = minRandom;
 		this.maxRandom = maxRandom;
+		this.dadoRandom = new Random();
+	}
+
+	public RandomWallHitDamageStrategy(int minRandom, int maxRandom, int seed) {
+		this.minRandom = minRandom;
+		this.maxRandom = maxRandom;
+		this.dadoRandom = new Random(seed);
 	}
 
 	@Override

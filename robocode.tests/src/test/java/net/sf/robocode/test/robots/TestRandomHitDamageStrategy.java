@@ -21,7 +21,7 @@ public class TestRandomHitDamageStrategy {
 	}
 	// Test de Random Strategy
 	@Test
-	public void RangodeDao1a6Test(){
+	public void RangodeDado1a6Test(){
 		RandomWallHitDamageStrategy strategy = new RandomWallHitDamageStrategy(1,1);
 		strategy.initializeRound();
 		Assert.assertTrue(strategy.getDiceExtraWallDamage() >= 1 && strategy.getDiceExtraWallDamage() <= 6);
@@ -39,9 +39,9 @@ public class TestRandomHitDamageStrategy {
 	}
 	@Test
 	public void MinyMaxIgualTest(){
-		RandomWallHitDamageStrategy strategy = new RandomWallHitDamageStrategy(3,3);
+		RandomWallHitDamageStrategy strategy = new RandomWallHitDamageStrategy(3,3, 1234);
 		strategy.initializeRound();
-		Assert.assertTrue(strategy.getExtraWallDamage() != 0);
+		Assert.assertEquals(3, strategy.getExtraWallDamage());
 	}
 
 }
