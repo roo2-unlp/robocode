@@ -28,7 +28,6 @@ public class TestFileWriteSize extends RobocodeTestBed {
 	boolean messageQuotaReached;
 	boolean robotTerminated;
 
-	@Ignore
 	@Test
 	public void run() {
 		super.run();

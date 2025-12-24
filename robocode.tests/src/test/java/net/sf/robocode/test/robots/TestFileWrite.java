@@ -22,7 +22,6 @@ import java.io.File;
  */
 public class TestFileWrite extends RobocodeTestBed {
 
-	@Ignore
 	@Test
 	public void run() {
 		super.run();
