@@ -22,12 +22,12 @@ public class DamageEffect implements ITrapEffect{
 		this.duration = duration;
 	}
 	@Override
-	public void apply(RobotPeer robot) {
+	public void apply(IRobotPeer robot) {
 		robot.applyEnergyEffect(-damage);
 	}
 
 	@Override
-	public void revert(RobotPeer robot) {
+	public void revert(IRobotPeer robot) {
 	}
 
 	@Override
@@ -49,5 +49,8 @@ public class DamageEffect implements ITrapEffect{
 ### efectos aplicables al robot (se ampliara en el futuro)
 - `applyEnergyEffect` afecta a la energia del robot
 - `setMovementMultiplier` afecta a la velocidad del robot
+
+### Tests de lógica de trampas
+Se desarrollaron tests unitarios en robocode.tests/src/test/java/net/sf/robocode/test/trap/TrapLogicTest.java para verificar el correcto funcionamiento de los efectos de trampas (DamageEffect, StickyEffect) sobre los robots. Estos tests aseguran que los efectos aplican correctamente daño y reducción de velocidad, y que los valores se acumulan y revierten según lo esperado.
 
 ## Se verificó su correcto funcionamiento con Java 8 (OpenJDK / Eclipse Temurin) versión 1.8.0_472, JDK 64-bit.
