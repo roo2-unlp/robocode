@@ -6,7 +6,10 @@ import static java.lang.Math.tan;
 import robocode.HitWallEvent;
 import robocode.Rules;
 import robocode.control.snapshot.RobotState;
-
+/*
+    Está clase mantiene todo el comportamiento inicial del mapa.
+    Cada colisón con una pared reacomoda y te resta energia al robot. 
+*/
 public class ClassicWallCollisionStrategy implements WallCollisionStrategy {
 
     @Override

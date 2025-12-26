@@ -1,5 +1,10 @@
 package net.sf.robocode.battle.peer;
 
+/*
+    Está clase contiene el comportamiento nuevo del mapa.
+    Cada colisón con una pared genera una traslado al lado opuesto. 
+*/
+
 public class InfiniteMapWallCollisionStrategy implements WallCollisionStrategy {
 
     @Override
