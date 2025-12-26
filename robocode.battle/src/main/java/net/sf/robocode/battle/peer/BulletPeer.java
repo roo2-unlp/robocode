@@ -245,16 +245,7 @@ public class BulletPeer {
     if (robot == null || robot.isDead()) {
       return false;
     }
-    Rectangle2D box = robot.getBoundingBox();
-    double cx = x;
-    double cy = y;
-    double r = getProximityRadius();
-    // Clamp bullet center to box to find closest point
-    double nearestX = Math.max(box.getMinX(), Math.min(cx, box.getMaxX()));
-    double nearestY = Math.max(box.getMinY(), Math.min(cy, box.getMaxY()));
-    double dx = nearestX - cx;
-    double dy = nearestY - cy;
-    return (dx * dx + dy * dy) <= r * r;
+	  return ProximityMath.intersects(x, y, getProximityRadius(), robot.getBoundingBox());
   }
 
   protected void handleRobotImpact(RobotPeer otherRobot) {

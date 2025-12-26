@@ -95,15 +95,12 @@ public class ProximityBulletCollisionStrategy implements IBulletCollisionStrateg
             return bullet.getPower();
         }
 
-        double dx = robot.getX() - bullet.getX();
-        double dy = robot.getY() - bullet.getY();
-        double distance = Math.hypot(dx, dy);
-        double normalized = Math.min(Math.max(distance, 0), proximityRadius) / proximityRadius;
-        
-        // Impact factor: 90% at center, scaling down to 10% at edge
-        double impactFactor = 0.90 - 0.80 * normalized;
-
-        return bullet.getPower() * impactFactor;
+		return ProximityMath.adjustedPower(
+				bullet.getPower(),
+				bullet.getX(), bullet.getY(),
+				robot.getX(), robot.getY(),
+				bullet.getProximityRadius()
+		);
     }
 
     @Override

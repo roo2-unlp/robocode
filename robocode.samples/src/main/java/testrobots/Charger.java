@@ -34,7 +34,7 @@ public class Charger extends Robot {
 		turnRight(e.getBearing());
 
 		double distancia = e.getDistance();
-		double margen = 50;  // seguridad para no chocar
+		double margen = 70;  // seguridad para no chocar
 
 		if (distancia > margen) {
 			ahead(distancia - margen);
