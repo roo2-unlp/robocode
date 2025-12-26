@@ -15,6 +15,8 @@ import robocode.robotinterfaces.peer.IAdvancedRobotPeer;
 import java.io.File;
 import java.util.Vector;
 
+import robocode.robotinterfaces.peer.IProximityRobotPeer;
+
 
 /**
  * A more advanced type of robot than Robot that allows non-blocking calls,
@@ -434,6 +436,87 @@ public class AdvancedRobot extends _AdvancedRadiansRobot implements IAdvancedRob
 	public Bullet setFireBullet(double power) {
 		if (peer != null) {
 			return peer.setFire(power);
+		}
+		uninitializedException();
+		return null;
+	}
+
+	/**
+	 * Immediately fires a proximity bullet. The bullet will travel in the direction
+	 * the gun is pointing and will detonate when an enemy robot enters its proximity
+	 * radius, dealing area damage to all robots within range.
+	 * <p>
+	 * This call executes immediately and blocks until the bullet is fired.
+	 * <p>
+	 * The specified bullet power is an amount of energy that will be taken from
+	 * the robot's energy. The proximity radius is configured in battle rules.
+	 * <p>
+	 * The specified bullet power should be between
+	 * {@link Rules#MIN_BULLET_POWER} and {@link Rules#MAX_BULLET_POWER}.
+	 * <p>
+	 * Note that the gun cannot fire if the gun is overheated, meaning that
+	 * {@link #getGunHeat()} returns a value &gt; 0.
+	 *
+	 * @param power the amount of energy given to the bullet, and subtracted
+	 *              from the robot's energy.
+	 * @return a {@link ProximityBullet} that contains information about the bullet if it
+	 *         was actually fired. If the bullet was not fired, {@code null} is returned.
+	 * @see #setFireProximityBullet(double)
+	 * @see ProximityBullet
+	 * @see #fire(double) fire(double)
+	 * @see #getGunHeat() getGunHeat()
+	 */
+	public ProximityBullet fireProximityBullet(double power) {
+		if (peer != null) {
+			return ((IProximityRobotPeer) peer).fireProximityBullet(power);
+		}
+		uninitializedException();
+		return null;
+	}
+
+	/**
+	 * Sets the gun to fire a proximity bullet when the next execution takes place.
+	 * The bullet will travel in the direction the gun is pointing and will detonate
+	 * when an enemy robot enters its proximity radius, dealing area damage to all
+	 * robots within range.
+	 * <p>
+	 * This call returns immediately, and will not execute until you call
+	 * {@link #execute()} or take an action that executes.
+	 * <p>
+	 * The specified bullet power is an amount of energy that will be taken from
+	 * the robot's energy. The proximity radius is configured in battle rules.
+	 * <p>
+	 * The specified bullet power should be between
+	 * {@link Rules#MIN_BULLET_POWER} and {@link Rules#MAX_BULLET_POWER}.
+	 * <p>
+	 * Note that the gun cannot fire if the gun is overheated, meaning that
+	 * {@link #getGunHeat()} returns a value &gt; 0.
+	 * <p>
+	 * Example:
+	 * <pre>
+	 *   ProximityBullet bullet = null;
+	 *
+	 *   // Fire a proximity bullet with maximum power if the gun is ready
+	 *   if (getGunHeat() == 0) {
+	 *       bullet = setFireProximityBullet(Rules.MAX_BULLET_POWER);
+	 *   }
+	 *   ...
+	 *   execute();
+	 * </pre>
+	 *
+	 * @param power the amount of energy given to the bullet, and subtracted
+	 *              from the robot's energy.
+	 * @return a {@link ProximityBullet} that contains information about the bullet if it
+	 *         was actually fired, which can be used for tracking the bullet after it
+	 *         has been fired. If the bullet was not fired, {@code null} is returned.
+	 * @see #fireProximityBullet(double)
+	 * @see ProximityBullet
+	 * @see #setFireBullet(double)
+	 * @see #getGunHeat() getGunHeat()
+	 */
+	public ProximityBullet setFireProximityBullet(double power) {
+		if (peer != null) {
+			return ((robocode.robotinterfaces.peer.IProximityRobotPeer) peer).setFireProximityBullet(power);
 		}
 		uninitializedException();
 		return null;

@@ -120,7 +120,7 @@ public class BasicRobotProxy extends HostingRobotProxy implements IProximityRobo
 		return fireImpl(power, BulletType.NORMAL);
 	}
 
-	public ProximityBullet setFireProximity(double power) {
+	public ProximityBullet setFireProximityBullet(double power) {
 		setCall();
 		return (ProximityBullet) fireImpl(power, BulletType.PROXIMITY);
 	}
@@ -159,7 +159,7 @@ public class BasicRobotProxy extends HostingRobotProxy implements IProximityRobo
 	}
 
 	public ProximityBullet fireProximityBullet(double power) {
-		ProximityBullet bullet = setFireProximity(power);
+		ProximityBullet bullet = setFireProximityBullet(power);
 
 		execute();
 		return bullet;
