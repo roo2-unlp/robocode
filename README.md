@@ -95,7 +95,7 @@ Reintentar el proceso de Setup normal.  (los paso mencinados anteriormente)
 ```
 ### Ejecución de Tests por separado:
 
-#### Test unitarios
+#### Test unitario
 ```bash
   ./gradlew :robocode.battle:test --tests "net.sf.robocode.battle.damage.TestRandomDamageModel"
 ```
