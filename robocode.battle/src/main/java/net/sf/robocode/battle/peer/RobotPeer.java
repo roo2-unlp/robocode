@@ -867,12 +867,12 @@ public final class RobotPeer implements IRobotPeerBattle, IRobotPeer {
 
 			gunHeat += Rules.getGunHeat(firePower);
 
-			if (bulletCmd.isProximity()) {
-				newBullet = new ProximityBulletPeer(this, battleRules, bulletCmd.getBulletId());
-				newBullet.setProximityRadius(bulletCmd.getProximityRadius());
-			} else {
-				newBullet = new BulletPeer(this, battleRules, bulletCmd.getBulletId());
-			}
+			// Use Factory to create bullet with appropriate collision strategy
+			IBulletCollisionStrategy collisionStrategy = BulletCollisionStrategyFactory.createStrategy(bulletCmd);
+			newBullet = new BulletPeer(this, battleRules, bulletCmd.getBulletId(), collisionStrategy);
+			
+			// Configure bullet based on command type - polymorphic configuration
+			BulletCollisionStrategyFactory.configureBullet(newBullet, bulletCmd);
 
 			newBullet.setPower(firePower);
 			if (!turnedRadarWithGun || !bulletCmd.isFireAssistValid() || statics.isAdvancedRobot()) {

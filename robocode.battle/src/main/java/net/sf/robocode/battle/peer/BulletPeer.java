@@ -21,6 +21,7 @@ import robocode.BulletHitBulletEvent;
 import robocode.BulletHitEvent;
 import robocode.BulletMissedEvent;
 import robocode.HitByBulletEvent;
+import robocode.ProximityBullet;
 import robocode.Rules;
 import robocode.control.snapshot.BulletState;
 import robocode.util.Utils;
@@ -70,12 +71,18 @@ public class BulletPeer {
   private final int color;
 
   protected int explosionImageIndex; // Do not set to -1
+  private IBulletCollisionStrategy collisionStrategy;
 
   BulletPeer(RobotPeer owner, BattleRules battleRules, int bulletId) {
+    this(owner, battleRules, bulletId, NormalBulletCollisionStrategy.getInstance());
+  }
+
+  BulletPeer(RobotPeer owner, BattleRules battleRules, int bulletId, IBulletCollisionStrategy collisionStrategy) {
     super();
     this.owner = owner;
     this.battleRules = battleRules;
     this.bulletId = bulletId;
+    this.collisionStrategy = collisionStrategy;
     state = BulletState.FIRED;
     color = owner.getBulletColor(); // Store current bullet color set on robot
   }
@@ -164,6 +171,18 @@ public class BulletPeer {
     state = newState;
   }
 
+  public IBulletCollisionStrategy getCollisionStrategy() {
+    return collisionStrategy;
+  }
+
+  public void setCollisionStrategy(IBulletCollisionStrategy strategy) {
+    this.collisionStrategy = strategy;
+  }
+
+  public Line2D.Double getBoundingLine() {
+    return boundingLine;
+  }
+
   public void update(List<RobotPeer> robots, List<BulletPeer> bullets) {
     frame++;
     if (isActive()) {
@@ -207,12 +226,18 @@ public class BulletPeer {
     return proximityRadius;
   }
 
+  public boolean isProximityBullet() {
+    return collisionStrategy instanceof ProximityBulletCollisionStrategy;
+  }
+
   /**
-   * Factory hook that allows subclasses to customize the concrete {@link Bullet}
-   * instance
-   * exposed to robots via events.
+   * Factory hook that creates the concrete {@link Bullet} instance
+   * exposed to robots via events. Returns ProximityBullet for proximity bullets.
    */
   protected Bullet instantiateBullet(String ownerName, String victimName, boolean isActive) {
+    if (isProximityBullet()) {
+      return new ProximityBullet(getHeading(), getX(), getY(), power, ownerName, victimName, isActive, getBulletId(), proximityRadius);
+    }
     return new Bullet(getHeading(), getX(), getY(), power, ownerName, victimName, isActive, getBulletId());
   }
 
@@ -237,7 +262,9 @@ public class BulletPeer {
     frame = 0;
     victim = otherRobot;
 
-    double damage = Rules.getBulletDamage(power);
+    // Get adjusted power from strategy (normal bullets return full power, proximity bullets scale by distance)
+    double effectivePower = collisionStrategy.getAdjustedPower(this, otherRobot);
+    double damage = Rules.getBulletDamage(effectivePower);
 
     if (owner.isSentryRobot()) {
       if (victim.isSentryRobot()) {
@@ -335,12 +362,12 @@ public class BulletPeer {
   }
 
   protected void checkRobotCollision(List<RobotPeer> robots) {
-    for (RobotPeer otherRobot : robots) {
-      if (!(otherRobot == null || otherRobot == owner || otherRobot.isDead())
-          && otherRobot.getBoundingBox().intersectsLine(boundingLine)) {
-        handleRobotImpact(otherRobot);
-        break;
-      }
+    // Delegate collision detection to the strategy
+    RobotPeer hitRobot = collisionStrategy.checkRobotCollision(this, robots);
+    if (hitRobot != null) {
+      // Let the strategy customize the impact if needed
+      collisionStrategy.handleImpact(this, hitRobot);
+      handleRobotImpact(hitRobot);
     }
   }
 

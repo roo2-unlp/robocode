@@ -22,6 +22,7 @@ import net.sf.robocode.host.RobotStatics;
 import net.sf.robocode.host.events.EventManager;
 import net.sf.robocode.peer.BulletCommand;
 import net.sf.robocode.peer.BulletStatus;
+import net.sf.robocode.peer.BulletType;
 import net.sf.robocode.peer.ExecCommands;
 import net.sf.robocode.peer.ExecResults;
 import net.sf.robocode.peer.IRobotPeer;
@@ -116,12 +117,12 @@ public class BasicRobotProxy extends HostingRobotProxy implements IProximityRobo
 	// asynchronous actions
 	public Bullet setFire(double power) {
 		setCall();
-		return fireImpl(power, false);
+		return fireImpl(power, BulletType.NORMAL);
 	}
 
 	public ProximityBullet setFireProximity(double power) {
 		setCall();
-		return (ProximityBullet) fireImpl(power, true);
+		return (ProximityBullet) fireImpl(power, BulletType.PROXIMITY);
 	}
 
 	// blocking actions
@@ -532,9 +533,9 @@ public class BasicRobotProxy extends HostingRobotProxy implements IProximityRobo
 		return status.getGunHeat() + firedHeat;
 	}
 
-	private final Bullet fireImpl(double power, boolean isProximity) {
+	private final Bullet fireImpl(double power, BulletType bulletType) {
 		if (Double.isNaN(power)) {
-			println("SYSTEM: You cannot call " + (isProximity ? "fireProximity" : "fire") + "(NaN)");
+			println("SYSTEM: You cannot call fire(NaN)");
 			return null;
 		}
 		if (getGunHeatImpl() > 0 || getEnergyImpl() == 0) {
@@ -566,22 +567,13 @@ public class BasicRobotProxy extends HostingRobotProxy implements IProximityRobo
 			ScannedRobotEvent e = (ScannedRobotEvent) currentTopEvent;
 			double fireAssistAngle = Utils.normalAbsoluteAngle(status.getHeadingRadians() + e.getBearingRadians());
 
-			if (isProximity) {
-				bullet = new ProximityBullet(fireAssistAngle, getX(), getY(), power, statics.getName(), null, true, nextBulletId, proximityRadius);
-			} else {
-				bullet = new Bullet(fireAssistAngle, getX(), getY(), power, statics.getName(), null, true, nextBulletId);
-			}
-			wrapper = new BulletCommand(power, true, fireAssistAngle, nextBulletId, proximityRadius, isProximity);
+			// Polymorphic bullet creation via factory
+			bullet = BulletFactory.createBullet(fireAssistAngle, getX(), getY(), power, statics.getName(), null, true, nextBulletId, proximityRadius, bulletType);
+			wrapper = new BulletCommand(power, true, fireAssistAngle, nextBulletId, proximityRadius, bulletType);
 		} else {
-			// this is normal bullet
-			if (isProximity) {
-				bullet = new ProximityBullet(status.getGunHeadingRadians(), getX(), getY(), power, statics.getName(), null, true,
-						nextBulletId, proximityRadius);
-			} else {
-				bullet = new Bullet(status.getGunHeadingRadians(), getX(), getY(), power, statics.getName(), null, true,
-						nextBulletId);
-			}
-			wrapper = new BulletCommand(power, false, 0, nextBulletId, proximityRadius, isProximity);
+			// this is normal bullet - polymorphic creation via factory
+			bullet = BulletFactory.createBullet(status.getGunHeadingRadians(), getX(), getY(), power, statics.getName(), null, true, nextBulletId, proximityRadius, bulletType);
+			wrapper = new BulletCommand(power, false, 0, nextBulletId, proximityRadius, bulletType);
 		}
 
 		firedEnergy += power;

@@ -31,6 +31,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import net.sf.robocode.peer.BulletCommand;
+import net.sf.robocode.peer.BulletType;
 import net.sf.robocode.peer.DebugProperty;
 import net.sf.robocode.peer.ExecCommands;
 import net.sf.robocode.peer.TeamMessage;
@@ -91,9 +92,9 @@ public class RbSerializerTest {
 		ExecCommands ec = new ExecCommands();
 
 		ec.setBodyTurnRemaining(150.123);
-		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, 1.0, false));
-		ec.getBullets().add(new BulletCommand(1.0, false, 0.9454, 12, 1.0, false));
-		ec.getBullets().add(new BulletCommand(1.0, true, 0.9554, -128, 1.0, false));
+		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, 1.0, BulletType.NORMAL));
+		ec.getBullets().add(new BulletCommand(1.0, false, 0.9454, 12, 1.0, BulletType.NORMAL));
+		ec.getBullets().add(new BulletCommand(1.0, true, 0.9554, -128, 1.0, BulletType.NORMAL));
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
 		RbSerializer rbs = new RbSerializer();
@@ -114,7 +115,7 @@ public class RbSerializerTest {
 		ExecCommands ec = new ExecCommands();
 
 		ec.setBodyTurnRemaining(150.123);
-		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, 1.0, false));
+		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, 1.0, BulletType.NORMAL));
 		final byte[] data = new byte[20];
 
 		data[10] = 10;
@@ -140,7 +141,7 @@ public class RbSerializerTest {
 		ExecCommands ec = new ExecCommands();
 
 		ec.setBodyTurnRemaining(150.123);
-		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, 1.0, false));
+		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, 1.0, BulletType.NORMAL));
 		ec.getTeamMessages().add(new TeamMessage("Foo", "Bar", null));
 		ec.getDebugProperties().add(
 				new DebugProperty("UTF8 Native characters", "Příliš žluťoučký kůň úpěl ďábelské ódy."));
@@ -163,9 +164,9 @@ public class RbSerializerTest {
 		ExecCommands ec = new ExecCommands();
 
 		ec.setBodyTurnRemaining(150.123);
-		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, 1.0, false));
-		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, 1.0, false));
-		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, 1.0, false));
+		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, 1.0, BulletType.NORMAL));
+		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, 1.0, BulletType.NORMAL));
+		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, 1.0, BulletType.NORMAL));
 		ec.getTeamMessages().add(new TeamMessage("Foo", "Bar", null));
 		ec.getDebugProperties().add(new DebugProperty("ooooh", "aaaah"));
 
@@ -190,9 +191,9 @@ public class RbSerializerTest {
 		ExecCommands ec = new ExecCommands();
 
 		ec.setBodyTurnRemaining(150.123);
-		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, 1.0, false));
-		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, 1.0, false));
-		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, 1.0, false));
+		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, 1.0, BulletType.NORMAL));
+		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, 1.0, BulletType.NORMAL));
+		ec.getBullets().add(new BulletCommand(1.0, true, 0.9354, 11, 1.0, BulletType.NORMAL));
 		ec.getTeamMessages().add(new TeamMessage("Foo", "Bar", null));
 		ec.getDebugProperties().add(new DebugProperty("ooooh", "aaaah"));
 

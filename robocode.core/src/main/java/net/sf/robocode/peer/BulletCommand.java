@@ -23,7 +23,7 @@ public class BulletCommand implements Serializable {
 	private static class SerializableHelper implements ISerializableHelper {
 		public int sizeOf(RbSerializer serializer, Object object) {
 			return RbSerializer.SIZEOF_TYPEINFO + RbSerializer.SIZEOF_DOUBLE + RbSerializer.SIZEOF_BOOL
-					+ RbSerializer.SIZEOF_DOUBLE + RbSerializer.SIZEOF_INT + RbSerializer.SIZEOF_DOUBLE + RbSerializer.SIZEOF_BOOL;
+					+ RbSerializer.SIZEOF_DOUBLE + RbSerializer.SIZEOF_INT + RbSerializer.SIZEOF_DOUBLE + RbSerializer.SIZEOF_INT;
 		}
 
 		public void serialize(RbSerializer serializer, ByteBuffer buffer, Object object) {
@@ -34,7 +34,7 @@ public class BulletCommand implements Serializable {
 			serializer.serialize(buffer, obj.fireAssistAngle);
 			serializer.serialize(buffer, obj.bulletId);
 			serializer.serialize(buffer, obj.proximityRadius);
-      		serializer.serialize(buffer, obj.isProximity);
+			serializer.serialize(buffer, obj.bulletType.ordinal());
 		}
 
 		public Object deserialize(RbSerializer serializer, ByteBuffer buffer) {
@@ -43,9 +43,9 @@ public class BulletCommand implements Serializable {
 			double fireAssistAngle = buffer.getDouble();
 			int bulletId = buffer.getInt();
 			double proximityRadius = buffer.getDouble();
-      		boolean isProximity = serializer.deserializeBoolean(buffer);
+			BulletType bulletType = BulletType.values()[buffer.getInt()];
 
-			return new BulletCommand(power, fireAssistValid, fireAssistAngle, bulletId, proximityRadius, isProximity);
+			return new BulletCommand(power, fireAssistValid, fireAssistAngle, bulletId, proximityRadius, bulletType);
 		}
 	}
 
@@ -60,19 +60,22 @@ public class BulletCommand implements Serializable {
 	private final int bulletId;
 
 	private final double proximityRadius;
-	private final boolean isProximity;
+	private final BulletType bulletType;
 
-	public BulletCommand(double power, boolean fireAssistValid, double fireAssistAngle, int bulletId,double proximityRadius, boolean isProximity) {
+	public BulletCommand(double power, boolean fireAssistValid, double fireAssistAngle, int bulletId, double proximityRadius, BulletType bulletType) {
 		this.fireAssistValid = fireAssistValid;
 		this.fireAssistAngle = fireAssistAngle;
 		this.bulletId = bulletId;
 		this.power = power;
 		this.proximityRadius = proximityRadius;
-		this.isProximity = isProximity;
+		this.bulletType = bulletType;
 	}
 
-	public boolean isProximity() {
-		return isProximity;
+	/**
+	 * Returns the bullet type for polymorphic strategy lookup.
+	 */
+	public BulletType getBulletType() {
+		return bulletType;
 	}
 
 	public boolean isFireAssistValid() {
