@@ -7,6 +7,7 @@
  */
 package net.sf.robocode.battle.peer;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,14 +36,15 @@ public class NormalBulletCollisionStrategy implements IBulletCollisionStrategy {
     }
 
     @Override
-    public RobotPeer checkRobotCollision(BulletPeer bullet, List<RobotPeer> robots) {
+    public List<RobotPeer> checkRobotCollision(BulletPeer bullet, List<RobotPeer> robots) {
         for (RobotPeer otherRobot : robots) {
             if (!(otherRobot == null || otherRobot == bullet.getOwner() || otherRobot.isDead())
                     && otherRobot.getBoundingBox().intersectsLine(bullet.getBoundingLine())) {
-                return otherRobot;
+                // Normal bullets hit only one robot
+                return Collections.singletonList(otherRobot);
             }
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

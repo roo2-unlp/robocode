@@ -21,13 +21,17 @@ import java.util.List;
 public interface IBulletCollisionStrategy {
 
     /**
-     * Checks for and handles collision between the bullet and robots.
+     * Checks for collisions between the bullet and robots.
+     * 
+     * Normal bullets return a single robot (or empty list), while proximity bullets
+     * may return multiple robots when they detonate, dealing area damage to all
+     * robots within the blast radius.
      * 
      * @param bullet the bullet peer performing the collision check
      * @param robots the list of robots to check collision against
-     * @return the robot that was hit, or null if no collision occurred
+     * @return a list of robots that were hit (may be empty, single, or multiple)
      */
-    RobotPeer checkRobotCollision(BulletPeer bullet, List<RobotPeer> robots);
+    List<RobotPeer> checkRobotCollision(BulletPeer bullet, List<RobotPeer> robots);
 
     /**
      * Called when a bullet impacts a robot. Implementations may modify

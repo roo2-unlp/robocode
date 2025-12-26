@@ -363,12 +363,84 @@ public class BulletPeer {
 
   protected void checkRobotCollision(List<RobotPeer> robots) {
     // Delegate collision detection to the strategy
-    RobotPeer hitRobot = collisionStrategy.checkRobotCollision(this, robots);
-    if (hitRobot != null) {
-      // Let the strategy customize the impact if needed
-      collisionStrategy.handleImpact(this, hitRobot);
-      handleRobotImpact(hitRobot);
+    // May return multiple robots for area-damage bullets (e.g., proximity)
+    List<RobotPeer> hitRobots = collisionStrategy.checkRobotCollision(this, robots);
+    
+    if (!hitRobots.isEmpty()) {
+      // First robot is the primary victim (used for bullet state and position)
+      RobotPeer primaryVictim = hitRobots.get(0);
+      
+      // Handle impact on all robots in the blast radius
+      for (RobotPeer hitRobot : hitRobots) {
+        collisionStrategy.handleImpact(this, hitRobot);
+        if (hitRobot == primaryVictim) {
+          // Primary victim: full impact handling (updates bullet state, victim, events)
+          handleRobotImpact(hitRobot);
+        } else {
+          // Secondary victims: damage only (no bullet state change, separate events)
+          handleSecondaryImpact(hitRobot);
+        }
+      }
     }
+  }
+
+  /**
+   * Handles impact on secondary targets during area damage (e.g., proximity explosions).
+   * This applies damage and generates events but doesn't change bullet state or victim.
+   * 
+   * @param otherRobot the secondary robot hit by the explosion
+   */
+  protected void handleSecondaryImpact(RobotPeer otherRobot) {
+    // Get adjusted power from strategy (proximity bullets scale by distance)
+    double effectivePower = collisionStrategy.getAdjustedPower(this, otherRobot);
+    double damage = Rules.getBulletDamage(effectivePower);
+
+    if (owner.isSentryRobot()) {
+      if (otherRobot.isSentryRobot()) {
+        damage = 0;
+      } else {
+        int range = battleRules.getSentryBorderSize();
+        if (x > range && x < (battleRules.getBattlefieldWidth() - range) && y > range
+            && y < (battleRules.getBattlefieldHeight() - range)) {
+          damage = 0;
+        }
+      }
+    }
+
+    double score = damage;
+    if (score > otherRobot.getEnergy()) {
+      score = otherRobot.getEnergy();
+    }
+    otherRobot.updateEnergy(-damage);
+
+    boolean teamFire = (owner.getTeamPeer() != null && owner.getTeamPeer() == otherRobot.getTeamPeer());
+
+    if (!teamFire && !otherRobot.isSentryRobot()) {
+      owner.getRobotStatistics().scoreBulletDamage(otherRobot.getName(), score);
+    }
+
+    if (otherRobot.getEnergy() <= 0 && otherRobot.isAlive()) {
+      otherRobot.kill();
+      if (!teamFire && !otherRobot.isSentryRobot()) {
+        double bonus = owner.getRobotStatistics().scoreBulletKill(otherRobot.getName());
+        if (bonus > 0) {
+          owner.println(
+              "SYSTEM: Bonus for killing "
+                  + (owner.getNameForEvent(otherRobot) + ": " + (int) (bonus + .5)));
+        }
+      }
+    }
+
+    // Note: No energy bonus for secondary hits (only primary victim gives energy back)
+
+    // Generate events for the hit
+    otherRobot.addEvent(
+        new HitByBulletEvent(
+            robocode.util.Utils.normalRelativeAngle(heading + Math.PI - otherRobot.getBodyHeading()),
+            createBullet(true)));
+
+    owner.addEvent(
+        new BulletHitEvent(owner.getNameForEvent(otherRobot), otherRobot.getEnergy(), createBullet(false)));
   }
 
   private void checkBulletCollision(List<BulletPeer> bullets) {

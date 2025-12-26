@@ -7,19 +7,24 @@
  */
 package net.sf.robocode.battle.peer;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 /**
- * Proximity bullet collision strategy using radius-based detection.
+ * Proximity bullet collision strategy using radius-based detection with area damage.
  * 
  * This strategy detects collision when a robot enters the bullet's proximity radius.
- * The damage is scaled based on the distance from the bullet center to the robot,
+ * When detonation is triggered (any robot enters the radius), ALL robots currently
+ * inside the radius receive damage (area damage effect).
+ * 
+ * The damage is scaled based on the distance from the bullet center to each robot,
  * with robots closer to the bullet receiving more damage.
  * 
  * Unlike normal bullets, proximity bullets track which robots are inside their radius
- * to prevent multiple hits per robot per frame and to only trigger on entry.
+ * to only trigger detonation on entry (not while robots stay inside).
  * 
  * @author Facu
  */
@@ -38,15 +43,15 @@ public class ProximityBulletCollisionStrategy implements IBulletCollisionStrateg
     }
 
     @Override
-    public RobotPeer checkRobotCollision(BulletPeer bullet, List<RobotPeer> robots) {
+    public List<RobotPeer> checkRobotCollision(BulletPeer bullet, List<RobotPeer> robots) {
         double proximityRadius = bullet.getProximityRadius();
         if (proximityRadius <= 0) {
-            return null;
+            return Collections.emptyList();
         }
 
         // Track which robots are currently inside the radius
         Set<RobotPeer> currentlyInside = new HashSet<RobotPeer>();
-        RobotPeer hitRobot = null;
+        boolean shouldDetonate = false;
 
         for (RobotPeer robot : robots) {
             if (robot == null || robot == bullet.getOwner() || robot.isDead()) {
@@ -58,10 +63,9 @@ public class ProximityBulletCollisionStrategy implements IBulletCollisionStrateg
             if (isInside) {
                 currentlyInside.add(robot);
 
-                // Only impact if the robot just entered the radius (wasn't inside before)
-                if (hitRobot == null && !robotsInsideRadius.contains(robot)) {
-                    hitRobot = robot;
-                    // Don't break - continue to track all robots inside radius
+                // Trigger detonation if any robot just entered the radius (wasn't inside before)
+                if (!robotsInsideRadius.contains(robot)) {
+                    shouldDetonate = true;
                 }
             }
         }
@@ -70,7 +74,12 @@ public class ProximityBulletCollisionStrategy implements IBulletCollisionStrateg
         robotsInsideRadius.clear();
         robotsInsideRadius.addAll(currentlyInside);
 
-        return hitRobot;
+        // If detonation triggered, return ALL robots in the blast radius for area damage
+        if (shouldDetonate && !currentlyInside.isEmpty()) {
+            return new ArrayList<RobotPeer>(currentlyInside);
+        }
+
+        return Collections.emptyList();
     }
 
     @Override
